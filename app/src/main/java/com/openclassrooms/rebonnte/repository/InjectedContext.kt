@@ -1,4 +1,4 @@
-package com.openclassrooms.p15_eventorias.repository
+package com.openclassrooms.rebonnte.repository
 
 import android.content.Context
 import android.net.ConnectivityManager

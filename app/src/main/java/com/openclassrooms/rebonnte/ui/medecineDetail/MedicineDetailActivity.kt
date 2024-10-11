@@ -1,4 +1,4 @@
-package com.openclassrooms.rebonnte.ui.medicine
+package com.openclassrooms.rebonnte.ui.medecineDetail
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -26,19 +25,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.openclassrooms.rebonnte.MainActivity
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 
 // TODO Denis : Je laisse les activitys ou je fais une appli mono-activity ?
@@ -62,11 +55,10 @@ class MedicineDetailActivity : ComponentActivity() {
 @Composable
 fun MedicineDetailScreen(
     name: String,
-    viewModel: MedicineViewModel = hiltViewModel(),
+    viewModel: MedicineDetailViewModel = hiltViewModel(),
 ) {
-    val medicines by viewModel.medicines.collectAsState(initial = emptyList())
-    val medicine = medicines.find { it.name == name } ?: return
-    var stock by remember { mutableStateOf(medicine.stock) }
+    val uiStateMedicines by viewModel.uiStateMedicines.collectAsState()
+
 
     Scaffold { paddingValues ->
         Column(

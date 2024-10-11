@@ -1,3 +1,6 @@
 package com.openclassrooms.rebonnte.model
 
-class Aisle(var name: String)
+class Aisle( // TODO JG : Data class ?
+    var id : String,
+    var name : String,
+)

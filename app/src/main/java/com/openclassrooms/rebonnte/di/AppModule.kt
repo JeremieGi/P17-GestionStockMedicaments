@@ -1,7 +1,7 @@
 package com.openclassrooms.rebonnte.di
 
 import android.content.Context
-import com.openclassrooms.p15_eventorias.repository.InjectedContext
+import com.openclassrooms.rebonnte.repository.InjectedContext
 import com.openclassrooms.rebonnte.repositoryStock.StockAPI
 import com.openclassrooms.rebonnte.repositoryStock.StockFakeAPI
 import dagger.Module

@@ -1,4 +1,4 @@
-package com.openclassrooms.rebonnte.repositoryStock
+package com.openclassrooms.rebonnte.repository
 
 /**
  * Classe permettant de gérer le chargement, l'erreur et le succès de chargement d'un objet générique T
