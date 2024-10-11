@@ -33,28 +33,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.openclassrooms.rebonnte.MainActivity
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 
+// TODO Denis : Je laisse les activitys ou je fais une appli mono-activity ?
+
+
 class MedicineDetailActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val name = intent.getStringExtra("nameMedicine") ?: "Unknown"
-        val viewModel = ViewModelProvider(MainActivity.mainActivity)[MedicineViewModel::class.java]
 
         setContent {
             RebonnteTheme {
-                MedicineDetailScreen(name, viewModel)
+                MedicineDetailScreen(name)
             }
         }
     }
+
 }
 
 @Composable
-fun MedicineDetailScreen(name: String, viewModel: MedicineViewModel) {
+fun MedicineDetailScreen(
+    name: String,
+    viewModel: MedicineViewModel = hiltViewModel(),
+) {
     val medicines by viewModel.medicines.collectAsState(initial = emptyList())
     val medicine = medicines.find { it.name == name } ?: return
     var stock by remember { mutableStateOf(medicine.stock) }
