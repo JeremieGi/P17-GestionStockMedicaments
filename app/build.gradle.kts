@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -9,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.openclassrooms.rebonnte"
-        minSdk = 24
+        minSdk = 24 // Android 7
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -40,7 +43,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
     packaging {
         resources {
@@ -67,4 +70,25 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Firebase
+
+    // Import the Firebase BoM
+    // garantit que toutes les bibliothèques Firebase utilisées dans un projet sont compatibles entre elles.
+    implementation(platform(libs.firebase.bom))
+
+    // Authentification
+    implementation(libs.firebase.ui.auth)
+
+    // Firestore = base de données NoSQL
+    implementation(libs.firebase.firestore)
+
+    // Firebase Storage (Stockage des images)
+    //implementation(libs.firebase.storage)
+
+    //DI
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+    androidTestImplementation(libs.hilt.android.testing)
 }
