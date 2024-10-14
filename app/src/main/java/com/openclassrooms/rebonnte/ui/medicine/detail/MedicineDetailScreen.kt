@@ -30,13 +30,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
+import com.openclassrooms.rebonnte.repositoryStock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
+import com.openclassrooms.rebonnte.ui.aisle.detail.AisleDetailStateComposable
+import com.openclassrooms.rebonnte.ui.aisle.detail.AisleDetailUIState
+import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
 
 @Composable
@@ -61,7 +66,7 @@ fun MedicineDetailScreen(
 
 @Composable
 fun MedicineDetailStateComposable(
-    uiStateMedicineDetailP: MedecineDetailUIState,
+    uiStateMedicineDetailP: MedicineDetailUIState,
     loadMedicineByIDP : () -> Unit,
 ) {
 
@@ -72,12 +77,12 @@ fun MedicineDetailStateComposable(
         when (uiStateMedicineDetailP) {
 
             // Chargement
-            is MedecineDetailUIState.IsLoading -> {
+            is MedicineDetailUIState.IsLoading -> {
                 LoadingComposable(Modifier.padding(contentPadding))
             }
 
             // Récupération des données avec succès
-            is MedecineDetailUIState.Success -> {
+            is MedicineDetailUIState.Success -> {
 
                 MedicineDetailSuccessComposable(
                     modifier=Modifier.padding(contentPadding),
@@ -87,7 +92,7 @@ fun MedicineDetailStateComposable(
             }
 
             // Exception
-            is MedecineDetailUIState.Error -> {
+            is MedicineDetailUIState.Error -> {
 
                 val error = uiStateMedicineDetailP.sError ?: stringResource(
                     R.string.unknown_error
@@ -217,5 +222,60 @@ fun HistoryItem(history: History) {
             Text(text = "Date: ${history.date}")
             Text(text = "Details: ${history.details}")
         }
+    }
+}
+
+
+
+@Preview("Medicine Detail Loading")
+@Composable
+fun MedicineDetailStateComposableLoadingPreview() {
+
+    val uiStateLoading = MedicineDetailUIState.IsLoading
+
+    RebonnteTheme {
+
+        MedicineDetailStateComposable(
+            uiStateMedicineDetailP = uiStateLoading,
+            loadMedicineByIDP = {}
+        )
+
+    }
+}
+
+
+@Preview("Medicine Detail Success")
+@Composable
+fun MedicineDetailStateComposableSuccessPreview() {
+
+
+    val listFakeMedicines = StockFakeAPI.initFakeMedicines()
+    val uiStateSuccess = MedicineDetailUIState.Success(listFakeMedicines[0])
+
+    RebonnteTheme {
+
+        MedicineDetailStateComposable(
+            uiStateMedicineDetailP = uiStateSuccess,
+            loadMedicineByIDP = {}
+        )
+
+    }
+
+
+}
+
+
+@Preview("Medicine Detail Error")
+@Composable
+fun MedicineDetailStateComposableErrorPreview() {
+
+    val uiStateError = MedicineDetailUIState.Error("Message de test pour la preview")
+
+    RebonnteTheme {
+
+        MedicineDetailStateComposable(
+            uiStateMedicineDetailP = uiStateError,
+            loadMedicineByIDP = {}
+        )
     }
 }

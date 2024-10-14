@@ -15,8 +15,8 @@ class MedicineDetailViewModel @Inject constructor (
     private val stockRepository: StockRepository
 ): ViewModel() {
 
-    private var _uiStateMedicineDetail = MutableStateFlow<MedecineDetailUIState>(MedecineDetailUIState.IsLoading)
-    val uiStateMedicineDetail : StateFlow<MedecineDetailUIState> get() = _uiStateMedicineDetail
+    private var _uiStateMedicineDetail = MutableStateFlow<MedicineDetailUIState>(MedicineDetailUIState.IsLoading)
+    val uiStateMedicineDetail : StateFlow<MedicineDetailUIState> get() = _uiStateMedicineDetail
 
 
     fun loadMedicineByID(idMedicineP: String) {
@@ -31,18 +31,18 @@ class MedicineDetailViewModel @Inject constructor (
                     // Echec
                     is ResultCustom.Failure ->
                         // Propagation du message d'erreur
-                        _uiStateMedicineDetail.value = MedecineDetailUIState.Error(resultFlow.errorMessage)
+                        _uiStateMedicineDetail.value = MedicineDetailUIState.Error(resultFlow.errorMessage)
 
                     // En chargement
                     is ResultCustom.Loading -> {
                         // Propagation du chargement
-                        _uiStateMedicineDetail.value = MedecineDetailUIState.IsLoading
+                        _uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
                     }
 
                     // Succès
                     is ResultCustom.Success -> {
                         val medicine = resultFlow.value
-                        _uiStateMedicineDetail.value = MedecineDetailUIState.Success(medicine)
+                        _uiStateMedicineDetail.value = MedicineDetailUIState.Success(medicine)
 
                     }
 
