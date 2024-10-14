@@ -3,14 +3,8 @@ package com.openclassrooms.rebonnte.ui.aisle.detail
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,7 +43,6 @@ fun AisleDetailScreen(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AisleDetailStateComposable(
     modifier: Modifier,
@@ -57,32 +50,34 @@ fun AisleDetailStateComposable(
     onBackClick: () -> Unit,
     loadAisleByIDP: () -> Unit) {
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = {
-                    if (uiStateAisleDetailP is AisleDetailUIState.Success){
-                        Text(uiStateAisleDetailP.aisle.name)
-                    }
-                    else{
-                        Text(stringResource(id = R.string.aisle))
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        onBackClick()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back),
-                        )
-                    }
-                }
-            )
-        }
-    ) { contentPadding ->
+// TODO Denis : pourquoi on a une topBar avec le nom de l'appli ici : Détails d'une allée
+//    Scaffold(
+//        modifier = modifier,
+//        topBar = {
+//            TopAppBar(
+//                title = {
+//                    if (uiStateAisleDetailP is AisleDetailUIState.Success){
+//                        Text(uiStateAisleDetailP.aisle.name)
+//                    }
+//                    else{
+//                        Text(stringResource(id = R.string.aisle))
+//                    }
+//                },
+//                navigationIcon = {
+//                    IconButton(onClick = {
+//                        onBackClick()
+//                    }) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                            contentDescription = stringResource(id = R.string.back),
+//                        )
+//                    }
+//                }
+//            )
+//        }
+//    ) { contentPadding ->
 
+    Scaffold { contentPadding ->
         when (uiStateAisleDetailP) {
 
             // Chargement

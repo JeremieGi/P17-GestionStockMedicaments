@@ -173,7 +173,7 @@ fun NavGraph(
                 onClickAddP = {
                     navController.navigate(Screen.MedicineAdd.route)
                 },
-                onClickMedicineP = {
+                onClickMedicineOnBottomBarP = {
                     navController.navigate(Screen.MedicinesList.route){
                         // permet de ne pas ouvrir un nouvel écran (pour ne pas surcharger la pile)
                         popUpTo(navController.graph.startDestinationId)  { saveState = true }

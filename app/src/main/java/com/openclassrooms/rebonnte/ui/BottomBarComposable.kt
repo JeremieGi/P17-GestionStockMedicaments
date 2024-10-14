@@ -1,4 +1,3 @@
-@file:Suppress("UNUSED_EXPRESSION")
 
 package com.openclassrooms.rebonnte.ui
 
@@ -29,13 +28,17 @@ fun BottomBarComposable(
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
             label = { Text("Aisle") },
             selected = sActiveScreenP==Screen.CTE_AISLE_LIST_SCREEN,
-            onClick = { onClickAisleP }
+            onClick = {
+                onClickAisleP()
+            }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.List, contentDescription = null) },
             label = { Text("Medicine") },
             selected = sActiveScreenP==Screen.CTE_MEDICINE_LIST_SCREEN,
-            onClick = { onClickMedicinesP }
+            onClick = {
+                onClickMedicinesP()
+            }
         )
     }
 

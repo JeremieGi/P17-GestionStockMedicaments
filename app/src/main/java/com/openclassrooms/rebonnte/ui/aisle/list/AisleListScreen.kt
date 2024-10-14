@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -28,22 +28,52 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.Aisle
+import com.openclassrooms.rebonnte.repositoryStock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.BottomBarComposable
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
 import com.openclassrooms.rebonnte.ui.Screen
 import com.openclassrooms.rebonnte.ui.aisle.detail.AisleDetailActivity
+import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AisleListScreen(
     viewModel: AisleListViewModel = hiltViewModel(),
     onClickAddP: () -> Unit,
-    onClickMedicineP : () -> Unit,
+    onClickMedicineOnBottomBarP : () -> Unit,
+) {
+
+
+    val uiStateList by viewModel.uiStateListAile.collectAsState()
+
+    // TODO Denis : Mieux vaut appeler le viewModel avant le composable ou dedans ?
+    LaunchedEffect(Unit) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
+        viewModel.loadAllAisle()
+    }
+
+    AisleListStateComposable(
+        uiStateListP = uiStateList,
+        loadAllAilesP = viewModel::loadAllAisle,
+        onClickAddP = onClickAddP,
+        onClickMedicineOnBottomBarP = onClickMedicineOnBottomBarP,
+    )
+
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AisleListStateComposable(
+    modifier: Modifier = Modifier,
+    uiStateListP: AisleListUIState,
+    loadAllAilesP : () -> Unit,
+    onClickAddP: () -> Unit,
+    onClickMedicineOnBottomBarP : () -> Unit,
 ) {
 
     Scaffold(
@@ -57,23 +87,46 @@ fun AisleListScreen(
         bottomBar = {
             BottomBarComposable(
                 sActiveScreenP = Screen.CTE_AISLE_LIST_SCREEN,
-                onClickMedicinesP = { onClickMedicineP },
-                onClickAisleP = { /*TODO JG*/ })
+                onClickMedicinesP = onClickMedicineOnBottomBarP,
+                onClickAisleP = { /* Bouton non clickable */ })
         },
         content = { innerPadding ->
 
-            val uiStateList by viewModel.uiStateListAile.collectAsState()
+            when (uiStateListP) {
 
-            // TODO Denis : Mieux vaut appler le viewModel avant le composable ou dedans ?
-            LaunchedEffect(Unit) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
-                viewModel.loadAllAisle()
+                // Chargement
+                is AisleListUIState.IsLoading -> {
+                    LoadingComposable(modifier= modifier.padding(innerPadding))
+                }
+
+                // Récupération des données avec succès
+                is AisleListUIState.Success -> {
+
+                    AisleListComposable(
+                        modifier = modifier.padding(innerPadding),
+                        listAisles = uiStateListP.listAisles
+                    )
+
+                }
+
+                // Exception
+                is AisleListUIState.Error -> {
+
+                    val error = uiStateListP.sError ?: stringResource(
+                        R.string.unknown_error
+                    )
+
+                    ErrorComposable(
+                        modifier= modifier.padding(innerPadding),
+                        sErrorMessage = error,
+                        onClickRetryP = {
+                            loadAllAilesP()
+                        }
+                    )
+
+
+                }
             }
-
-            AisleListStateComposable(
-                modifier = Modifier.padding(innerPadding),
-                uiStateListP = uiStateList,
-                loadAllAilesP = viewModel::loadAllAisle
-            )
 
 
 
@@ -91,53 +144,6 @@ fun AisleListScreen(
 }
 
 @Composable
-fun AisleListStateComposable(
-    modifier: Modifier = Modifier,
-    uiStateListP: AisleListUIState,
-    loadAllAilesP : () -> Unit
-) {
-
-    when (uiStateListP) {
-
-        // Chargement
-        is AisleListUIState.IsLoading -> {
-            LoadingComposable(modifier= modifier)
-        }
-
-        // Récupération des données avec succès
-        is AisleListUIState.Success -> {
-
-            AisleListComposable(
-                modifier = modifier,
-                listAisles = uiStateListP.listAisles
-            )
-
-        }
-
-        // Exception
-        is AisleListUIState.Error -> {
-
-            val error = uiStateListP.sError ?: stringResource(
-                R.string.unknown_error
-            )
-
-            ErrorComposable(
-                modifier= modifier,
-                sErrorMessage = error,
-                onClickRetryP = {
-                    loadAllAilesP()
-                }
-            )
-
-
-        }
-    }
-
-
-
-}
-
-@Composable
 fun AisleListComposable(
     modifier: Modifier,
     listAisles: List<Aisle>
@@ -150,7 +156,7 @@ fun AisleListComposable(
     ) {
         items(listAisles) { aisle ->
             AisleItem(aisle = aisle, onClick = {
-                startDetailActivity(context, aisle.name)
+                startAisleDetailActivity(context, aisle.id)
             })
         }
     }
@@ -170,15 +176,67 @@ fun AisleItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = aisle.name, style = MaterialTheme.typography.bodyMedium)
-        Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = "Arrow")
+        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Arrow")
     }
 }
 
 
 
-private fun startDetailActivity(context: Context, name: String) {
+private fun startAisleDetailActivity(context: Context, name: String) {
     val intent = Intent(context, AisleDetailActivity::class.java).apply {
         putExtra(Screen.CTE_PARAM_ID_AISLE, name)
     }
     context.startActivity(intent)
+}
+
+
+@Preview(
+    name ="Aisle list success",
+    showBackground = true
+)
+@Composable
+fun AisleListComposableSuccessPreview() {
+
+    val listFakeAisles = StockFakeAPI.initFakeAisles()
+    val uiStateSuccess = AisleListUIState.Success(listFakeAisles)
+
+    RebonnteTheme {
+
+        AisleListStateComposable(
+            uiStateListP = uiStateSuccess,
+            loadAllAilesP = {},
+            onClickAddP = {},
+            onClickMedicineOnBottomBarP = {}
+
+        )
+    }
+}
+
+@Preview("Aisle list loading")
+@Composable
+fun AisleListComposableLoadingPreview() {
+
+    RebonnteTheme {
+        AisleListStateComposable(
+            uiStateListP = AisleListUIState.IsLoading,
+            loadAllAilesP = {},
+            onClickAddP = {},
+            onClickMedicineOnBottomBarP = {}
+        )
+    }
+}
+
+
+@Preview("Aisle list error")
+@Composable
+fun AisleListComposableErrorPreview() {
+
+    RebonnteTheme {
+        AisleListStateComposable(
+            uiStateListP = AisleListUIState.Error("Erreur de test de la preview"),
+            loadAllAilesP = {},
+            onClickAddP = {},
+            onClickMedicineOnBottomBarP = {}
+        )
+    }
 }
