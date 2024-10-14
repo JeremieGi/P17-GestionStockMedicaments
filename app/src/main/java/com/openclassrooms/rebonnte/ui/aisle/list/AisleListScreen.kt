@@ -88,7 +88,7 @@ fun AisleListStateComposable(
             BottomBarComposable(
                 sActiveScreenP = Screen.CTE_AISLE_LIST_SCREEN,
                 onClickMedicinesP = onClickMedicineOnBottomBarP,
-                onClickAisleP = { /* Bouton non clickable */ })
+                onClickAislesP = { /* Bouton non clickable */ })
         },
         content = { innerPadding ->
 

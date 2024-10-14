@@ -11,11 +11,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.Aisle
+import com.openclassrooms.rebonnte.repositoryStock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
+import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
 
 @Composable
@@ -45,7 +48,7 @@ fun AisleDetailScreen(
 
 @Composable
 fun AisleDetailStateComposable(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     uiStateAisleDetailP: AisleDetailUIState,
     onBackClick: () -> Unit,
     loadAisleByIDP: () -> Unit) {
@@ -134,3 +137,59 @@ fun AisleDetailSuccessComposable(
 
 }
 
+
+@Preview("Aisle Item Loading")
+@Composable
+fun AisleDetailStateComposableLoadingPreview() {
+
+    val uiStateLoading = AisleDetailUIState.IsLoading
+
+    RebonnteTheme {
+
+        AisleDetailStateComposable(
+            uiStateAisleDetailP = uiStateLoading,
+            onBackClick = {},
+            loadAisleByIDP = {}
+        )
+
+    }
+}
+
+
+@Preview("Aisle Item Success")
+@Composable
+fun AisleDetailStateComposableSuccessPreview() {
+
+
+    val listFakeAlsse = StockFakeAPI.initFakeAisles()
+    val uiStateSuccess = AisleDetailUIState.Success(listFakeAlsse[0])
+
+    RebonnteTheme {
+
+        AisleDetailStateComposable(
+            uiStateAisleDetailP = uiStateSuccess,
+            onBackClick = {},
+            loadAisleByIDP = {}
+        )
+
+    }
+
+
+}
+
+
+@Preview("Aisle Item Error")
+@Composable
+fun AisleDetailStateComposableErrorPreview() {
+
+    val uiStateError = AisleDetailUIState.Error("Message de test pour la preview")
+
+    RebonnteTheme {
+
+        AisleDetailStateComposable(
+            uiStateAisleDetailP = uiStateError,
+            onBackClick = {},
+            loadAisleByIDP = {}
+        )
+    }
+}

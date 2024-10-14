@@ -57,8 +57,6 @@ fun ErrorComposable(
     }
 }
 
-// Le thème n'est pas appliqué....
-// A l'exécution, si la fenêtre de login est annulé => style pas appliqué non plus
 @Preview(showBackground = true)
 @Composable
 fun ErrorDialogPreview() {

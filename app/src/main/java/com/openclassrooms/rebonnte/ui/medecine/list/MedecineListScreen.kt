@@ -133,7 +133,7 @@ fun MedicineListScreen(
             BottomBarComposable(
                 sActiveScreenP = Screen.CTE_MEDICINE_LIST_SCREEN,
                 onClickMedicinesP = { /*L'icone sera grisée*/ },
-                onClickAisleP = onClickBottomAisleP
+                onClickAislesP = onClickBottomAisleP
             )
         },
         content = { innerPadding ->
