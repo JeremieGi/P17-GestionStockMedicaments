@@ -53,8 +53,9 @@ fun AisleDetailStateComposable(
     onBackClick: () -> Unit,
     loadAisleByIDP: () -> Unit) {
 
-// TODO Denis : pourquoi on a une topBar avec le nom de l'appli ici : Détails d'une allée
-//    Scaffold(
+// actionBar avec le nom de l'appli ici car l'activity à un thème avec ActionBar
+
+    //    Scaffold(
 //        modifier = modifier,
 //        topBar = {
 //            TopAppBar(

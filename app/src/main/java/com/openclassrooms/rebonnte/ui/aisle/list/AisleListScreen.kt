@@ -49,10 +49,8 @@ fun AisleListScreen(
     onClickMedicineOnBottomBarP : () -> Unit,
 ) {
 
-
     val uiStateList by viewModel.uiStateListAile.collectAsState()
 
-    // TODO Denis : Mieux vaut appeler le viewModel avant le composable ou dedans ?
     LaunchedEffect(Unit) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
         viewModel.loadAllAisle()
     }

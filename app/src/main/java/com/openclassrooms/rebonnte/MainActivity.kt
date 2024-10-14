@@ -70,7 +70,8 @@ class MainActivity : ComponentActivity() {
         startBroadcastReceiver()
     }
 
-    // TODO Denis : C'est quoi ce BroadcastReceiver ?
+    // TODO JG : A supprimer ou à libérer (car peut faire une fuite mémoire)
+
     private fun startBroadcastReceiver() {
         myBroadcastReceiver = MyBroadcastReceiver()
         val filter = IntentFilter().apply {
@@ -85,7 +86,7 @@ class MainActivity : ComponentActivity() {
         Handler().postDelayed({
             val intent = Intent("com.rebonnte.ACTION_UPDATE")
             sendBroadcast(intent)
-        }, 5000)
+        }, 500)
     }
 
 

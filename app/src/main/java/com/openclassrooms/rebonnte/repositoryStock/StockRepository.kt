@@ -20,7 +20,7 @@ class StockRepository @Inject constructor(
     private val injectedContext: InjectedContext // Contexte connu par injection de dépendance (Permet de vérifier l'accès à Internet et aussi d'accéder aux ressources chaines)
 ){
 
-    // TODO Denis : Je gère les pertes de connexion à Internet ?
+    // TODO JG : Je gère les pertes de connexion à Internet
 
     /**
      * Liste des médicaments

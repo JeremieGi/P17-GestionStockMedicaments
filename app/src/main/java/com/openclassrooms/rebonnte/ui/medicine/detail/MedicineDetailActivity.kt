@@ -8,7 +8,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 
-// TODO Denis : Je laisse les activitys ou je fais une appli mono-activity ?
+// TODO JG : Je laisse les activity
 
 @AndroidEntryPoint
 class MedicineDetailActivity : ComponentActivity() {
