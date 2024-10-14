@@ -20,7 +20,10 @@ class MedicineDetailActivity : ComponentActivity() {
 
         setContent {
             RebonnteTheme {
-                MedicineDetailScreen(idMedicineP = id)
+                MedicineDetailScreen(
+                    idMedicineP = id,
+                    onBackClick = { finish() } // TODO JG : A traiter, si je ne fais pas de monoactivity : Ne réactualise pas la liste (les données du repo sont ok)
+                )
             }
         }
     }

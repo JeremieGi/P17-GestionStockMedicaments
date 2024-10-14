@@ -7,10 +7,11 @@ sealed class MedicineDetailUIState {
 
     data object IsLoading : MedicineDetailUIState()
 
-    data class Success(
+    data class LoadSuccess(
         val medecineDetail : Medicine
     ) : MedicineDetailUIState()
 
     data class Error(val sError: String?) : MedicineDetailUIState()
 
+    data object UploadSuccess : MedicineDetailUIState()
 }

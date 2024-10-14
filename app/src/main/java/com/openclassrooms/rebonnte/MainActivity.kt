@@ -149,17 +149,19 @@ fun NavGraph(
 
         }
 
-        // Fenêtre d'un médicament
-        composable(Screen.MedicineDetail.route) { backStackEntry -> // BackStackEntry ici permet de récupérer les paramètres
 
-            val medecineId = backStackEntry.arguments?.getString(Screen.CTE_PARAM_ID_MEDECINE)
-                ?: error("Missing required argument medicineId") // pour lever une exception de type IllegalArgumentException avec le message spécifié.
-
-            MedicineDetailScreen(
-                idMedicineP = medecineId
-            )
-
-        }
+//        // Fenêtre d'un médicament (TODO : Pour l'instant lance une activity)
+//        composable(Screen.MedicineDetail.route) { backStackEntry -> // BackStackEntry ici permet de récupérer les paramètres
+//
+//            val medecineId = backStackEntry.arguments?.getString(Screen.CTE_PARAM_ID_MEDECINE)
+//                ?: error("Missing required argument medicineId") // pour lever une exception de type IllegalArgumentException avec le message spécifié.
+//
+//            MedicineDetailScreen(
+//                idMedicineP = medecineId,
+//                onBackClick = { navController.navigateUp() }
+//            )
+//
+//        }
 
         composable(route = Screen.MedicineAdd.route) {
             // TODO JG : MedicineAddScreen

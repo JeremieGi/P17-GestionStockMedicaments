@@ -157,6 +157,32 @@ class StockFakeAPI : StockAPI {
 
     }
 
+    override fun updateMedicine(updatedMedicine: Medicine): Flow<ResultCustom<String>> {
+
+        val index = _listMedicines.indexOfFirst { it.id == updatedMedicine.id }
+
+        return callbackFlow {
+
+            trySend(ResultCustom.Loading)
+            //delay(1*1000)
+
+            if (index >= 0){
+                _listMedicines[index] = updatedMedicine
+                trySend(ResultCustom.Success(""))
+            }
+            else{
+                trySend(ResultCustom.Failure("No medicine find with ID = $updatedMedicine.id "))
+            }
+
+            // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+            awaitClose {
+
+            }
+        }
+
+
+    }
+
     override fun loadMedicineByID(idMedicine: String): Flow<ResultCustom<Medicine>> {
 
         val medicine = _listMedicines.find { it.id == idMedicine }

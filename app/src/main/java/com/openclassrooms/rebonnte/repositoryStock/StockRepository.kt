@@ -99,4 +99,15 @@ class StockRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
+    fun updateMedicine(updatedMedicine: Medicine) : Flow<ResultCustom<String>> = flow {
+
+        emit(ResultCustom.Loading)
+
+        stockApi.updateMedicine(updatedMedicine).collect { result ->
+            emit(result)
+        }
+
+    }
+
+
 }

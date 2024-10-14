@@ -3,15 +3,19 @@ package com.openclassrooms.rebonnte.ui.medicine.detail
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -45,6 +49,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 fun MedicineDetailScreen(
     idMedicineP : String,
     viewModel: MedicineDetailViewModel = hiltViewModel(),
+    onBackClick : () -> Unit,
 ) {
 
     val uiStateMedicineDetail by viewModel.uiStateMedicineDetail.collectAsState()
@@ -58,6 +63,8 @@ fun MedicineDetailScreen(
         loadMedicineByIDP = { viewModel.loadMedicineByID(idMedicineP) },
         decrementStockP = viewModel::decrementStock,
         incrementStockP = viewModel::incrementStock,
+        updateStockP = viewModel::updateStock,
+        onBackClick = onBackClick
     )
 
 
@@ -68,7 +75,9 @@ fun MedicineDetailStateComposable(
     uiStateMedicineDetailP: MedicineDetailUIState,
     loadMedicineByIDP : () -> Unit,
     decrementStockP : () -> Unit,
-    incrementStockP : () -> Unit
+    incrementStockP : () -> Unit,
+    updateStockP : () -> Unit,
+    onBackClick: () -> Unit,
 ) {
 
 
@@ -83,13 +92,14 @@ fun MedicineDetailStateComposable(
             }
 
             // Récupération des données avec succès
-            is MedicineDetailUIState.Success -> {
+            is MedicineDetailUIState.LoadSuccess -> {
 
                 MedicineDetailSuccessComposable(
                     modifier=Modifier.padding(contentPadding),
                     medicineP = uiStateMedicineDetailP.medecineDetail,
                     decrementStockP = decrementStockP,
                     incrementStockP = incrementStockP,
+                    updateStockP = updateStockP
                 )
 
             }
@@ -112,6 +122,10 @@ fun MedicineDetailStateComposable(
 
 
             }
+
+            is MedicineDetailUIState.UploadSuccess -> {
+                onBackClick() // Retour à la liste
+            }
         }
 
 
@@ -125,7 +139,8 @@ fun MedicineDetailSuccessComposable(
     modifier: Modifier,
     medicineP: Medicine,
     decrementStockP : () -> Unit,
-    incrementStockP : () -> Unit
+    incrementStockP : () -> Unit,
+    updateStockP : () -> Unit
 ) {
 
     Column(
@@ -180,14 +195,31 @@ fun MedicineDetailSuccessComposable(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "History", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            content = {
+                Text(text = stringResource(id = R.string.validate))
+            },
+            onClick = {
+                updateStockP()
+            }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "History", style = MaterialTheme.typography.titleLarge)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(medicineP.histories) { history ->
                 HistoryItem(history = history)
             }
         }
+
+
     }
 
 }
@@ -222,7 +254,9 @@ fun MedicineDetailStateComposableLoadingPreview() {
             uiStateMedicineDetailP = uiStateLoading,
             loadMedicineByIDP = {},
             decrementStockP = {},
-            incrementStockP = {}
+            incrementStockP = {},
+            updateStockP = {},
+            onBackClick = {}
         )
 
     }
@@ -235,7 +269,7 @@ fun MedicineDetailStateComposableSuccessPreview() {
 
 
     val listFakeMedicines = StockFakeAPI.initFakeMedicines()
-    val uiStateSuccess = MedicineDetailUIState.Success(listFakeMedicines[0])
+    val uiStateSuccess = MedicineDetailUIState.LoadSuccess(listFakeMedicines[0])
 
     RebonnteTheme {
 
@@ -243,7 +277,9 @@ fun MedicineDetailStateComposableSuccessPreview() {
             uiStateMedicineDetailP = uiStateSuccess,
             loadMedicineByIDP = {},
             decrementStockP = {},
-            incrementStockP = {}
+            incrementStockP = {},
+            updateStockP = {},
+            onBackClick = {}
         )
 
     }
@@ -264,7 +300,9 @@ fun MedicineDetailStateComposableErrorPreview() {
             uiStateMedicineDetailP = uiStateError,
             loadMedicineByIDP = {},
             decrementStockP = {},
-            incrementStockP = {}
+            incrementStockP = {},
+            updateStockP = {},
+            onBackClick = {}
         )
     }
 }

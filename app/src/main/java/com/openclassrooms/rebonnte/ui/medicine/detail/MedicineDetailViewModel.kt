@@ -42,7 +42,7 @@ class MedicineDetailViewModel @Inject constructor (
                     // Succès
                     is ResultCustom.Success -> {
                         val medicine = resultFlow.value
-                        _uiStateMedicineDetail.value = MedicineDetailUIState.Success(medicine)
+                        _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(medicine)
 
                     }
 
@@ -60,14 +60,14 @@ class MedicineDetailViewModel @Inject constructor (
         val currentState = _uiStateMedicineDetail.value
 
         // Cette condition devrait toujours être vraie lors de l'appel à cette fonction
-        if (currentState is MedicineDetailUIState.Success) {
+        if (currentState is MedicineDetailUIState.LoadSuccess) {
 
             val nNewStock = currentState.medecineDetail.stock + 1
 
             val updatedMedicine = currentState.medecineDetail.copy(stock = nNewStock)
 
             // Met à jour l'état avec le nouvel objet Medicine modifié
-            _uiStateMedicineDetail.value = MedicineDetailUIState.Success(updatedMedicine)
+            _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
         }
 
     }
@@ -77,7 +77,7 @@ class MedicineDetailViewModel @Inject constructor (
         val currentState = _uiStateMedicineDetail.value
 
         // Cette condition devrait toujours être vraie lors de l'appel à cette fonction
-        if (currentState is MedicineDetailUIState.Success) {
+        if (currentState is MedicineDetailUIState.LoadSuccess) {
 
             var nNewStock = currentState.medecineDetail.stock - 1
             if (nNewStock < 0) {
@@ -87,11 +87,60 @@ class MedicineDetailViewModel @Inject constructor (
             val updatedMedicine = currentState.medecineDetail.copy(stock = nNewStock)
 
             // Met à jour l'état avec le nouvel objet Medicine modifié
-            _uiStateMedicineDetail.value = MedicineDetailUIState.Success(updatedMedicine)
+            _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
         }
 
     }
 
+    fun updateStock() {
+
+        val currentState = _uiStateMedicineDetail.value
+        if (currentState is MedicineDetailUIState.LoadSuccess) {
+
+            val updatedMedicine = currentState.medecineDetail
+
+            viewModelScope.launch {
+
+                stockRepository.updateMedicine(updatedMedicine).collect { resultFlow ->
+
+                    // En fonction du résultat
+                    when (resultFlow) {
+
+                        // Transmission au UIState dédié
+
+                        // Echec du au réseau
+                        is ResultCustom.Failure -> {
+
+                            // Récupération du message d'erreur
+                            val sError = resultFlow.errorMessage
+
+                            // Affiche la fenêtre d'erreur
+                            _uiStateMedicineDetail.value = MedicineDetailUIState.Error(sError)
+
+                        }
+
+                        // En chargement
+                        is ResultCustom.Loading -> {
+                            // Propagation du chargement
+                            _uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
+                        }
+
+                        // Succès
+                        is ResultCustom.Success -> {
+                            _uiStateMedicineDetail.value = MedicineDetailUIState.UploadSuccess
+                        }
+
+                    }
+
+                }
+
+            }
+
+
+        }
+
+
+    }
 
 
 }

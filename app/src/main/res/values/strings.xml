@@ -6,4 +6,5 @@
     <string name="unknown_error">Unknow error</string>
     <string name="aisle">Aisle</string>
     <string name="back">Back</string>
+    <string name="validate">Validate</string>
 </resources>

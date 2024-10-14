@@ -14,6 +14,8 @@ interface StockAPI {
     // Ajout d'un médicament
     fun addMedicine(medicine: Medicine): Flow<ResultCustom<Medicine>>
 
+    fun updateMedicine(updatedMedicine: Medicine) : Flow<ResultCustom<String>>
+
     // Chargement d'un médicament
     fun loadMedicineByID(idMedicine: String): Flow<ResultCustom<Medicine>>
 
@@ -24,6 +26,7 @@ interface StockAPI {
 
     // Chargement d'une allée
     fun loadAisleByID(idAisle: String): Flow<ResultCustom<Aisle>>
+
 
 
 
