@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,17 +33,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.rebonnte.ui.Screen
-import com.openclassrooms.rebonnte.ui.aisle.list.AisleListViewModel
-import com.openclassrooms.rebonnte.ui.medecine.list.MedicineViewModel
-import com.openclassrooms.rebonnte.ui.medecineDetail.MedicineDetailScreen
+import com.openclassrooms.rebonnte.ui.aisle.list.AisleListScreen
+import com.openclassrooms.rebonnte.ui.medecine.list.MedicineListScreen
+import com.openclassrooms.rebonnte.ui.medicine.detail.MedicineDetailScreen
 import com.openclassrooms.rebonnte.ui.screen.launch.LaunchScreen
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -118,13 +114,13 @@ fun NavGraph(
         composable(route = Screen.Launch.route) {
 
             LaunchScreen(
-                onMedicineClickP = { medicine ->
-                    navController.navigate(Screen.MedicineItem.createRoute(medicine.id))
-                },
+//                onMedicineClickP = { medicine ->
+//                    navController.navigate(Screen.MedicineItem.createRoute(medicine.id))
+//                },
                 onClickAddP = {
                     navController.navigate(Screen.MedicineAdd.route)
                 },
-                onClickAisleP = {
+                onClickBottomAisleP = {
                     navController.navigate(Screen.AisleList.route)
                 }
             )
@@ -135,14 +131,12 @@ fun NavGraph(
         // Liste des médicaments
         composable(Screen.MedicinesList.route) {
 
-            MedecineListScreen(
-                onMedicineClickP = { medicine ->
-                    navController.navigate(Screen.MedicineItem.createRoute(medicine.id))
-                },
+            MedicineListScreen(
+
                 onClickAddP = {
                     navController.navigate(Screen.MedicineAdd.route)
                 },
-                onClickAisleP = {
+                onClickBottomAisleP = {
                     navController.navigate(Screen.AisleList.route){
                         // permet de ne pas ouvrir un nouvel écran (pour ne pas surcharger la pile)
                         popUpTo(navController.graph.startDestinationId)  { saveState = true }
@@ -155,30 +149,31 @@ fun NavGraph(
 
         }
 
-        // Fenêtre d'un evènement
+        // Fenêtre d'un médicament
         composable(Screen.MedicineDetail.route) { backStackEntry -> // BackStackEntry ici permet de récupérer les paramètres
 
             val medecineId = backStackEntry.arguments?.getString(Screen.CTE_PARAM_ID_MEDECINE)
                 ?: error("Missing required argument medicineId") // pour lever une exception de type IllegalArgumentException avec le message spécifié.
 
             MedicineDetailScreen(
-                onBackClick = { navController.navigateUp() },
-                medecineId = medecineId
+                idMedicineP = medecineId
             )
-
 
         }
 
         composable(route = Screen.MedicineAdd.route) {
-            MedicineAddScreen(
-                onBackClick = { navController.navigateUp() }
-            )
+            // TODO JG : MedicineAddScreen
+//            MedicineAddScreen(
+//                onBackClick = { navController.navigateUp() }
+//            )
         }
 
         composable(route = Screen.AisleList.route) {
             AisleListScreen(
-                onBackClick = { navController.navigateUp() },
-                onClickMedecinesP = {
+                onClickAddP = {
+                    navController.navigate(Screen.MedicineAdd.route)
+                },
+                onClickMedicineP = {
                     navController.navigate(Screen.MedicinesList.route){
                         // permet de ne pas ouvrir un nouvel écran (pour ne pas surcharger la pile)
                         popUpTo(navController.graph.startDestinationId)  { saveState = true }
@@ -193,25 +188,25 @@ fun NavGraph(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MyApp() {
-    val navController = rememberNavController()
-    val medicineViewModel: MedicineViewModel = viewModel()
-    val aisleViewModel: AisleListViewModel = viewModel()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val route = navBackStackEntry?.destination?.route
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun MyApp() {
+//    val navController = rememberNavController()
+//    val medicineViewModel: MedicineViewModel = viewModel()
+//    val aisleViewModel: AisleListViewModel = viewModel()
+//    val navBackStackEntry by navController.currentBackStackEntryAsState()
+//    val route = navBackStackEntry?.destination?.route
+//
+//    RebonnteTheme {
+//
+//    }
+//}
 
-    RebonnteTheme {
-
-    }
-}
-
-@Composable
-fun currentRoute(navController: NavController): String? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route
-}
+//@Composable
+//fun currentRoute(navController: NavController): String? {
+//    val navBackStackEntry by navController.currentBackStackEntryAsState()
+//    return navBackStackEntry?.destination?.route
+//}
 
 @Composable
 fun EmbeddedSearchBar(

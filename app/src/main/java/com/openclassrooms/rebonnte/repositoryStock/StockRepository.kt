@@ -49,6 +49,18 @@ class StockRepository @Inject constructor(
 
     }
 
+    fun loadMedicineByID(idMedicine: String): Flow<ResultCustom<Medicine>> = flow  {
+
+        emit(ResultCustom.Loading)
+
+        // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
+        eventApi.loadMedicineByID(idMedicine).collect { result ->
+            emit(result)
+        }
+
+
+    }.flowOn(Dispatchers.IO)
+
     suspend fun loadAllAisles(){
 
         withContext(Dispatchers.IO) {

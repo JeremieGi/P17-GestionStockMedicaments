@@ -1,27 +1,8 @@
 package com.openclassrooms.rebonnte.ui.screen.launch
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
-import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.openclassrooms.rebonnte.R
-import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.ui.medecine.list.MedicineListScreen
 
 
@@ -29,12 +10,12 @@ import com.openclassrooms.rebonnte.ui.medecine.list.MedicineListScreen
 fun LaunchScreen(
     //modifier: Modifier = Modifier,
     viewModel: LaunchViewModel = hiltViewModel(),
-    onMedicineClickP: (Medicine) -> Unit = {},
+ //   onMedicineClickP: (Medicine) -> Unit = {},
     onClickAddP: () -> Unit,
-    onClickAisleP : () -> Unit
+    onClickBottomAisleP : () -> Unit
 ) {
 
-    val context = LocalContext.current
+//    val context = LocalContext.current
 
 //    // Authentification réussie ?
 //    var isAuthenticated by remember { mutableStateOf(false) }
@@ -98,9 +79,8 @@ fun LaunchScreen(
         //  Utilisateur connecté
         MedicineListScreen(
             //modifier = modifier,
-            onMedicineClickP = onMedicineClickP,
             onClickAddP = onClickAddP,
-            onClickAisleP = onClickAisleP
+            onClickBottomAisleP = onClickBottomAisleP
         )
     }
 

@@ -1,6 +1,7 @@
 package com.openclassrooms.rebonnte.model
 
 data class Medicine(
+    var id : String,
     var name: String,
     var stock: Int,
     var nameAisle: String, // TODo JG : remplacé par var oAisle : Aisle plus évolutif

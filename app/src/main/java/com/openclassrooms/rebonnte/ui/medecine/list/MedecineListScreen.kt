@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +49,7 @@ import com.openclassrooms.rebonnte.ui.BottomBarComposable
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
 import com.openclassrooms.rebonnte.ui.Screen
-import com.openclassrooms.rebonnte.ui.medecineDetail.MedicineDetailActivity
+import com.openclassrooms.rebonnte.ui.medicine.detail.MedicineDetailActivity
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +59,7 @@ fun MedicineListScreen(
     onClickAddP: () -> Unit,
     onClickBottomAisleP: () -> Unit
 ) {
+
 
     Scaffold(
         topBar = {
@@ -138,6 +140,10 @@ fun MedicineListScreen(
 
             val uiStateMedicines by viewModel.uiStateMedicines.collectAsState()
 
+            LaunchedEffect(Unit) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
+                viewModel.loadAllMedicines()
+            }
+
             MedicineListStateComposable(
                 modifier = Modifier.padding(innerPadding),
                 uiStateMedicinesP = uiStateMedicines
@@ -213,7 +219,7 @@ fun MedecineListComposable(
     ) {
         items(listMedicines) { medicine ->
             MedicineItem(medicine = medicine, onClick = {
-                startDetailActivity(context, medicine.name)
+                startDetailActivity(context, medicine.id)
             })
         }
     }
@@ -237,9 +243,9 @@ fun MedicineItem(medicine: Medicine, onClick: () -> Unit) {
     }
 }
 
-private fun startDetailActivity(context: Context, name: String) {
+private fun startDetailActivity(context: Context, id: String) {
     val intent = Intent(context, MedicineDetailActivity::class.java).apply {
-        putExtra("nameMedicine", name)
+        putExtra(Screen.CTE_PARAM_ID_MEDECINE, id)
     }
     context.startActivity(intent)
 }

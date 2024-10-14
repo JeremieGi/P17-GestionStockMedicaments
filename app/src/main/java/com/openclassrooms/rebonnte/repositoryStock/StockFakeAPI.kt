@@ -21,7 +21,9 @@ class StockFakeAPI : StockAPI {
 
             return mutableListOf(
 
-                Medicine(name = "Medecine 1",
+                Medicine(
+                    id = "1",
+                    name = "Medecine 1",
                     stock = 1,
                     nameAisle = "Aisle 1",
                     histories = listOf(
@@ -30,7 +32,9 @@ class StockFakeAPI : StockAPI {
                     )
                 ),
 
-                Medicine(name = "Medecine 2",
+                Medicine(
+                    id = "2",
+                    name = "Medecine 2",
                     stock = 2,
                     nameAisle = "Aisle 2",
                     histories = listOf(
@@ -39,7 +43,9 @@ class StockFakeAPI : StockAPI {
                     )
                 ),
 
-                Medicine(name = "Medecine 3",
+                Medicine(
+                    id = "3",
+                    name = "Medecine 3",
                     stock = 3,
                     nameAisle = "Aisle 3",
                     histories = listOf(
@@ -96,15 +102,76 @@ class StockFakeAPI : StockAPI {
     }
 
     override fun addMedicine(medicine: Medicine): Flow<ResultCustom<Medicine>> {
-        TODO("Not yet implemented")
+
+        val isAdded = _listMedicines.add(medicine)
+
+        return callbackFlow {
+
+            trySend(ResultCustom.Loading)
+            //delay(1*1000)
+
+            if (isAdded){
+                trySend(ResultCustom.Success(medicine))
+            }
+            else{
+                trySend(ResultCustom.Failure("Impossible to add medicine"))
+            }
+
+            // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+            awaitClose {
+
+            }
+        }
+
     }
 
     override fun loadMedicineByID(idMedicine: String): Flow<ResultCustom<Medicine>> {
-        TODO("Not yet implemented")
+
+        val medicine = _listMedicines.find { it.id == idMedicine }
+
+        return callbackFlow {
+
+            trySend(ResultCustom.Loading)
+            //delay(1*1000)
+
+            if (medicine == null){
+                trySend(ResultCustom.Failure("No medicine find with ID = $idMedicine"))
+            }
+            else{
+                trySend(ResultCustom.Success(medicine))
+            }
+
+            // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+            awaitClose {
+
+            }
+        }
+
     }
 
     override fun deleteMedicineByID(idMedicine: String): Flow<ResultCustom<String>> {
-        TODO("Not yet implemented")
+
+        // Vrai si un élément a été supprimé
+        val bSup = _listMedicines.removeIf { it.id == idMedicine }
+
+        return callbackFlow {
+
+            trySend(ResultCustom.Loading)
+            //delay(1*1000)
+
+            if (bSup){
+                trySend(ResultCustom.Success(""))
+            }
+            else{
+                trySend(ResultCustom.Failure("No medicine find with ID = $idMedicine"))
+            }
+
+            // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+            awaitClose {
+
+            }
+        }
+
     }
 
     override fun loadAllAisles(): Flow<ResultCustom<List<Aisle>>> {
@@ -113,7 +180,7 @@ class StockFakeAPI : StockAPI {
 
             trySend(ResultCustom.Loading)
 
-            var list : List<Aisle>  = _listAisle
+            val list : List<Aisle>  = _listAisle
 
             trySend(ResultCustom.Success(list))
 

@@ -2,10 +2,8 @@ package com.openclassrooms.rebonnte.ui.aisle.list
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,54 +13,37 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.openclassrooms.rebonnte.EmbeddedSearchBar
 import com.openclassrooms.rebonnte.R
-import com.openclassrooms.rebonnte.currentRoute
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.ui.BottomBarComposable
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
 import com.openclassrooms.rebonnte.ui.Screen
 import com.openclassrooms.rebonnte.ui.aisle.detail.AisleDetailActivity
-import com.openclassrooms.rebonnte.ui.aisle.detail.AisleItem
-import com.openclassrooms.rebonnte.ui.medecine.list.MedicineListStateComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AisleScreen(
+fun AisleListScreen(
     viewModel: AisleListViewModel = hiltViewModel(),
+    onClickAddP: () -> Unit,
+    onClickMedicineP : () -> Unit,
 ) {
 
     Scaffold(
@@ -76,20 +57,22 @@ fun AisleScreen(
         bottomBar = {
             BottomBarComposable(
                 sActiveScreenP = Screen.CTE_AISLE_LIST_SCREEN,
-                onClickMedicinesP = { /*TODO JG*/ },
+                onClickMedicinesP = { onClickMedicineP },
                 onClickAisleP = { /*TODO JG*/ })
         },
         content = { innerPadding ->
 
             val uiStateList by viewModel.uiStateListAile.collectAsState()
 
+            // TODO Denis : Mieux vaut appler le viewModel avant le composable ou dedans ?
+            LaunchedEffect(Unit) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
+                viewModel.loadAllAisle()
+            }
+
             AisleListStateComposable(
                 modifier = Modifier.padding(innerPadding),
                 uiStateListP = uiStateList,
-                loadAllAilesP = viewModel::loadAllAisle,
-                onAilesClickP = onEventClickP,
-                onClickAddP = onClickAddP,
-                onClickBottomMedicineP = onClickProfileP
+                loadAllAilesP = viewModel::loadAllAisle
             )
 
 
@@ -111,9 +94,8 @@ fun AisleScreen(
 fun AisleListStateComposable(
     modifier: Modifier = Modifier,
     uiStateListP: AisleListUIState,
-    loadAllAilesP: Any,
-    onClickAddP: Any,
-    onClickBottomMedicineP: Any) {
+    loadAllAilesP : () -> Unit
+) {
 
     when (uiStateListP) {
 
@@ -143,7 +125,7 @@ fun AisleListStateComposable(
                 modifier= modifier,
                 sErrorMessage = error,
                 onClickRetryP = {
-                    loadAllEventsP(searchText.text, bSortAsc)
+                    loadAllAilesP()
                 }
             )
 
@@ -158,7 +140,8 @@ fun AisleListStateComposable(
 @Composable
 fun AisleListComposable(
     modifier: Modifier,
-    listAisles: List<Aisle>) {
+    listAisles: List<Aisle>
+) {
 
     val context = LocalContext.current
 
@@ -195,7 +178,7 @@ fun AisleItem(
 
 private fun startDetailActivity(context: Context, name: String) {
     val intent = Intent(context, AisleDetailActivity::class.java).apply {
-        putExtra("nameAisle", name)
+        putExtra(Screen.CTE_PARAM_ID_AISLE, name)
     }
     context.startActivity(intent)
 }

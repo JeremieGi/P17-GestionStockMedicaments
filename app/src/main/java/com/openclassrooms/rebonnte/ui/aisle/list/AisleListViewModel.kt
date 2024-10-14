@@ -2,14 +2,15 @@ package com.openclassrooms.rebonnte.ui.aisle.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repositoryStock.StockRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class AisleListViewModel  @Inject constructor(
     private val stockRepository: StockRepository
 ): ViewModel() {

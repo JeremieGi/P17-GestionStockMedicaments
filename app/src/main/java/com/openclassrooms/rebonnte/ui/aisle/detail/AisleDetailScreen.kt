@@ -1,76 +1,141 @@
 package com.openclassrooms.rebonnte.ui.aisle.detail
 
-import android.content.Intent
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.Aisle
-import com.openclassrooms.rebonnte.model.Medicine
-import com.openclassrooms.rebonnte.ui.medecineDetail.MedicineDetailActivity
+import com.openclassrooms.rebonnte.ui.ErrorComposable
+import com.openclassrooms.rebonnte.ui.LoadingComposable
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AisleDetailScreen(
     modifier: Modifier = Modifier,
+    idAisleP : String,
     viewModel: AisleDetailViewModel = hiltViewModel(),
-    name: String,
+    onBackClick: () -> Unit,
 ) {
 
-//    val medicines by viewModel.medicines.collectAsState(initial = emptyList())
-//
-//    val filteredMedicines = medicines.filter { it.nameAisle == name }
-//    val context = LocalContext.current
-//
-//    Scaffold { paddingValues ->
-//        LazyColumn(
-//            contentPadding = paddingValues,
-//            modifier = Modifier.fillMaxSize()
-//        ) {
-//            items(filteredMedicines) { medicine ->
-//                MedicineItem(medicine = medicine, onClick = { name ->
-//                    val intent = Intent(context, MedicineDetailActivity::class.java).apply {
-//                        putExtra("nameMedicine", name)
-//                    }
-//                    context.startActivity(intent)
-//                })
-//            }
-//        }
-//    }
+    // Lecture du post
+    val uiStateAisleDetail by viewModel.uiStateAisleDetail.collectAsState()
+
+    LaunchedEffect(idAisleP) {
+        viewModel.loadAisleByID(idAisleP)
+    }
+
+    AisleDetailStateComposable(
+        modifier=modifier,
+        uiStateAisleDetailP = uiStateAisleDetail,
+        loadAisleByIDP = { viewModel.loadAisleByID(idAisleP) },
+        onBackClick = onBackClick
+    )
+
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AisleDetailStateComposable(
+    modifier: Modifier,
+    uiStateAisleDetailP: AisleDetailUIState,
+    onBackClick: () -> Unit,
+    loadAisleByIDP: () -> Unit) {
+
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                title = {
+                    if (uiStateAisleDetailP is AisleDetailUIState.Success){
+                        Text(uiStateAisleDetailP.aisle.name)
+                    }
+                    else{
+                        Text(stringResource(id = R.string.aisle))
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onBackClick()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(id = R.string.back),
+                        )
+                    }
+                }
+            )
+        }
+    ) { contentPadding ->
+
+        when (uiStateAisleDetailP) {
+
+            // Chargement
+            is AisleDetailUIState.IsLoading -> {
+                LoadingComposable(modifier.padding(contentPadding))
+            }
+
+            // Récupération des données avec succès
+            is AisleDetailUIState.Success -> {
+
+                AisleDetailSuccessComposable(
+                    modifier=modifier.padding(contentPadding),
+                    aisleP = uiStateAisleDetailP.aisle
+                )
+
+            }
+
+            // Exception
+            is AisleDetailUIState.Error -> {
+
+                val error = uiStateAisleDetailP.sError ?: stringResource(
+                    R.string.unknown_error
+                )
+
+                ErrorComposable(
+                    modifier=modifier
+                        .padding(contentPadding)
+                    ,
+                    sErrorMessage = error,
+                    onClickRetryP = loadAisleByIDP
+                )
+
+
+            }
+        }
+
+
+
+    }
+
 }
 
 @Composable
-fun MedicineItem(medicine: Medicine, onClick: (String) -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick(medicine.name) }
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Text(text = medicine.name, fontWeight = FontWeight.Bold)
-            Text(text = "Stock: ${medicine.stock}", color = Color.Gray)
-        }
-        Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = "Arrow")
+fun AisleDetailSuccessComposable(
+    modifier: Modifier,
+    aisleP: Aisle
+) {
+
+    Column(
+        modifier = modifier
+    ){
+        Text(text = aisleP.name)
     }
+
 }
+

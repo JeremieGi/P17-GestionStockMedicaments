@@ -17,7 +17,7 @@
             android:exported="@bool/receiver_exported">
         </receiver>
         <activity
-            android:name=".ui.medecineDetail.MedicineDetailActivity"
+            android:name=".ui.medicine.detail.MedicineDetailActivity"
             android:theme="@style/Theme.Rebonnte.ActionBar"
             android:parentActivityName=".MainActivity"
             android:exported="false" />

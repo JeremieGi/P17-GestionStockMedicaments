@@ -4,4 +4,6 @@
     <string name="error">Error</string>
     <string name="try_again">Try again</string>
     <string name="unknown_error">Unknow error</string>
+    <string name="aisle">Aisle</string>
+    <string name="back">Back</string>
 </resources>

@@ -2,15 +2,12 @@ package com.openclassrooms.rebonnte.ui.medecine.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.openclassrooms.rebonnte.model.Aisle
-import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repositoryStock.StockRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.Random
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,51 +61,54 @@ class MedicineListViewModel @Inject constructor(
 
     }
 
-    // TODO JG : A basculer dans une fenêtre d'ajout
-    fun addRandomMedicine(aisles: List<Aisle>) {
-
-        val randomMed =  Medicine(
-            "Medicine",
-            Random().nextInt(100),
-            aisles[Random().nextInt(aisles.size)].name,
-            emptyList()
-        )
-
-        viewModelScope.launch {
-
-            stockRepository.addMedicine(randomMed).collect { resultFlow ->
-
-                // En fonction du résultat
-                when (resultFlow) {
-
-                    // Transmission au UIState dédié
-
-                    // Echec du au réseau
-                    is ResultCustom.Failure -> {
-
-                        // Récupération du message d'erreur
-                        val sErrorNetwork = resultFlow.errorMessage
-
-
-                    }
-
-                    // En chargement
-                    is ResultCustom.Loading -> {
-
-                    }
-
-                    // Succès
-                    is ResultCustom.Success -> {
-
-                    }
-
-                }
-            }
-
-        }
-
-
-    }
+//    // TODO JG : A basculer dans une fenêtre d'ajout
+//    fun addRandomMedicine(aisles: List<Aisle>) {
+//
+//        val nRandomID = Random().nextInt(100)
+//
+//        val randomMed =  Medicine(
+//            nRandomID.toString(),
+//            "Medicine",
+//            nRandomID,
+//            aisles[Random().nextInt(aisles.size)].name,
+//            emptyList()
+//        )
+//
+//        viewModelScope.launch {
+//
+//            stockRepository.addMedicine(randomMed).collect { resultFlow ->
+//
+//                // En fonction du résultat
+//                when (resultFlow) {
+//
+//                    // Transmission au UIState dédié
+//
+//                    // Echec du au réseau
+//                    is ResultCustom.Failure -> {
+//
+//                        // Récupération du message d'erreur
+//                        val sErrorNetwork = resultFlow.errorMessage
+//
+//
+//                    }
+//
+//                    // En chargement
+//                    is ResultCustom.Loading -> {
+//
+//                    }
+//
+//                    // Succès
+//                    is ResultCustom.Success -> {
+//
+//                    }
+//
+//                }
+//            }
+//
+//        }
+//
+//
+//    }
 
     fun loadAllMedicines() {
         viewModelScope.launch {
