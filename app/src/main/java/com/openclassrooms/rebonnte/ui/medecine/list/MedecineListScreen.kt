@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -259,7 +260,7 @@ fun MedicineItem(medicine: Medicine, onClick: () -> Unit) {
             Text(text = medicine.name, style = MaterialTheme.typography.bodyLarge)
             Text(text = "Stock: ${medicine.stock}", style = MaterialTheme.typography.bodyMedium)
         }
-        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Arrow")
+        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Arrow")
     }
 }
 

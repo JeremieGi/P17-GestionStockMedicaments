@@ -139,7 +139,7 @@ fun MedicineDetailSuccessComposable(
         )
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
-            value = medicineP.nameAisle,
+            value = medicineP.oAisle.name,
             onValueChange = {},
             label = { Text("Aisle") },
             enabled = false,
@@ -217,7 +217,6 @@ fun HistoryItem(history: History) {
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = history.medicineName, fontWeight = FontWeight.Bold)
             Text(text = "User: ${history.userId}")
             Text(text = "Date: ${history.date}")
             Text(text = "Details: ${history.details}")

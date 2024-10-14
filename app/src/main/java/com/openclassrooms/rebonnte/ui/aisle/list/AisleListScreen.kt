@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -176,7 +177,7 @@ fun AisleItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = aisle.name, style = MaterialTheme.typography.bodyMedium)
-        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Arrow")
+        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Arrow")
     }
 }
 

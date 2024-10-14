@@ -8,6 +8,8 @@ import com.openclassrooms.rebonnte.repositoryStock.StockRepository.EnumSortedIte
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.util.Calendar
+import java.util.Date
 
 class StockFakeAPI : StockAPI {
 
@@ -19,16 +21,21 @@ class StockFakeAPI : StockAPI {
         // J'utilise cette procédure statique pour les previews Compose et les tests
         fun initFakeMedicines() : MutableList<Medicine> {
 
+            val aisles = initFakeAisles()
+
+            val dates = initDates(3)
+
+
             return mutableListOf(
 
                 Medicine(
                     id = "1",
                     name = "Medecine 1",
                     stock = 1,
-                    nameAisle = "Aisle 1",
+                    oAisle = aisles[0],
                     histories = listOf(
-                        History("Medecine 1","1","Date1","Details 1"),
-                        History("Medecine 1","1","Date2","Details 2")
+                        History("User1",dates[0],"Details 1"),
+                        History("User1",dates[1],"Details 2")
                     )
                 ),
 
@@ -36,10 +43,10 @@ class StockFakeAPI : StockAPI {
                     id = "2",
                     name = "Medecine 2",
                     stock = 2,
-                    nameAisle = "Aisle 2",
+                    oAisle = aisles[1],
                     histories = listOf(
-                        History("Medecine 2","1","Date1","Details 1"),
-                        History("Medecine 2","1","Date2","Details 2")
+                        History("User2",dates[0],"Details 1"),
+                        History("User2",dates[1],"Details 2")
                     )
                 ),
 
@@ -47,13 +54,38 @@ class StockFakeAPI : StockAPI {
                     id = "3",
                     name = "Medecine 3",
                     stock = 3,
-                    nameAisle = "Aisle 3",
+                    oAisle = aisles[2],
                     histories = listOf(
-                        History("Medecine 3","1","Date1","Details 1"),
-                        History("Medecine 3","1","Date2","Details 2")
+                        History("User1",dates[1],"Details 1"),
+                        History("User3",dates[2],"Details 2")
                     )
                 )
             )
+        }
+
+        // Génère des dates
+        private fun initDates(nNbDatesP : Int): List<Date> {
+
+            val resultDates = MutableList<Date>(nNbDatesP) { Date() }
+
+            // Créer une instance de Calendar
+            val calendar = Calendar.getInstance()
+
+            // Date fixe de départ
+            calendar.set(2024, Calendar.JUNE, 1)
+
+            for (i in 0 until nNbDatesP) {
+
+                // Obtenir la date actuelle
+                resultDates[i] = calendar.time
+
+                // Enlève un mois
+                calendar.add(Calendar.MONTH, -1)
+
+            }
+
+            return resultDates
+
         }
 
         fun initFakeAisles() : MutableList<Aisle> {
