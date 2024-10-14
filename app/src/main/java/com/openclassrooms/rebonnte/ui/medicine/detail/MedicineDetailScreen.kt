@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,8 +38,6 @@ import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repositoryStock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
-import com.openclassrooms.rebonnte.ui.aisle.detail.AisleDetailStateComposable
-import com.openclassrooms.rebonnte.ui.aisle.detail.AisleDetailUIState
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
 
@@ -52,13 +49,15 @@ fun MedicineDetailScreen(
 
     val uiStateMedicineDetail by viewModel.uiStateMedicineDetail.collectAsState()
 
-    LaunchedEffect(Unit) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
+    LaunchedEffect(idMedicineP) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
         viewModel.loadMedicineByID(idMedicineP)
     }
 
     MedicineDetailStateComposable(
         uiStateMedicineDetailP = uiStateMedicineDetail,
-        loadMedicineByIDP = { viewModel.loadMedicineByID(idMedicineP) }
+        loadMedicineByIDP = { viewModel.loadMedicineByID(idMedicineP) },
+        decrementStockP = viewModel::decrementStock,
+        incrementStockP = viewModel::incrementStock,
     )
 
 
@@ -68,6 +67,8 @@ fun MedicineDetailScreen(
 fun MedicineDetailStateComposable(
     uiStateMedicineDetailP: MedicineDetailUIState,
     loadMedicineByIDP : () -> Unit,
+    decrementStockP : () -> Unit,
+    incrementStockP : () -> Unit
 ) {
 
 
@@ -86,7 +87,9 @@ fun MedicineDetailStateComposable(
 
                 MedicineDetailSuccessComposable(
                     modifier=Modifier.padding(contentPadding),
-                    medicineP = uiStateMedicineDetailP.medecineDetail
+                    medicineP = uiStateMedicineDetailP.medecineDetail,
+                    decrementStockP = decrementStockP,
+                    incrementStockP = incrementStockP,
                 )
 
             }
@@ -120,11 +123,10 @@ fun MedicineDetailStateComposable(
 @Composable
 fun MedicineDetailSuccessComposable(
     modifier: Modifier,
-    medicineP: Medicine
+    medicineP: Medicine,
+    decrementStockP : () -> Unit,
+    incrementStockP : () -> Unit
 ) {
-
-    // TODO JG : A mettre dans le viewModel
-    val stock by remember { mutableIntStateOf(medicineP.stock) }
 
     Column(
         modifier = modifier
@@ -152,18 +154,9 @@ fun MedicineDetailSuccessComposable(
         ) {
             // Désincrémenter le stock
             IconButton(onClick = {
-//                if (stock > 0) {
-                    // TODO JG : Désincrémenter le stock  => Enregistrer l'historique
-//                    medicines[medicines.size].histories.toMutableList().add(
-//                        History(
-//                            medicine.name,
-//                            "efeza56f1e65f",
-//                            Date().toString(),
-//                            "Updated medicine details"
-//                        )
-//                    )
-//                    stock--
-//                }
+                // Avant ici : java.lang.IndexOutOfBoundsException: Index 1 out of bounds for length 1
+                // Suite à un appel directement aux donénes en mémorie sans pattern MVVM
+                decrementStockP()
             }) {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
@@ -171,7 +164,7 @@ fun MedicineDetailSuccessComposable(
                 )
             }
             TextField(
-                value = stock.toString(),
+                value = medicineP.stock.toString(),
                 onValueChange = {},
                 label = { Text("Stock") },
                 enabled = false,
@@ -179,16 +172,7 @@ fun MedicineDetailSuccessComposable(
             )
             // Incrémenter le stock
             IconButton(onClick = {
-                // TODO JG : Incrémenter le stock  -> Enregistrer l'historique
-//                medicines[medicines.size].histories.toMutableList().add(
-//                    History(
-//                        medicine.name,
-//                        "efeza56f1e65f",
-//                        Date().toString(),
-//                        "Updated medicine details"
-//                    )
-//                )
-//                stock++
+                incrementStockP()
             }) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowUp,
@@ -236,7 +220,9 @@ fun MedicineDetailStateComposableLoadingPreview() {
 
         MedicineDetailStateComposable(
             uiStateMedicineDetailP = uiStateLoading,
-            loadMedicineByIDP = {}
+            loadMedicineByIDP = {},
+            decrementStockP = {},
+            incrementStockP = {}
         )
 
     }
@@ -255,7 +241,9 @@ fun MedicineDetailStateComposableSuccessPreview() {
 
         MedicineDetailStateComposable(
             uiStateMedicineDetailP = uiStateSuccess,
-            loadMedicineByIDP = {}
+            loadMedicineByIDP = {},
+            decrementStockP = {},
+            incrementStockP = {}
         )
 
     }
@@ -274,7 +262,9 @@ fun MedicineDetailStateComposableErrorPreview() {
 
         MedicineDetailStateComposable(
             uiStateMedicineDetailP = uiStateError,
-            loadMedicineByIDP = {}
+            loadMedicineByIDP = {},
+            decrementStockP = {},
+            incrementStockP = {}
         )
     }
 }

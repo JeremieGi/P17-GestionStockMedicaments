@@ -55,6 +55,43 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
+    fun incrementStock(){
+
+        val currentState = _uiStateMedicineDetail.value
+
+        // Cette condition devrait toujours être vraie lors de l'appel à cette fonction
+        if (currentState is MedicineDetailUIState.Success) {
+
+            val nNewStock = currentState.medecineDetail.stock + 1
+
+            val updatedMedicine = currentState.medecineDetail.copy(stock = nNewStock)
+
+            // Met à jour l'état avec le nouvel objet Medicine modifié
+            _uiStateMedicineDetail.value = MedicineDetailUIState.Success(updatedMedicine)
+        }
+
+    }
+
+    fun decrementStock(){
+
+        val currentState = _uiStateMedicineDetail.value
+
+        // Cette condition devrait toujours être vraie lors de l'appel à cette fonction
+        if (currentState is MedicineDetailUIState.Success) {
+
+            var nNewStock = currentState.medecineDetail.stock - 1
+            if (nNewStock < 0) {
+                nNewStock = 0
+            }
+
+            val updatedMedicine = currentState.medecineDetail.copy(stock = nNewStock)
+
+            // Met à jour l'état avec le nouvel objet Medicine modifié
+            _uiStateMedicineDetail.value = MedicineDetailUIState.Success(updatedMedicine)
+        }
+
+    }
+
 
 
 }
