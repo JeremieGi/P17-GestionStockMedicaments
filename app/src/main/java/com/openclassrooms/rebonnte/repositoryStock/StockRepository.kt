@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class StockRepository @Inject constructor(
-    private val eventApi: StockAPI,
+    private val stockApi: StockAPI,
     private val injectedContext: InjectedContext // Contexte connu par injection de dépendance (Permet de vérifier l'accès à Internet et aussi d'accéder aux ressources chaines)
 ){
 
@@ -44,7 +44,7 @@ class StockRepository @Inject constructor(
     suspend fun loadAllMedecines(sFilterNameP : String, eSortItemP : EnumSortedItem){
 
         withContext(Dispatchers.IO) {
-            eventApi.loadAllMedecines(sFilterNameP, eSortItemP).collect { result ->
+            stockApi.loadAllMedecines(sFilterNameP, eSortItemP).collect { result ->
                 _flowMedecines.emit(result)
             }
         }
@@ -56,7 +56,7 @@ class StockRepository @Inject constructor(
         emit(ResultCustom.Loading)
 
         // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-        eventApi.loadMedicineByID(idMedicine).collect { result ->
+        stockApi.loadMedicineByID(idMedicine).collect { result ->
             emit(result)
         }
 
@@ -66,7 +66,7 @@ class StockRepository @Inject constructor(
     suspend fun loadAllAisles(){
 
         withContext(Dispatchers.IO) {
-            eventApi.loadAllAisles().collect { result ->
+            stockApi.loadAllAisles().collect { result ->
                 _flowAisles.emit(result)
             }
         }
@@ -79,7 +79,7 @@ class StockRepository @Inject constructor(
         emit(ResultCustom.Loading)
 
         // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-        eventApi.addMedicine(medicine).collect { result ->
+        stockApi.addMedicine(medicine).collect { result ->
             emit(result)
         }
 
@@ -91,7 +91,7 @@ class StockRepository @Inject constructor(
         emit(ResultCustom.Loading)
 
         // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-        eventApi.loadAisleByID(idAisle).collect { result ->
+        stockApi.loadAisleByID(idAisle).collect { result ->
             emit(result)
         }
 

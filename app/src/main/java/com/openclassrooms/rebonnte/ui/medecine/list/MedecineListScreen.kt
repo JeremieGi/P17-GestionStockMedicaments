@@ -39,25 +39,63 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.EmbeddedSearchBar
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.Medicine
+import com.openclassrooms.rebonnte.repositoryStock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.BottomBarComposable
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
 import com.openclassrooms.rebonnte.ui.Screen
 import com.openclassrooms.rebonnte.ui.medicine.detail.MedicineDetailActivity
+import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun MedicineListScreen(
     viewModel: MedicineListViewModel = hiltViewModel(),
     onClickAddP: () -> Unit,
     onClickBottomAisleP: () -> Unit
+) {
+
+
+    val uiStateMedicines by viewModel.uiStateMedicines.collectAsState()
+
+    LaunchedEffect(Unit) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
+        viewModel.loadAllMedicines()
+    }
+
+    MedicineListStateComposable(
+        uiStateMedicinesP = uiStateMedicines,
+        sortByNoneP = viewModel::sortByNone,
+        sortByNameP = viewModel::sortByName,
+        sortByStockP = viewModel::sortByStock,
+        filterByNameP = viewModel::filterByName,
+        loadAllMedecinesP = viewModel::loadAllMedicines,
+        onClickAddP = onClickAddP,
+        onClickBottomAisleP = onClickBottomAisleP,
+    )
+
+
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MedicineListStateComposable(
+    uiStateMedicinesP : MedecineListUIState,
+    sortByNoneP : () -> Unit,
+    sortByNameP : () -> Unit,
+    sortByStockP : () -> Unit,
+    filterByNameP : (String) -> Unit,
+    loadAllMedecinesP : () -> Unit,
+    onClickAddP: () -> Unit,
+    onClickBottomAisleP: () -> Unit,
 ) {
 
 
@@ -90,21 +128,21 @@ fun MedicineListScreen(
                                 ) {
                                     DropdownMenuItem(
                                         onClick = {
-                                            viewModel.sortByNone()
+                                            sortByNoneP()
                                             expanded = false
                                         },
                                         text = { Text("Sort by None") }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
-                                            viewModel.sortByName()
+                                            sortByNameP()
                                             expanded = false
                                         },
                                         text = { Text("Sort by Name") }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
-                                            viewModel.sortByStock()
+                                            sortByStockP()
                                             expanded = false
                                         },
                                         text = { Text("Sort by Stock") }
@@ -119,7 +157,7 @@ fun MedicineListScreen(
                 EmbeddedSearchBar(
                     query = searchQuery,
                     onQueryChange = {
-                        viewModel.filterByName(it)
+                        filterByNameP(it)
                         searchQuery = it
                     },
                     isSearchActive = isSearchActive,
@@ -139,16 +177,39 @@ fun MedicineListScreen(
         content = { innerPadding ->
 
 
-            val uiStateMedicines by viewModel.uiStateMedicines.collectAsState()
+            when (uiStateMedicinesP) {
 
-            LaunchedEffect(Unit) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
-                viewModel.loadAllMedicines()
+                // Chargement
+                is MedecineListUIState.IsLoading -> {
+                    LoadingComposable(modifier = Modifier.padding(innerPadding))
+                }
+
+                // Récupération des données avec succès
+                is MedecineListUIState.Success -> {
+
+                    MedecineListComposable(
+                        modifier = Modifier.padding(innerPadding),
+                        listMedicines = uiStateMedicinesP.listMedecines
+                    )
+
+                }
+
+                // Exception
+                is MedecineListUIState.Error -> {
+
+                    val error = uiStateMedicinesP.sError ?: stringResource(
+                        R.string.unknown_error
+                    )
+
+                    ErrorComposable(
+                        modifier= Modifier.padding(innerPadding),
+                        sErrorMessage = error,
+                        onClickRetryP = loadAllMedecinesP
+                    )
+
+
+                }
             }
-
-            MedicineListStateComposable(
-                modifier = Modifier.padding(innerPadding),
-                uiStateMedicinesP = uiStateMedicines
-            )
 
         },
         floatingActionButton = {
@@ -160,50 +221,8 @@ fun MedicineListScreen(
         }
     )
 
-}
 
 
-@Composable
-fun MedicineListStateComposable(
-    modifier: Modifier = Modifier,
-    uiStateMedicinesP : MedecineListUIState
-) {
-
-    when (uiStateMedicinesP) {
-
-        // Chargement
-        is MedecineListUIState.IsLoading -> {
-            LoadingComposable(modifier = modifier)
-        }
-
-        // Récupération des données avec succès
-        is MedecineListUIState.Success -> {
-
-            MedecineListComposable(
-                modifier = modifier,
-                listMedicines = uiStateMedicinesP.listMedecines
-            )
-
-        }
-
-        // Exception
-        is MedecineListUIState.Error -> {
-
-            val error = uiStateMedicinesP.sError ?: stringResource(
-                R.string.unknown_error
-            )
-
-            ErrorComposable(
-                modifier= modifier,
-                sErrorMessage = error,
-                onClickRetryP = {
-                    /* TODO JG : hisser la méthode load */
-                }
-            )
-
-
-        }
-    }
 
 
 }
@@ -253,3 +272,65 @@ private fun startDetailActivity(context: Context, id: String) {
 
 
 
+
+@Preview(
+    name ="Medicine list success",
+    showBackground = true
+)
+@Composable
+fun MedicineListComposableSuccessPreview() {
+
+    val listFakeMedicines = StockFakeAPI.initFakeMedicines()
+    val uiStateSuccess = MedecineListUIState.Success(listFakeMedicines)
+
+    RebonnteTheme {
+
+        MedicineListStateComposable(
+            uiStateMedicinesP = uiStateSuccess,
+            sortByNoneP = {},
+            sortByNameP = {},
+            sortByStockP = {},
+            filterByNameP = {},
+            loadAllMedecinesP = {},
+            onClickAddP = {},
+            onClickBottomAisleP = {}
+        )
+    }
+}
+
+@Preview("Medicine list loading")
+@Composable
+fun MedicineListComposableLoadingPreview() {
+
+    RebonnteTheme {
+        MedicineListStateComposable(
+            uiStateMedicinesP = MedecineListUIState.IsLoading,
+            sortByNoneP = {},
+            sortByNameP = {},
+            sortByStockP = {},
+            filterByNameP = {},
+            loadAllMedecinesP = {},
+            onClickAddP = {},
+            onClickBottomAisleP = {}
+        )
+    }
+}
+
+
+@Preview("Medicine list error")
+@Composable
+fun MedicineListComposableErrorPreview() {
+
+    RebonnteTheme {
+        MedicineListStateComposable(
+            uiStateMedicinesP = MedecineListUIState.Error("Erreur de test de la preview"),
+            sortByNoneP = {},
+            sortByNameP = {},
+            sortByStockP = {},
+            filterByNameP = {},
+            loadAllMedecinesP = {},
+            onClickAddP = {},
+            onClickBottomAisleP = {}
+        )
+    }
+}

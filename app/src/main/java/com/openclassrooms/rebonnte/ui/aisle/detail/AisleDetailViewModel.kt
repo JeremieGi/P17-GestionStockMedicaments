@@ -42,8 +42,8 @@ class AisleDetailViewModel @Inject constructor (
 
                     // Succès
                     is ResultCustom.Success -> {
-                        val event = resultFlow.value
-                        _uiStateAisleDetail.value = AisleDetailUIState.Success(event)
+                        val aisle = resultFlow.value
+                        _uiStateAisleDetail.value = AisleDetailUIState.Success(aisle)
 
                     }
 

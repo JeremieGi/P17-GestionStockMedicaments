@@ -11,7 +11,7 @@ sealed class Screen(
 
     data object MedicineDetail : Screen("medecineDetail/{$CTE_PARAM_ID_MEDECINE}"){
         // Configurer la Route avec des Arguments
-        fun createRoute(eventId: String) = "medecineDetail/$eventId"
+        fun createRoute(medecineId: String) = "medecineDetail/$medecineId"
     }
 
     data object MedicineAdd : Screen("medecineAdd")
@@ -20,7 +20,7 @@ sealed class Screen(
 
     data object AisleDetail : Screen("aisleDetail/{$CTE_PARAM_ID_AISLE}"){
         // Configurer la Route avec des Arguments
-        fun createRoute(eventId: String) = "aisleDetail/$eventId"
+        fun createRoute(aisleId: String) = "aisleDetail/$aisleId"
     }
 
     companion object {

@@ -47,8 +47,8 @@ class MedicineListViewModel @Inject constructor(
 
                     // Succès
                     is ResultCustom.Success -> {
-                        val listEvents = resultFlow.value
-                        _uiStateMedicines.value = MedecineListUIState.Success(listEvents)
+                        val listMedicines = resultFlow.value
+                        _uiStateMedicines.value = MedecineListUIState.Success(listMedicines)
 
                     }
 

@@ -44,8 +44,8 @@ class AisleListViewModel  @Inject constructor(
 
                     // Succès
                     is ResultCustom.Success -> {
-                        val listEvents = resultFlow.value
-                        _uiStateListAile.value = AisleListUIState.Success(listEvents)
+                        val listAisles = resultFlow.value
+                        _uiStateListAile.value = AisleListUIState.Success(listAisles)
 
                     }
 
