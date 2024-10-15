@@ -39,10 +39,7 @@ import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
-// Cet écran fait l'affichage de détails d'un médicaement et aussi son ajout
-fun bDetailMode(idMedicineP: String): Boolean {
-    return idMedicineP.isNotEmpty()
-}
+// Cet écran fait l'affichage de détails d'un médicament et aussi son ajout
 
 @Composable
 fun MedicineDetailScreen(
@@ -55,24 +52,32 @@ fun MedicineDetailScreen(
 
     val uiStateMedicineDetail by viewModel.uiStateMedicineDetail.collectAsState()
 
-    if (bDetailMode(idMedicineP)){
-        LaunchedEffect(idMedicineP) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
+
+    LaunchedEffect(idMedicineP) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
+
+        // En mode ajout
+        if (idMedicineP==MedicineDetailActivity.PARAM_MEDICINE_ADD){
+            // T008 - Ajout d’un médicament
+            // Initialise un objet Medecine vide dans le viewModel dans le UiState
+            viewModel.initNewMedicine()
+        }
+        else{
+            // Charge les données
             viewModel.loadMedicineByID(idMedicineP)
         }
-    }
-    else{
-        // TODO : Mode ajout à implémenter
-    }
 
-
+    }
 
     MedicineDetailStateComposable(
         uiStateMedicineDetailP = uiStateMedicineDetail,
         loadMedicineByIDP = { viewModel.loadMedicineByID(idMedicineP) },
         decrementStockP = viewModel::decrementStock,
         incrementStockP = viewModel::incrementStock,
-        updateStockP = viewModel::updateStock,
-        onMedicineUpdated = onMedicineUpdated
+        updateOrInsertMedicineP = viewModel::updateOrInsertMedicine,
+        onMedicineUpdated = onMedicineUpdated,
+        bAddModeP = viewModel.bAddMode(),
+        onInputNameChangedP = viewModel::onInputNameChanged,
+        onInputAisleChangedP = viewModel::onInputAisleChanged
     )
 
 
@@ -86,8 +91,11 @@ fun MedicineDetailStateComposable(
     loadMedicineByIDP : () -> Unit,
     decrementStockP : () -> Unit,
     incrementStockP : () -> Unit,
-    updateStockP : () -> Unit,
+    updateOrInsertMedicineP : () -> Unit,
     onMedicineUpdated: () -> Unit,
+    bAddModeP : Boolean,
+    onInputNameChangedP : (String) -> Unit,
+    onInputAisleChangedP : (String) -> Unit,
 ) {
 
 
@@ -109,7 +117,10 @@ fun MedicineDetailStateComposable(
                     medicineP = uiStateMedicineDetailP.medicineDetail,
                     decrementStockP = decrementStockP,
                     incrementStockP = incrementStockP,
-                    updateStockP = updateStockP
+                    updateOrInsertMedicineP = updateOrInsertMedicineP,
+                    bAddModeP = bAddModeP,
+                    onInputNameChangedP = onInputNameChangedP,
+                    onInputAisleChangedP = onInputAisleChangedP,
                 )
 
             }
@@ -121,19 +132,26 @@ fun MedicineDetailStateComposable(
                     R.string.unknown_error
                 )
 
+                val onRetry : () -> Unit
+                //if (bAddModeP){
+                    //onRetry = // TODO Denis : Je ne sais pas quoi mettre ici
+                //}
+                //else{
+                    onRetry = loadMedicineByIDP
+                //}
 
                 ErrorComposable(
                     modifier=Modifier
                         .padding(contentPadding)
                     ,
                     sErrorMessage = error,
-                    onClickRetryP = loadMedicineByIDP
+                    onClickRetryP = onRetry
                 )
 
 
             }
 
-            is MedicineDetailUIState.UploadSuccess -> {
+            is MedicineDetailUIState.ValidateSuccess -> {
                 onMedicineUpdated() // Retour à la liste avec notification de la modification
             }
         }
@@ -150,8 +168,12 @@ fun MedicineDetailSuccessComposable(
     medicineP: Medicine,
     decrementStockP : () -> Unit,
     incrementStockP : () -> Unit,
-    updateStockP : () -> Unit
+    updateOrInsertMedicineP : () -> Unit,
+    bAddModeP : Boolean,
+    onInputNameChangedP : (String) -> Unit,
+    onInputAisleChangedP : (String) -> Unit,
 ) {
+
 
     Column(
         modifier = modifier
@@ -159,17 +181,21 @@ fun MedicineDetailSuccessComposable(
     ) {
         TextField(
             value = medicineP.name,
-            onValueChange = {},
+            onValueChange = {
+                onInputNameChangedP(it)
+            },
             label = { Text(stringResource(R.string.name)) },
-            enabled = false,
+            enabled = bAddModeP,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
             value = medicineP.oAisle.name,
-            onValueChange = {},
+            onValueChange = {
+                onInputAisleChangedP(it)
+            },
             label = { Text(stringResource(R.string.aisle)) },
-            enabled = false,
+            enabled = bAddModeP,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -215,19 +241,22 @@ fun MedicineDetailSuccessComposable(
                 Text(text = stringResource(id = R.string.validate))
             },
             onClick = {
-                updateStockP()
+                updateOrInsertMedicineP()
             }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Historique uniquement en mode détails
+        if (!bAddModeP){
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = stringResource(R.string.history), style = MaterialTheme.typography.titleLarge)
+            Text(text = stringResource(R.string.history), style = MaterialTheme.typography.titleLarge)
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(medicineP.histories) { history ->
-                HistoryItem(history = history)
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(medicineP.histories) { history ->
+                    HistoryItem(history = history)
+                }
             }
         }
 
@@ -235,6 +264,7 @@ fun MedicineDetailSuccessComposable(
     }
 
 }
+
 
 // T011a - Affichage de l’historique - Améliorer l’UI
 // TODO Denis : "L’affichage de l’historique des changements est peu esthétique et se trouve en
@@ -260,28 +290,8 @@ fun HistoryItem(history: History) {
 
 
 
-@Preview("Medicine Detail Loading")
-@Composable
-fun MedicineDetailStateComposableLoadingPreview() {
 
-    val uiStateLoading = MedicineDetailUIState.IsLoading
-
-    RebonnteTheme {
-
-        MedicineDetailStateComposable(
-            uiStateMedicineDetailP = uiStateLoading,
-            loadMedicineByIDP = {},
-            decrementStockP = {},
-            incrementStockP = {},
-            updateStockP = {},
-            onMedicineUpdated = {}
-        )
-
-    }
-}
-
-
-@Preview("Medicine Detail Success")
+@Preview("Medicine Detail Success - Mode Details")
 @Composable
 fun MedicineDetailStateComposableSuccessPreview() {
 
@@ -296,13 +306,68 @@ fun MedicineDetailStateComposableSuccessPreview() {
             loadMedicineByIDP = {},
             decrementStockP = {},
             incrementStockP = {},
-            updateStockP = {},
-            onMedicineUpdated = {}
+            updateOrInsertMedicineP = {},
+            onMedicineUpdated = {},
+            bAddModeP = false,
+            onInputNameChangedP= {},
+            onInputAisleChangedP= {},
         )
 
     }
 
 
+}
+
+@Preview("Medicine Detail Success - Mode Add")
+@Composable
+fun MedicineDetailStateComposableAdd() {
+
+
+    val listFakeMedicines = StockFakeAPI.initFakeMedicines()
+    val uiStateSuccess = MedicineDetailUIState.LoadSuccess(listFakeMedicines[0])
+
+    RebonnteTheme {
+
+        MedicineDetailStateComposable(
+            uiStateMedicineDetailP = uiStateSuccess,
+            loadMedicineByIDP = {},
+            decrementStockP = {},
+            incrementStockP = {},
+            updateOrInsertMedicineP = {},
+            onMedicineUpdated = {},
+            bAddModeP = true,
+            onInputNameChangedP= {},
+            onInputAisleChangedP= {},
+        )
+
+    }
+
+
+}
+
+
+
+@Preview("Medicine Detail Loading")
+@Composable
+fun MedicineDetailStateComposableLoadingPreview() {
+
+    val uiStateLoading = MedicineDetailUIState.IsLoading
+
+    RebonnteTheme {
+
+        MedicineDetailStateComposable(
+            uiStateMedicineDetailP = uiStateLoading,
+            loadMedicineByIDP = {},
+            decrementStockP = {},
+            incrementStockP = {},
+            updateOrInsertMedicineP = {},
+            onMedicineUpdated = {},
+            bAddModeP = false,
+            onInputNameChangedP= {},
+            onInputAisleChangedP= {},
+        )
+
+    }
 }
 
 
@@ -319,8 +384,11 @@ fun MedicineDetailStateComposableErrorPreview() {
             loadMedicineByIDP = {},
             decrementStockP = {},
             incrementStockP = {},
-            updateStockP = {},
-            onMedicineUpdated = {}
+            updateOrInsertMedicineP = {},
+            onMedicineUpdated = {},
+            bAddModeP = false,
+            onInputNameChangedP= {},
+            onInputAisleChangedP= {},
         )
     }
 }

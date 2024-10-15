@@ -13,7 +13,10 @@ interface StockAPI {
     fun loadAllMedicines(sFilterNameP : String, eSortItemP : EnumSortedItem) : Flow<ResultCustom<List<Medicine>>>
 
     // Ajout d'un médicament
-    fun addMedicine(medicine: Medicine): Flow<ResultCustom<Medicine>>
+    fun addMedicine(
+        medicine: Medicine,
+        author : User
+    ): Flow<ResultCustom<String>>
 
     fun updateMedicine(
         updatedMedicine: Medicine,

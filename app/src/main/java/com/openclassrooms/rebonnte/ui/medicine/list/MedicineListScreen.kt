@@ -226,7 +226,7 @@ fun MedicineListStateComposable(
         floatingActionButton = {
             val context = LocalContext.current
             FloatingActionButton(onClick = {
-                startDetailActivity(context, launcher, id="") // ID vide = mode ajout
+                startDetailActivity(context, launcher, id=MedicineDetailActivity.PARAM_MEDICINE_ADD) // ID vide = mode ajout
             }) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add))
             }

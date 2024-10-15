@@ -137,7 +137,17 @@ class StockFakeAPI : StockAPI {
 
     }
 
-    override fun addMedicine(medicine: Medicine): Flow<ResultCustom<Medicine>> {
+    override fun addMedicine(
+        medicine: Medicine,
+        author : User
+    ): Flow<ResultCustom<String>> {
+
+
+        val newHistory = History(
+            author = author,
+            details = "Creation"
+        )
+        medicine.addHistory(newHistory)
 
         val isAdded = _listMedicines.add(medicine)
 
@@ -147,7 +157,7 @@ class StockFakeAPI : StockAPI {
             //delay(1*1000)
 
             if (isAdded){
-                trySend(ResultCustom.Success(medicine))
+                trySend(ResultCustom.Success(""))
             }
             else{
                 trySend(ResultCustom.Failure("Impossible to add medicine"))

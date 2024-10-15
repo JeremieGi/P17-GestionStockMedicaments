@@ -116,7 +116,10 @@ class StockRepository @Inject constructor(
     }
 
     // Ajoute un médicament
-    fun addMedicine(medicine : Medicine): Flow<ResultCustom<Medicine>> = flow {
+    fun addMedicine(
+        medicine : Medicine,
+        author : User
+    ): Flow<ResultCustom<String>> = flow {
 
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {
@@ -132,37 +135,12 @@ class StockRepository @Inject constructor(
             emit(ResultCustom.Loading)
 
             // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-            stockApi.addMedicine(medicine).collect { result ->
+            stockApi.addMedicine(medicine,author).collect { result ->
                 emit(result)
             }
         }
 
     }.flowOn(Dispatchers.IO)  // Exécuter sur un thread d'entrée/sortie (IO)
-
-
-    fun loadAisleByID(idAisle: String): Flow<ResultCustom<Aisle>> = flow  {
-
-        // Si pas d'Internet
-        if (!injectedContext.isInternetAvailable()) {
-
-            _flowMedicines.emit(
-                ResultCustom.Failure(
-                    injectedContext.getInjectedContext().getString(R.string.no_network)
-                )
-            )
-
-        }
-        else{
-            emit(ResultCustom.Loading)
-
-            // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-            stockApi.loadAisleByID(idAisle).collect { result ->
-                emit(result)
-            }
-        }
-
-    }.flowOn(Dispatchers.IO)
-
 
     fun updateMedicine(
         updatedMedicine: Medicine,
@@ -188,6 +166,32 @@ class StockRepository @Inject constructor(
         }
 
     }
+
+    fun loadAisleByID(idAisle: String): Flow<ResultCustom<Aisle>> = flow  {
+
+        // Si pas d'Internet
+        if (!injectedContext.isInternetAvailable()) {
+
+            _flowMedicines.emit(
+                ResultCustom.Failure(
+                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                )
+            )
+
+        }
+        else{
+            emit(ResultCustom.Loading)
+
+            // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
+            stockApi.loadAisleByID(idAisle).collect { result ->
+                emit(result)
+            }
+        }
+
+    }.flowOn(Dispatchers.IO)
+
+
+
 
 
 }

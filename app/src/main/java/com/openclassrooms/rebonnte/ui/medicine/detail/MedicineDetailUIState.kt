@@ -13,5 +13,5 @@ sealed class MedicineDetailUIState {
 
     data class Error(val sError: String?) : MedicineDetailUIState()
 
-    data object UploadSuccess : MedicineDetailUIState()
+    data object ValidateSuccess : MedicineDetailUIState() // upload or insert
 }
