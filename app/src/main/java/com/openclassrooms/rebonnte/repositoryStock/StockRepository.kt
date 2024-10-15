@@ -25,9 +25,9 @@ class StockRepository @Inject constructor(
     /**
      * Liste des médicaments
      */
-    private var _flowMedecines = MutableSharedFlow<ResultCustom<List<Medicine>>>()
-    val flowMedecines : SharedFlow<ResultCustom<List<Medicine>>>
-        get() = _flowMedecines
+    private var _flowMedicines = MutableSharedFlow<ResultCustom<List<Medicine>>>()
+    val flowMedicines : SharedFlow<ResultCustom<List<Medicine>>>
+        get() = _flowMedicines
 
     /**
      * Liste des allées
@@ -41,11 +41,11 @@ class StockRepository @Inject constructor(
         NONE, NAME, STOCK
     }
 
-    suspend fun loadAllMedecines(sFilterNameP : String, eSortItemP : EnumSortedItem){
+    suspend fun loadAllMedicines(sFilterNameP : String, eSortItemP : EnumSortedItem){
 
         withContext(Dispatchers.IO) {
-            stockApi.loadAllMedecines(sFilterNameP, eSortItemP).collect { result ->
-                _flowMedecines.emit(result)
+            stockApi.loadAllMedicines(sFilterNameP, eSortItemP).collect { result ->
+                _flowMedicines.emit(result)
             }
         }
 

@@ -93,7 +93,7 @@ fun MedicineDetailStateComposable(
 
                 MedicineDetailSuccessComposable(
                     modifier=Modifier.padding(contentPadding),
-                    medicineP = uiStateMedicineDetailP.medecineDetail,
+                    medicineP = uiStateMedicineDetailP.medicineDetail,
                     decrementStockP = decrementStockP,
                     incrementStockP = incrementStockP,
                     updateStockP = updateStockP

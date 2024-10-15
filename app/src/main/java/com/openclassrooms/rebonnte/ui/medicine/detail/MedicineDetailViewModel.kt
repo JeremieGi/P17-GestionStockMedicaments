@@ -62,9 +62,9 @@ class MedicineDetailViewModel @Inject constructor (
         // Cette condition devrait toujours être vraie lors de l'appel à cette fonction
         if (currentState is MedicineDetailUIState.LoadSuccess) {
 
-            val nNewStock = currentState.medecineDetail.stock + 1
+            val nNewStock = currentState.medicineDetail.stock + 1
 
-            val updatedMedicine = currentState.medecineDetail.copy(stock = nNewStock)
+            val updatedMedicine = currentState.medicineDetail.copy(stock = nNewStock)
 
             // Met à jour l'état avec le nouvel objet Medicine modifié
             _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
@@ -79,12 +79,12 @@ class MedicineDetailViewModel @Inject constructor (
         // Cette condition devrait toujours être vraie lors de l'appel à cette fonction
         if (currentState is MedicineDetailUIState.LoadSuccess) {
 
-            var nNewStock = currentState.medecineDetail.stock - 1
+            var nNewStock = currentState.medicineDetail.stock - 1
             if (nNewStock < 0) {
                 nNewStock = 0
             }
 
-            val updatedMedicine = currentState.medecineDetail.copy(stock = nNewStock)
+            val updatedMedicine = currentState.medicineDetail.copy(stock = nNewStock)
 
             // Met à jour l'état avec le nouvel objet Medicine modifié
             _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
@@ -97,7 +97,7 @@ class MedicineDetailViewModel @Inject constructor (
         val currentState = _uiStateMedicineDetail.value
         if (currentState is MedicineDetailUIState.LoadSuccess) {
 
-            val updatedMedicine = currentState.medecineDetail
+            val updatedMedicine = currentState.medicineDetail
 
             viewModelScope.launch {
 

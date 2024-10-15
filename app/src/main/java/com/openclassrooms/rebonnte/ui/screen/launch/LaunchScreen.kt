@@ -3,7 +3,7 @@ package com.openclassrooms.rebonnte.ui.screen.launch
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.openclassrooms.rebonnte.ui.medecine.list.MedicineListScreen
+import com.openclassrooms.rebonnte.ui.medicine.list.MedicineListScreen
 
 
 @Composable

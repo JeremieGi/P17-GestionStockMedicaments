@@ -39,8 +39,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.openclassrooms.rebonnte.ui.Screen
 import com.openclassrooms.rebonnte.ui.aisle.list.AisleListScreen
-import com.openclassrooms.rebonnte.ui.medecine.list.MedicineListScreen
-import com.openclassrooms.rebonnte.ui.medicine.detail.MedicineDetailScreen
+import com.openclassrooms.rebonnte.ui.medicine.list.MedicineListScreen
 import com.openclassrooms.rebonnte.ui.screen.launch.LaunchScreen
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 import dagger.hilt.android.AndroidEntryPoint

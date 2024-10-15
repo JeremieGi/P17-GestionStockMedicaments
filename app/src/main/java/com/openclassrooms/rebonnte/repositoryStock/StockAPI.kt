@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface StockAPI {
 
 
-    fun loadAllMedecines(sFilterNameP : String, eSortItemP : EnumSortedItem) : Flow<ResultCustom<List<Medicine>>>
+    fun loadAllMedicines(sFilterNameP : String, eSortItemP : EnumSortedItem) : Flow<ResultCustom<List<Medicine>>>
 
     // Ajout d'un médicament
     fun addMedicine(medicine: Medicine): Flow<ResultCustom<Medicine>>

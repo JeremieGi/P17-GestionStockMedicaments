@@ -30,7 +30,7 @@ class StockFakeAPI : StockAPI {
 
                 Medicine(
                     id = "1",
-                    name = "Medecine 1",
+                    name = "Medicine 1",
                     stock = 1,
                     oAisle = aisles[0],
                     histories = listOf(
@@ -41,7 +41,7 @@ class StockFakeAPI : StockAPI {
 
                 Medicine(
                     id = "2",
-                    name = "Medecine 2",
+                    name = "Medicine 2",
                     stock = 2,
                     oAisle = aisles[1],
                     histories = listOf(
@@ -52,7 +52,7 @@ class StockFakeAPI : StockAPI {
 
                 Medicine(
                     id = "3",
-                    name = "Medecine 3",
+                    name = "Medicine 3",
                     stock = 3,
                     oAisle = aisles[2],
                     histories = listOf(
@@ -98,7 +98,7 @@ class StockFakeAPI : StockAPI {
 
     }
 
-    override fun loadAllMedecines(sFilterNameP : String, eSortItemP : EnumSortedItem): Flow<ResultCustom<List<Medicine>>> {
+    override fun loadAllMedicines(sFilterNameP : String, eSortItemP : EnumSortedItem): Flow<ResultCustom<List<Medicine>>> {
 
         return callbackFlow {
 
