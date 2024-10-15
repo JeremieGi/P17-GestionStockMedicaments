@@ -39,6 +39,9 @@ class UserRepository @Inject constructor(
         userApi.insertCurrentUser()
     }
 
+    fun userLogged() : Boolean {
+        return userApi.userLogged()
+    }
 
     fun getCurrentUser() : User {
         return userApi.getCurrentUser()

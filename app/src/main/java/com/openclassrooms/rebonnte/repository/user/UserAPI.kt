@@ -9,8 +9,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserAPI {
 
+    // Return true if the user is logged
+    fun userLogged() : Boolean
 
-    // Donne l'email de l'utilisateur courant
+    // Donne l'utilisateur courant
     fun getCurrentUser() : User
 
     /**

@@ -38,6 +38,10 @@ class UserFakeAPI : UserAPI {
 
     private val usersFake = initFakeCurrentUser()
 
+    override fun userLogged() : Boolean {
+        return true
+    }
+
     override fun getCurrentUser(): User {
         return usersFake[0]
     }

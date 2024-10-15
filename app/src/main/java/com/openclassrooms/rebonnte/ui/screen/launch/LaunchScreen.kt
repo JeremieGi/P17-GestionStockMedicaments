@@ -75,7 +75,7 @@ fun LaunchScreen(
 //    }
 
     // Si l'utilisateur était déjà loggué ou il vient de se logguer avec succès
-//    if (viewModel.getCurrentUserID().isNotEmpty() || isAuthenticated ){
+    if (viewModel.userLogged() /*|| isAuthenticated */){
         //  Utilisateur connecté
         MedicineListScreen(
             //modifier = modifier,
@@ -110,7 +110,7 @@ fun LaunchScreen(
 
 
 
-//}
+}
 
 //fun launchAuthUI(signInLauncher: ManagedActivityResultLauncher<Intent, FirebaseAuthUIAuthenticationResult>) {
 //
