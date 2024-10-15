@@ -3,7 +3,8 @@ package com.openclassrooms.rebonnte.ui.medicine.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.rebonnte.repository.ResultCustom
-import com.openclassrooms.rebonnte.repositoryStock.StockRepository
+import com.openclassrooms.rebonnte.repository.stock.StockRepository
+import com.openclassrooms.rebonnte.repository.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MedicineDetailViewModel @Inject constructor (
-    private val stockRepository: StockRepository
+    private val stockRepository: StockRepository,
+    private val userRepository: UserRepository
 ): ViewModel() {
 
     private var _uiStateMedicineDetail = MutableStateFlow<MedicineDetailUIState>(MedicineDetailUIState.IsLoading)
@@ -101,7 +103,10 @@ class MedicineDetailViewModel @Inject constructor (
 
             viewModelScope.launch {
 
-                stockRepository.updateMedicine(updatedMedicine).collect { resultFlow ->
+                stockRepository.updateMedicine(
+                    updatedMedicine = updatedMedicine,
+                    author = userRepository.getCurrentUser()
+                ).collect { resultFlow ->
 
                     // En fonction du résultat
                     when (resultFlow) {

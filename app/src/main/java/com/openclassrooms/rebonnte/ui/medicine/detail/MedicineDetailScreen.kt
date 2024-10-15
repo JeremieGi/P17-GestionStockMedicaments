@@ -34,7 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
-import com.openclassrooms.rebonnte.repositoryStock.StockFakeAPI
+import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
@@ -223,6 +223,11 @@ fun MedicineDetailSuccessComposable(
 
 }
 
+// T011a - Affichage de l’historique - Améliorer l’UI
+// TODO Denis : "L’affichage de l’historique des changements est peu esthétique et se trouve en
+//bas de la liste. Intégrer l’historique dans le contenu scrollable de la fiche détail
+//d’un magasin serait appréciable."
+// => C'est déjà fait même si esthétiquement pas top => que faut-il faire exactement ?s
 @Composable
 fun HistoryItem(history: History) {
     Card(
@@ -233,7 +238,7 @@ fun HistoryItem(history: History) {
     ) {
         // TODO JG : Ne pas oublier d'utiliser les ressources chaines ici
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "User: ${history.userId}")
+            Text(text = "User: ${history.author.sEmail}")
             Text(text = "Date: ${history.date}")
             Text(text = "Details: ${history.details}")
         }

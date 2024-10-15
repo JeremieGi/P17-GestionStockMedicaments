@@ -1,9 +1,10 @@
-package com.openclassrooms.rebonnte.repositoryStock
+package com.openclassrooms.rebonnte.repository.stock
 
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.repository.InjectedContext
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.Medicine
+import com.openclassrooms.rebonnte.model.User
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -163,7 +164,10 @@ class StockRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    fun updateMedicine(updatedMedicine: Medicine) : Flow<ResultCustom<String>> = flow {
+    fun updateMedicine(
+        updatedMedicine: Medicine,
+        author : User
+    ) : Flow<ResultCustom<String>> = flow {
 
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {
@@ -178,7 +182,7 @@ class StockRepository @Inject constructor(
         else{
             emit(ResultCustom.Loading)
 
-            stockApi.updateMedicine(updatedMedicine).collect { result ->
+            stockApi.updateMedicine(updatedMedicine,author).collect { result ->
                 emit(result)
             }
         }

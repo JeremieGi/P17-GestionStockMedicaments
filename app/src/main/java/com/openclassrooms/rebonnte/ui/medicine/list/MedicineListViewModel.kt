@@ -3,7 +3,7 @@ package com.openclassrooms.rebonnte.ui.medicine.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.rebonnte.repository.ResultCustom
-import com.openclassrooms.rebonnte.repositoryStock.StockRepository
+import com.openclassrooms.rebonnte.repository.stock.StockRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

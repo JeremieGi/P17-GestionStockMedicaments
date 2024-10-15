@@ -5,5 +5,31 @@ data class Medicine(
     val name: String,
     val stock: Int,
     val oAisle: Aisle,
-    val histories: List<History>
-)
+    val histories: MutableList<History>
+) {
+
+    // Utile uniquement en utilisant les FakeAPI
+    fun addHistory(newHistory: History) {
+        this.histories.add(0, newHistory)
+    }
+
+    // Renvoie le détail de la différence entre les 2 objets
+    fun sDiff(updatedMedicine: Medicine): String {
+
+        var sDiffResult = ""
+
+        if (this.name!=updatedMedicine.name){
+            sDiffResult += "New name : ${updatedMedicine.name}"
+        }
+
+        if (this.stock!=updatedMedicine.stock){
+            sDiffResult += "New stock : ${updatedMedicine.stock}"
+        }
+
+        if (this.oAisle.id!=updatedMedicine.oAisle.id){
+            sDiffResult += "New aisle : ${updatedMedicine.oAisle.name}"
+        }
+
+        return sDiffResult
+    }
+}

@@ -1,10 +1,12 @@
-package com.openclassrooms.rebonnte.repositoryStock
+package com.openclassrooms.rebonnte.repository.stock
 
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
+import com.openclassrooms.rebonnte.model.User
 import com.openclassrooms.rebonnte.repository.ResultCustom
-import com.openclassrooms.rebonnte.repositoryStock.StockRepository.EnumSortedItem
+import com.openclassrooms.rebonnte.repository.stock.StockRepository.EnumSortedItem
+import com.openclassrooms.rebonnte.repository.user.UserFakeAPI
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -25,6 +27,8 @@ class StockFakeAPI : StockAPI {
 
             val dates = initDates(3)
 
+            val users = UserFakeAPI.initFakeCurrentUser()
+
 
             return mutableListOf(
 
@@ -33,9 +37,9 @@ class StockFakeAPI : StockAPI {
                     name = "Medicine 1",
                     stock = 1,
                     oAisle = aisles[0],
-                    histories = listOf(
-                        History("User1",dates[0],"Details 1"),
-                        History("User1",dates[1],"Details 2")
+                    histories = mutableListOf(
+                        History(users[0],dates[0],"Details 1"),
+                        History(users[0],dates[1],"Details 2")
                     )
                 ),
 
@@ -44,9 +48,9 @@ class StockFakeAPI : StockAPI {
                     name = "Medicine 2",
                     stock = 2,
                     oAisle = aisles[1],
-                    histories = listOf(
-                        History("User2",dates[0],"Details 1"),
-                        History("User2",dates[1],"Details 2")
+                    histories = mutableListOf(
+                        History(users[1],dates[0],"Details 1"),
+                        History(users[1],dates[1],"Details 2")
                     )
                 ),
 
@@ -55,9 +59,9 @@ class StockFakeAPI : StockAPI {
                     name = "Medicine 3",
                     stock = 3,
                     oAisle = aisles[2],
-                    histories = listOf(
-                        History("User1",dates[1],"Details 1"),
-                        History("User3",dates[2],"Details 2")
+                    histories =  mutableListOf(
+                        History(users[0],dates[0],"Details 1"),
+                        History(users[1],dates[1],"Details 2")
                     )
                 )
             )
@@ -157,7 +161,10 @@ class StockFakeAPI : StockAPI {
 
     }
 
-    override fun updateMedicine(updatedMedicine: Medicine): Flow<ResultCustom<String>> {
+    override fun updateMedicine(
+        updatedMedicine: Medicine,
+        author : User
+    ): Flow<ResultCustom<String>> {
 
         val index = _listMedicines.indexOfFirst { it.id == updatedMedicine.id }
 
@@ -167,7 +174,17 @@ class StockFakeAPI : StockAPI {
             //delay(1*1000)
 
             if (index >= 0){
+
+                val sDetail = _listMedicines[index].sDiff(updatedMedicine)
+
                 _listMedicines[index] = updatedMedicine
+
+                val newHistory = History(
+                    author = author,
+                    details = sDetail
+                )
+                _listMedicines[index].addHistory(newHistory)
+
                 trySend(ResultCustom.Success(""))
             }
             else{

@@ -49,7 +49,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.EmbeddedSearchBar
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.Medicine
-import com.openclassrooms.rebonnte.repositoryStock.StockFakeAPI
+import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.BottomBarComposable
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable

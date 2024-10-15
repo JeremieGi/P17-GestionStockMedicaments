@@ -191,6 +191,9 @@ fun NavGraph(
 
 }
 
+// TODO Denis : "Toutes les données sont chargées immédiatement sans utilisation de lazy." => Ca veut dire quoi ?
+// T004c - Charger les données aux bons moments => chaque viewModel est appelé quand il est necessaire
+// loading. Nous recommandons donc de l’implémenter..
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
 //fun MyApp() {
