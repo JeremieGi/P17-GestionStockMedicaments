@@ -25,8 +25,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 fun AisleDetailScreen(
     modifier: Modifier = Modifier,
     idAisleP : String,
-    viewModel: AisleDetailViewModel = hiltViewModel(),
-    onBackClick: () -> Unit,
+    viewModel: AisleDetailViewModel = hiltViewModel()
 ) {
 
     // Lecture du post
@@ -39,8 +38,7 @@ fun AisleDetailScreen(
     AisleDetailStateComposable(
         modifier=modifier,
         uiStateAisleDetailP = uiStateAisleDetail,
-        loadAisleByIDP = { viewModel.loadAisleByID(idAisleP) },
-        onBackClick = onBackClick
+        loadAisleByIDP = { viewModel.loadAisleByID(idAisleP) }
     )
 
 
@@ -50,7 +48,6 @@ fun AisleDetailScreen(
 fun AisleDetailStateComposable(
     modifier: Modifier = Modifier,
     uiStateAisleDetailP: AisleDetailUIState,
-    onBackClick: () -> Unit,
     loadAisleByIDP: () -> Unit) {
 
     // Une actionBar avec le nom de l'appli ici car l'activity à un thème avec ActionBar
@@ -122,7 +119,6 @@ fun AisleDetailStateComposableLoadingPreview() {
 
         AisleDetailStateComposable(
             uiStateAisleDetailP = uiStateLoading,
-            onBackClick = {},
             loadAisleByIDP = {}
         )
 
@@ -142,7 +138,6 @@ fun AisleDetailStateComposableSuccessPreview() {
 
         AisleDetailStateComposable(
             uiStateAisleDetailP = uiStateSuccess,
-            onBackClick = {},
             loadAisleByIDP = {}
         )
 
@@ -162,7 +157,6 @@ fun AisleDetailStateComposableErrorPreview() {
 
         AisleDetailStateComposable(
             uiStateAisleDetailP = uiStateError,
-            onBackClick = {},
             loadAisleByIDP = {}
         )
     }

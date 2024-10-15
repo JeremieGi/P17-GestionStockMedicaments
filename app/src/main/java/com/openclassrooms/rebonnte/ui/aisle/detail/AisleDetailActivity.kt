@@ -19,9 +19,10 @@ class AisleDetailActivity : ComponentActivity() {
 
         setContent {
             RebonnteTheme {
+                // Une actionBar avec le nom de l'appli ici car l'activity à un thème avec ActionBar
+                // Cette action bar permettra le retour en arrière
                 AisleDetailScreen(
-                    idAisleP = id,
-                    onBackClick = {} // TODO JG : A modifier quand j'aurai décider comment implémenter la navigation
+                    idAisleP = id
                 )
             }
         }

@@ -1,5 +1,6 @@
 package com.openclassrooms.rebonnte.repositoryStock
 
+import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.repository.InjectedContext
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.Medicine
@@ -19,8 +20,6 @@ class StockRepository @Inject constructor(
     private val stockApi: StockAPI,
     private val injectedContext: InjectedContext // Contexte connu par injection de dépendance (Permet de vérifier l'accès à Internet et aussi d'accéder aux ressources chaines)
 ){
-
-    // TODO JG : Je gère les pertes de connexion à Internet
 
     /**
      * Liste des médicaments
@@ -44,30 +43,72 @@ class StockRepository @Inject constructor(
     suspend fun loadAllMedicines(sFilterNameP : String, eSortItemP : EnumSortedItem){
 
         withContext(Dispatchers.IO) {
-            stockApi.loadAllMedicines(sFilterNameP, eSortItemP).collect { result ->
-                _flowMedicines.emit(result)
+
+            // Si pas d'Internet
+            if (!injectedContext.isInternetAvailable()) {
+
+                _flowMedicines.emit(
+                    ResultCustom.Failure(
+                        injectedContext.getInjectedContext().getString(R.string.no_network)
+                    )
+                )
+
             }
+            else{
+
+                stockApi.loadAllMedicines(sFilterNameP, eSortItemP).collect { result ->
+                    _flowMedicines.emit(result)
+                }
+            }
+
+
         }
 
     }
 
     fun loadMedicineByID(idMedicine: String): Flow<ResultCustom<Medicine>> = flow  {
 
-        emit(ResultCustom.Loading)
+        // Si pas d'Internet
+        if (!injectedContext.isInternetAvailable()) {
 
-        // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-        stockApi.loadMedicineByID(idMedicine).collect { result ->
-            emit(result)
+            _flowMedicines.emit(
+                ResultCustom.Failure(
+                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                )
+            )
+
         }
+        else{
 
+            emit(ResultCustom.Loading)
+
+            // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
+            stockApi.loadMedicineByID(idMedicine).collect { result ->
+                emit(result)
+            }
+
+        }
 
     }.flowOn(Dispatchers.IO)
 
+
     suspend fun loadAllAisles(){
 
-        withContext(Dispatchers.IO) {
-            stockApi.loadAllAisles().collect { result ->
-                _flowAisles.emit(result)
+        // Si pas d'Internet
+        if (!injectedContext.isInternetAvailable()) {
+
+            _flowMedicines.emit(
+                ResultCustom.Failure(
+                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                )
+            )
+
+        }
+        else{
+            withContext(Dispatchers.IO) {
+                stockApi.loadAllAisles().collect { result ->
+                    _flowAisles.emit(result)
+                }
             }
         }
 
@@ -76,11 +117,23 @@ class StockRepository @Inject constructor(
     // Ajoute un médicament
     fun addMedicine(medicine : Medicine): Flow<ResultCustom<Medicine>> = flow {
 
-        emit(ResultCustom.Loading)
+        // Si pas d'Internet
+        if (!injectedContext.isInternetAvailable()) {
 
-        // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-        stockApi.addMedicine(medicine).collect { result ->
-            emit(result)
+            _flowMedicines.emit(
+                ResultCustom.Failure(
+                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                )
+            )
+
+        }
+        else{
+            emit(ResultCustom.Loading)
+
+            // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
+            stockApi.addMedicine(medicine).collect { result ->
+                emit(result)
+            }
         }
 
     }.flowOn(Dispatchers.IO)  // Exécuter sur un thread d'entrée/sortie (IO)
@@ -88,23 +141,46 @@ class StockRepository @Inject constructor(
 
     fun loadAisleByID(idAisle: String): Flow<ResultCustom<Aisle>> = flow  {
 
-        emit(ResultCustom.Loading)
+        // Si pas d'Internet
+        if (!injectedContext.isInternetAvailable()) {
 
-        // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-        stockApi.loadAisleByID(idAisle).collect { result ->
-            emit(result)
+            _flowMedicines.emit(
+                ResultCustom.Failure(
+                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                )
+            )
+
         }
+        else{
+            emit(ResultCustom.Loading)
 
+            // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
+            stockApi.loadAisleByID(idAisle).collect { result ->
+                emit(result)
+            }
+        }
 
     }.flowOn(Dispatchers.IO)
 
 
     fun updateMedicine(updatedMedicine: Medicine) : Flow<ResultCustom<String>> = flow {
 
-        emit(ResultCustom.Loading)
+        // Si pas d'Internet
+        if (!injectedContext.isInternetAvailable()) {
 
-        stockApi.updateMedicine(updatedMedicine).collect { result ->
-            emit(result)
+            _flowMedicines.emit(
+                ResultCustom.Failure(
+                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                )
+            )
+
+        }
+        else{
+            emit(ResultCustom.Loading)
+
+            stockApi.updateMedicine(updatedMedicine).collect { result ->
+                emit(result)
+            }
         }
 
     }

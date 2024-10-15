@@ -8,7 +8,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 
-// TODO JG : Je laisse les activity
+// T094 - Je laisse les activity
 
 @AndroidEntryPoint
 class MedicineDetailActivity : ComponentActivity() {
