@@ -118,9 +118,6 @@ fun NavGraph(
 //                onMedicineClickP = { medicine ->
 //                    navController.navigate(Screen.MedicineItem.createRoute(medicine.id))
 //                },
-                onClickAddP = {
-                    navController.navigate(Screen.MedicineAdd.route)
-                },
                 onClickBottomAisleP = {
                     navController.navigate(Screen.AisleList.route)
                 }
@@ -133,10 +130,6 @@ fun NavGraph(
         composable(Screen.MedicinesList.route) {
 
             MedicineListScreen(
-
-                onClickAddP = {
-                    navController.navigate(Screen.MedicineAdd.route)
-                },
                 onClickBottomAisleP = {
                     navController.navigate(Screen.AisleList.route){
                         // permet de ne pas ouvrir un nouvel écran (pour ne pas surcharger la pile)
@@ -164,18 +157,15 @@ fun NavGraph(
 //
 //        }
 
-        composable(route = Screen.MedicineAdd.route) {
-            // TODO JG : MedicineAddScreen
-//            MedicineAddScreen(
-//                onBackClick = { navController.navigateUp() }
-//            )
-        }
+        // Fenêtre d'un médicament (Pas besoin de route pour cet écran => une activité dédiée sera ouverte)
+//        composable(route = Screen.MedicineAdd.route) {
+////            MedicineAddScreen(
+////                onBackClick = { navController.navigateUp() }
+////            )
+//        }
 
         composable(route = Screen.AisleList.route) {
             AisleListScreen(
-                onClickAddP = {
-                    navController.navigate(Screen.MedicineAdd.route)
-                },
                 onClickMedicineOnBottomBarP = {
                     navController.navigate(Screen.MedicinesList.route){
                         // permet de ne pas ouvrir un nouvel écran (pour ne pas surcharger la pile)

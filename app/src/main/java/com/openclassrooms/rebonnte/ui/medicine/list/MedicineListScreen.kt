@@ -62,7 +62,6 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 @Composable
 fun MedicineListScreen(
     viewModel: MedicineListViewModel = hiltViewModel(),
-    onClickAddP: () -> Unit,
     onClickBottomAisleP: () -> Unit
 ) {
 
@@ -88,7 +87,6 @@ fun MedicineListScreen(
         sortByStockP = viewModel::sortByStock,
         filterByNameP = viewModel::filterByName,
         loadAllMedicinesP = viewModel::loadAllMedicines,
-        onClickAddP = onClickAddP,
         onClickBottomAisleP = onClickBottomAisleP,
         launcher = launcher
     )
@@ -106,7 +104,6 @@ fun MedicineListStateComposable(
     sortByStockP : () -> Unit,
     filterByNameP : (String) -> Unit,
     loadAllMedicinesP : () -> Unit,
-    onClickAddP: () -> Unit,
     onClickBottomAisleP: () -> Unit,
     launcher: ActivityResultLauncher<Intent>?
 ) {
@@ -227,10 +224,11 @@ fun MedicineListStateComposable(
 
         },
         floatingActionButton = {
+            val context = LocalContext.current
             FloatingActionButton(onClick = {
-                onClickAddP()
+                startDetailActivity(context, launcher, id="") // ID vide = mode ajout
             }) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add))
             }
         }
     )
@@ -321,7 +319,6 @@ fun MedicineListComposableSuccessPreview() {
             sortByStockP = {},
             filterByNameP = {},
             loadAllMedicinesP = {},
-            onClickAddP = {},
             onClickBottomAisleP = {},
             launcher = null
         )
@@ -340,7 +337,6 @@ fun MedicineListComposableLoadingPreview() {
             sortByStockP = {},
             filterByNameP = {},
             loadAllMedicinesP = {},
-            onClickAddP = {},
             onClickBottomAisleP = {},
             launcher = null
         )
@@ -360,7 +356,6 @@ fun MedicineListComposableErrorPreview() {
             sortByStockP = {},
             filterByNameP = {},
             loadAllMedicinesP = {},
-            onClickAddP = {},
             onClickBottomAisleP = {},
             launcher = null
         )

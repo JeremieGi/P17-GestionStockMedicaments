@@ -11,7 +11,6 @@ fun LaunchScreen(
     //modifier: Modifier = Modifier,
     viewModel: LaunchViewModel = hiltViewModel(),
  //   onMedicineClickP: (Medicine) -> Unit = {},
-    onClickAddP: () -> Unit,
     onClickBottomAisleP : () -> Unit
 ) {
 
@@ -79,7 +78,6 @@ fun LaunchScreen(
         //  Utilisateur connecté
         MedicineListScreen(
             //modifier = modifier,
-            onClickAddP = onClickAddP,
             onClickBottomAisleP = onClickBottomAisleP
         )
     }

@@ -39,6 +39,10 @@ import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
+// Cet écran fait l'affichage de détails d'un médicaement et aussi son ajout
+fun bDetailMode(idMedicineP: String): Boolean {
+    return idMedicineP.isNotEmpty()
+}
 
 @Composable
 fun MedicineDetailScreen(
@@ -51,9 +55,16 @@ fun MedicineDetailScreen(
 
     val uiStateMedicineDetail by viewModel.uiStateMedicineDetail.collectAsState()
 
-    LaunchedEffect(idMedicineP) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
-        viewModel.loadMedicineByID(idMedicineP)
+    if (bDetailMode(idMedicineP)){
+        LaunchedEffect(idMedicineP) { // Pour déclencher l'effet secondaire une seule fois au cours du cycle de vie de ce composable
+            viewModel.loadMedicineByID(idMedicineP)
+        }
     }
+    else{
+        // TODO : Mode ajout à implémenter
+    }
+
+
 
     MedicineDetailStateComposable(
         uiStateMedicineDetailP = uiStateMedicineDetail,
@@ -66,6 +77,8 @@ fun MedicineDetailScreen(
 
 
 }
+
+
 
 @Composable
 fun MedicineDetailStateComposable(

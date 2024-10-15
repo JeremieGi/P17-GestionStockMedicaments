@@ -14,7 +14,8 @@ sealed class Screen(
 //        fun createRoute(medecineId: String) = "medecineDetail/$medecineId"
 //    }
 
-    data object MedicineAdd : Screen("medicineAdd")
+    // Pas besoin de route pour cet écran => une activité dédiée sera ouverte
+//    data object MedicineAdd : Screen("medicineAdd")
 
     data object AisleList : Screen(CTE_AISLE_LIST_SCREEN)
 

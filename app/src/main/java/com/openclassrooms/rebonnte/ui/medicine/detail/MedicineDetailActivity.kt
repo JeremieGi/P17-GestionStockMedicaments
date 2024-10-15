@@ -20,7 +20,7 @@ class MedicineDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val id = intent.getStringExtra(Screen.CTE_PARAM_ID_MEDICINE) ?: "Unknown"
+        val id = intent.getStringExtra(Screen.CTE_PARAM_ID_MEDICINE) ?: ""
 
         setContent {
             RebonnteTheme {

@@ -44,7 +44,6 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 @Composable
 fun AisleListScreen(
     viewModel: AisleListViewModel = hiltViewModel(),
-    onClickAddP: () -> Unit,
     onClickMedicineOnBottomBarP : () -> Unit,
 ) {
 
@@ -57,7 +56,6 @@ fun AisleListScreen(
     AisleListStateComposable(
         uiStateListP = uiStateList,
         loadAllAilesP = viewModel::loadAllAisle,
-        onClickAddP = onClickAddP,
         onClickMedicineOnBottomBarP = onClickMedicineOnBottomBarP,
     )
 
@@ -70,7 +68,6 @@ fun AisleListStateComposable(
     modifier: Modifier = Modifier,
     uiStateListP: AisleListUIState,
     loadAllAilesP : () -> Unit,
-    onClickAddP: () -> Unit,
     onClickMedicineOnBottomBarP : () -> Unit,
 ) {
 
@@ -130,8 +127,9 @@ fun AisleListStateComposable(
 
         },
         floatingActionButton = {
+            val context = LocalContext.current
             FloatingActionButton(onClick = {
-                onClickAddP()
+                startAisleDetailActivity(context, "") // id="" mode ajout
             }) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
@@ -180,9 +178,9 @@ fun AisleItem(
 
 
 
-private fun startAisleDetailActivity(context: Context, name: String) {
+private fun startAisleDetailActivity(context: Context, id : String) {
     val intent = Intent(context, AisleDetailActivity::class.java).apply {
-        putExtra(Screen.CTE_PARAM_ID_AISLE, name)
+        putExtra(Screen.CTE_PARAM_ID_AISLE, id)
     }
     context.startActivity(intent)
 }
@@ -203,7 +201,6 @@ fun AisleListComposableSuccessPreview() {
         AisleListStateComposable(
             uiStateListP = uiStateSuccess,
             loadAllAilesP = {},
-            onClickAddP = {},
             onClickMedicineOnBottomBarP = {}
 
         )
@@ -218,7 +215,6 @@ fun AisleListComposableLoadingPreview() {
         AisleListStateComposable(
             uiStateListP = AisleListUIState.IsLoading,
             loadAllAilesP = {},
-            onClickAddP = {},
             onClickMedicineOnBottomBarP = {}
         )
     }
@@ -233,7 +229,6 @@ fun AisleListComposableErrorPreview() {
         AisleListStateComposable(
             uiStateListP = AisleListUIState.Error("Erreur de test de la preview"),
             loadAllAilesP = {},
-            onClickAddP = {},
             onClickMedicineOnBottomBarP = {}
         )
     }
