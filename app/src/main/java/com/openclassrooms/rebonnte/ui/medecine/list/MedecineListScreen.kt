@@ -2,6 +2,9 @@ package com.openclassrooms.rebonnte.ui.medecine.list
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -71,6 +75,14 @@ fun MedicineListScreen(
         viewModel.loadAllMedicines()
     }
 
+    // Pour déclencher le rafraichissement en cas de modification des donénes dans l'Activity de détails
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == MedicineDetailActivity.RESULT_MEDICINE_UPDATE) {
+           viewModel.loadAllMedicines()
+        }
+    }
+
+
     MedicineListStateComposable(
         uiStateMedicinesP = uiStateMedicines,
         sortByNoneP = viewModel::sortByNone,
@@ -80,6 +92,7 @@ fun MedicineListScreen(
         loadAllMedecinesP = viewModel::loadAllMedicines,
         onClickAddP = onClickAddP,
         onClickBottomAisleP = onClickBottomAisleP,
+        launcher = launcher
     )
 
 
@@ -97,6 +110,7 @@ fun MedicineListStateComposable(
     loadAllMedecinesP : () -> Unit,
     onClickAddP: () -> Unit,
     onClickBottomAisleP: () -> Unit,
+    launcher: ActivityResultLauncher<Intent>?
 ) {
 
 
@@ -190,7 +204,8 @@ fun MedicineListStateComposable(
 
                     MedecineListComposable(
                         modifier = Modifier.padding(innerPadding),
-                        listMedicines = uiStateMedicinesP.listMedecines
+                        listMedicines = uiStateMedicinesP.listMedecines,
+                        launcher = launcher,
                     )
 
                 }
@@ -231,7 +246,8 @@ fun MedicineListStateComposable(
 @Composable
 fun MedecineListComposable(
     modifier: Modifier,
-    listMedicines: List<Medicine>) {
+    listMedicines: List<Medicine>,
+    launcher: ActivityResultLauncher<Intent>?) {
 
     val context = LocalContext.current
 
@@ -240,7 +256,7 @@ fun MedecineListComposable(
     ) {
         items(listMedicines) { medicine ->
             MedicineItem(medicine = medicine, onClick = {
-                startDetailActivity(context, medicine.id)
+                startDetailActivity(context, launcher, medicine.id)
             })
         }
     }
@@ -264,11 +280,24 @@ fun MedicineItem(medicine: Medicine, onClick: () -> Unit) {
     }
 }
 
-private fun startDetailActivity(context: Context, id: String) {
-    val intent = Intent(context, MedicineDetailActivity::class.java).apply {
-        putExtra(Screen.CTE_PARAM_ID_MEDECINE, id)
+// Lance l'activity en utilisant un launcher pour savoir quand l'activity se ferme
+private fun startDetailActivity(
+    context: Context,
+    launcher: ActivityResultLauncher<Intent>?,
+    id: String
+) {
+
+    // launcher peut-être nullable juste pour les previews Compose
+    launcher?.let {
+        val intent = Intent(context, MedicineDetailActivity::class.java).apply {
+            putExtra(Screen.CTE_PARAM_ID_MEDECINE, id)
+        }
+        //context.startActivity(intent)
+        it.launch(intent)
     }
-    context.startActivity(intent)
+
+
+
 }
 
 
@@ -294,7 +323,8 @@ fun MedicineListComposableSuccessPreview() {
             filterByNameP = {},
             loadAllMedecinesP = {},
             onClickAddP = {},
-            onClickBottomAisleP = {}
+            onClickBottomAisleP = {},
+            launcher = null
         )
     }
 }
@@ -312,7 +342,8 @@ fun MedicineListComposableLoadingPreview() {
             filterByNameP = {},
             loadAllMedecinesP = {},
             onClickAddP = {},
-            onClickBottomAisleP = {}
+            onClickBottomAisleP = {},
+            launcher = null
         )
     }
 }
@@ -331,7 +362,8 @@ fun MedicineListComposableErrorPreview() {
             filterByNameP = {},
             loadAllMedecinesP = {},
             onClickAddP = {},
-            onClickBottomAisleP = {}
+            onClickBottomAisleP = {},
+            launcher = null
         )
     }
 }

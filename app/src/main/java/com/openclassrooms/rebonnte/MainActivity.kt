@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
         startBroadcastReceiver()
     }
 
-    // TODO JG : A supprimer ou à libérer (car peut faire une fuite mémoire)
+    // TODO Openclassrooms + JG : A supprimer ou à libérer (car peut faire une fuite mémoire) => Mail à Openclassrooms car fuite non visible
 
     private fun startBroadcastReceiver() {
         myBroadcastReceiver = MyBroadcastReceiver()
@@ -151,7 +151,7 @@ fun NavGraph(
         }
 
 
-//        // Fenêtre d'un médicament (TODO : Pour l'instant lance une activity)
+//        // Fenêtre d'un médicament (Pas besoin de route pour cet écran => une activité dédiée sera ouverte)
 //        composable(Screen.MedicineDetail.route) { backStackEntry -> // BackStackEntry ici permet de récupérer les paramètres
 //
 //            val medecineId = backStackEntry.arguments?.getString(Screen.CTE_PARAM_ID_MEDECINE)

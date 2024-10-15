@@ -53,33 +53,7 @@ fun AisleDetailStateComposable(
     onBackClick: () -> Unit,
     loadAisleByIDP: () -> Unit) {
 
-// actionBar avec le nom de l'appli ici car l'activity à un thème avec ActionBar
-
-    //    Scaffold(
-//        modifier = modifier,
-//        topBar = {
-//            TopAppBar(
-//                title = {
-//                    if (uiStateAisleDetailP is AisleDetailUIState.Success){
-//                        Text(uiStateAisleDetailP.aisle.name)
-//                    }
-//                    else{
-//                        Text(stringResource(id = R.string.aisle))
-//                    }
-//                },
-//                navigationIcon = {
-//                    IconButton(onClick = {
-//                        onBackClick()
-//                    }) {
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                            contentDescription = stringResource(id = R.string.back),
-//                        )
-//                    }
-//                }
-//            )
-//        }
-//    ) { contentPadding ->
+    // Une actionBar avec le nom de l'appli ici car l'activity à un thème avec ActionBar
 
     Scaffold { contentPadding ->
         when (uiStateAisleDetailP) {
@@ -117,7 +91,6 @@ fun AisleDetailStateComposable(
 
             }
         }
-
 
 
     }

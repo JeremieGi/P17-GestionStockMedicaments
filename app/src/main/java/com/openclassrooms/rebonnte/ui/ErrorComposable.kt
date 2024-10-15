@@ -21,6 +21,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
 
 /**
+ * T004b - Indiquer les erreurs
  * Composant d'erreur : Affiche un message d'erreur et un bouton "Try Again"
  */
 @Composable

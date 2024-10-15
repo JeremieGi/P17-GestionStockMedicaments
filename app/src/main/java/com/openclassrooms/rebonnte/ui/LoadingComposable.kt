@@ -21,6 +21,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
 
 /**
+ * T004a - Indiquer les chargements
  * Composable qui s'affiche lors du chargement
  */
 @Composable

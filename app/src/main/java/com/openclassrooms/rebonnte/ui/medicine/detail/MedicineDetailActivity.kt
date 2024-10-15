@@ -13,6 +13,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MedicineDetailActivity : ComponentActivity() {
 
+    companion object {
+        const val RESULT_MEDICINE_UPDATE = 1    // Indique à l'appelant (fenêtre de liste), que le medicatment a été mis à jour. Celà déclenchera le rafraichissement
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,10 +26,16 @@ class MedicineDetailActivity : ComponentActivity() {
             RebonnteTheme {
                 MedicineDetailScreen(
                     idMedicineP = id,
-                    onBackClick = { finish() } // TODO JG : A traiter, si je ne fais pas de monoactivity : Ne réactualise pas la liste (les données du repo sont ok)
+                    onMedicineUpdated = {
+                        // Indique à l'appelant (fenêtre de liste), que le medicatment a été mis à jour
+                        setResult(RESULT_MEDICINE_UPDATE)
+                        finish()
+                    }
                 )
             }
         }
     }
+
+
 
 }

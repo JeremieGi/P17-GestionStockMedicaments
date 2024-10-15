@@ -3,19 +3,16 @@ package com.openclassrooms.rebonnte.ui.medicine.detail
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,8 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -49,8 +44,10 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 fun MedicineDetailScreen(
     idMedicineP : String,
     viewModel: MedicineDetailViewModel = hiltViewModel(),
-    onBackClick : () -> Unit,
+    onMedicineUpdated : () -> Unit,
 ) {
+
+    // Une actionBar avec le nom de l'appli ici car l'activity à un thème avec ActionBar
 
     val uiStateMedicineDetail by viewModel.uiStateMedicineDetail.collectAsState()
 
@@ -64,7 +61,7 @@ fun MedicineDetailScreen(
         decrementStockP = viewModel::decrementStock,
         incrementStockP = viewModel::incrementStock,
         updateStockP = viewModel::updateStock,
-        onBackClick = onBackClick
+        onMedicineUpdated = onMedicineUpdated
     )
 
 
@@ -77,7 +74,7 @@ fun MedicineDetailStateComposable(
     decrementStockP : () -> Unit,
     incrementStockP : () -> Unit,
     updateStockP : () -> Unit,
-    onBackClick: () -> Unit,
+    onMedicineUpdated: () -> Unit,
 ) {
 
 
@@ -124,7 +121,7 @@ fun MedicineDetailStateComposable(
             }
 
             is MedicineDetailUIState.UploadSuccess -> {
-                onBackClick() // Retour à la liste
+                onMedicineUpdated() // Retour à la liste avec notification de la modification
             }
         }
 
@@ -169,6 +166,7 @@ fun MedicineDetailSuccessComposable(
         ) {
             // Désincrémenter le stock
             IconButton(onClick = {
+                // Correction T010
                 // Avant ici : java.lang.IndexOutOfBoundsException: Index 1 out of bounds for length 1
                 // Suite à un appel directement aux donénes en mémorie sans pattern MVVM
                 decrementStockP()
@@ -197,6 +195,7 @@ fun MedicineDetailSuccessComposable(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
+        // T003a - Mise à jour de stock : Ne doit pas bloquer le thread principal
         Button(
             modifier = Modifier.fillMaxWidth(),
             content = {
@@ -256,7 +255,7 @@ fun MedicineDetailStateComposableLoadingPreview() {
             decrementStockP = {},
             incrementStockP = {},
             updateStockP = {},
-            onBackClick = {}
+            onMedicineUpdated = {}
         )
 
     }
@@ -279,7 +278,7 @@ fun MedicineDetailStateComposableSuccessPreview() {
             decrementStockP = {},
             incrementStockP = {},
             updateStockP = {},
-            onBackClick = {}
+            onMedicineUpdated = {}
         )
 
     }
@@ -302,7 +301,7 @@ fun MedicineDetailStateComposableErrorPreview() {
             decrementStockP = {},
             incrementStockP = {},
             updateStockP = {},
-            onBackClick = {}
+            onMedicineUpdated = {}
         )
     }
 }
