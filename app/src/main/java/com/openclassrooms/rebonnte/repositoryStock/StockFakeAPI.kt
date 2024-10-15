@@ -66,7 +66,7 @@ class StockFakeAPI : StockAPI {
         // Génère des dates
         private fun initDates(nNbDatesP : Int): List<Date> {
 
-            val resultDates = MutableList<Date>(nNbDatesP) { Date() }
+            val resultDates = MutableList(nNbDatesP) { Date() }
 
             // Créer une instance de Calendar
             val calendar = Calendar.getInstance()

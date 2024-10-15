@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -79,7 +78,7 @@ fun AisleListStateComposable(
         topBar = {
             Column(verticalArrangement = Arrangement.spacedBy((-1).dp)) {
                 TopAppBar(
-                    title = { Text(text = "Aisle")  },
+                    title = { Text(text = stringResource(R.string.aisle))  },
                 )
             }
         },

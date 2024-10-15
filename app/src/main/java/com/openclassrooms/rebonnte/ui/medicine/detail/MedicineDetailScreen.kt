@@ -147,7 +147,7 @@ fun MedicineDetailSuccessComposable(
         TextField(
             value = medicineP.name,
             onValueChange = {},
-            label = { Text("Name") },
+            label = { Text(stringResource(R.string.name)) },
             enabled = false,
             modifier = Modifier.fillMaxWidth()
         )
@@ -155,7 +155,7 @@ fun MedicineDetailSuccessComposable(
         TextField(
             value = medicineP.oAisle.name,
             onValueChange = {},
-            label = { Text("Aisle") },
+            label = { Text(stringResource(R.string.aisle)) },
             enabled = false,
             modifier = Modifier.fillMaxWidth()
         )
@@ -173,13 +173,13 @@ fun MedicineDetailSuccessComposable(
             }) {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "Minus One"
+                    contentDescription = stringResource(R.string.minus_one)
                 )
             }
             TextField(
                 value = medicineP.stock.toString(),
                 onValueChange = {},
-                label = { Text("Stock") },
+                label = { Text(stringResource(R.string.stock)) },
                 enabled = false,
                 modifier = Modifier.weight(1f)
             )
@@ -189,7 +189,7 @@ fun MedicineDetailSuccessComposable(
             }) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowUp,
-                    contentDescription = "Plus One"
+                    contentDescription = stringResource(R.string.plus_one)
                 )
             }
         }
@@ -208,7 +208,7 @@ fun MedicineDetailSuccessComposable(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "History", style = MaterialTheme.typography.titleLarge)
+        Text(text = stringResource(R.string.history), style = MaterialTheme.typography.titleLarge)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -231,6 +231,7 @@ fun HistoryItem(history: History) {
             .padding(vertical = 4.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
+        // TODO JG : Ne pas oublier d'utiliser les ressources chaines ici
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "User: ${history.userId}")
             Text(text = "Date: ${history.date}")

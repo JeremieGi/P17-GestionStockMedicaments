@@ -10,7 +10,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
 
@@ -28,7 +30,7 @@ fun BottomBarComposable(
     NavigationBar {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
-            label = { Text("Aisle") },
+            label = { Text(stringResource(R.string.aisle)) },
             selected = sActiveScreenP==Screen.CTE_AISLE_LIST_SCREEN,
             onClick = {
                 onClickAislesP()
@@ -37,7 +39,7 @@ fun BottomBarComposable(
         NavigationBarItem(
             //icon = { Icon(Icons.Default.List, contentDescription = null) },
             icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-            label = { Text("Medicine") },
+            label = { Text(stringResource(R.string.medicine)) },
             selected = sActiveScreenP==Screen.CTE_MEDICINE_LIST_SCREEN,
             onClick = {
                 onClickMedicinesP()

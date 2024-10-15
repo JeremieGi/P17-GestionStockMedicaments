@@ -119,7 +119,7 @@ fun MedicineListStateComposable(
 
             Column(verticalArrangement = Arrangement.spacedBy((-1).dp)) {
                 TopAppBar(
-                    title = { Text(text = "Medicines") },
+                    title = { Text(text = stringResource(R.string.medicines)) },
                     actions = {
                         var expanded by remember { mutableStateOf(false) }
 
@@ -144,21 +144,21 @@ fun MedicineListStateComposable(
                                             sortByNoneP()
                                             expanded = false
                                         },
-                                        text = { Text("Sort by None") }
+                                        text = { Text(stringResource(R.string.sort_by_none)) }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
                                             sortByNameP()
                                             expanded = false
                                         },
-                                        text = { Text("Sort by Name") }
+                                        text = { Text(stringResource(R.string.sort_by_name)) }
                                     )
                                     DropdownMenuItem(
                                         onClick = {
                                             sortByStockP()
                                             expanded = false
                                         },
-                                        text = { Text("Sort by Stock") }
+                                        text = { Text(stringResource(R.string.sort_by_stock)) }
                                     )
                                 }
                             }
@@ -272,8 +272,9 @@ fun MedicineItem(medicine: Medicine, onClick: () -> Unit) {
     ) {
         Column {
             Text(text = medicine.name, style = MaterialTheme.typography.bodyLarge)
-            Text(text = "Stock: ${medicine.stock}", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "${stringResource(R.string.stock)}: ${medicine.stock}", style = MaterialTheme.typography.bodyMedium)
         }
+
         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Arrow")
     }
 }

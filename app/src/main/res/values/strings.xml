@@ -8,4 +8,15 @@
     <string name="back">Back</string>
     <string name="validate">Validate</string>
     <string name="no_network">No network</string>
+    <string name="medicine">Medicine</string>
+    <string name="medicines">Medicines</string>
+    <string name="name">Name</string>
+    <string name="stock">Stock</string>
+    <string name="minus_one">Minus One</string>
+    <string name="plus_one">Plus One</string>
+    <string name="sort_by_none">Sort by None</string>
+    <string name="sort_by_name">Sort by Name</string>
+    <string name="sort_by_stock">Sort by Stock</string>
+    <string name="history">History</string>
+    <string name="search">Search</string>
 </resources>
