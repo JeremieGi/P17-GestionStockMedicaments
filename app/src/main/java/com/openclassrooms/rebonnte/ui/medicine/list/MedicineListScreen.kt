@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +21,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,8 +33,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,6 +49,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -256,6 +267,7 @@ fun MedicineListStateComposable(
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MedicineListComposable(
     modifier: Modifier,
@@ -268,34 +280,39 @@ fun MedicineListComposable(
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
-        items(listMedicines) { medicine ->
-            MedicineItem(
-                medicineP = medicine,
-                onClick = {
-                    startDetailActivity(context, launcher, medicine.id)
+        items(
+            items =listMedicines,
+            key = { it.id }
+        ) { medicine ->
+
+            // Composant qui permet de swiper dans la lazyColumn
+            SwipeBox(
+                onDelete = {
+                    onItemSwiped(medicine.id)
                 },
-                onItemSwiped = onItemSwiped
-            )
+                modifier = Modifier.animateItemPlacement()
+            ) {
+
+
+                MedicineItem(
+                    medicineP = medicine,
+                    onClick = {
+                        startDetailActivity(context, launcher, medicine.id)
+                    }
+                )
+
+            }
+
         }
     }
 
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun MedicineItem(
     medicineP: Medicine,
-    onClick: () -> Unit,
-    onItemSwiped: (id : String) -> Unit) {
-
-//    val dismissState = rememberDismissState {
-//        if (it == DismissValue.DismissedToEnd) {
-//            onItemSwiped(item) // Appeler la fonction de suppression après le swipe
-//            true
-//        } else {
-//            false
-//        }
-//    }
+    onClick: () -> Unit
+) {
 
     Row(
         modifier = Modifier
@@ -314,6 +331,66 @@ fun MedicineItem(
 
 }
 
+// Doc : https://medium.com/@shivathapaa/apply-swipetodismissbox-in-android-jetpack-compose-4b9cec46355e
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SwipeBox(
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    // Permet de connaître l'état du swipe en cours
+    val swipeState = rememberSwipeToDismissBoxState()
+
+
+    // Composant de Compose
+    SwipeToDismissBox(
+        modifier = modifier.animateContentSize(),
+        state = swipeState,
+        backgroundContent = {
+
+            // Affichage de la partie qui va apparaître lors du swipe
+
+            // Afficher l'icône uniquement si l'élément est en cours de swipe EndToStart
+            if (swipeState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
+                Box(
+                    contentAlignment = Alignment.CenterEnd,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Icon(
+                        modifier = Modifier.minimumInteractiveComponentSize(),
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = null
+                    )
+                }
+            }
+
+        }
+    ) {
+        content()
+    }
+
+    // État pour gérer l'affichage de la boîte de dialogue de confirmation
+    //var showDialog by remember { mutableStateOf(false) }
+
+    // Gestion du swipe de suppression
+    if (swipeState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+        // Le swipe est terminé (appel une seule fois)
+        //showDialog = true // Affichage de la boite de dialogue de confirmation
+        onDelete() // Appeler la fonction de suppression
+    }
+
+    // Désactivation du swipe StartToEnd
+    // Si l'utilisateur swipe vers la droite, le retour à la position initiale se fait instantanément
+    if (swipeState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
+        LaunchedEffect(swipeState) {
+            // Retour immédiat à la position initiale
+            swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+        }
+    }
+}
 
 
 // Lance l'activity en utilisant un launcher pour savoir quand l'activity se ferme
