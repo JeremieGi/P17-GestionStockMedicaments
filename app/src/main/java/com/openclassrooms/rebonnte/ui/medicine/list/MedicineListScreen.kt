@@ -285,6 +285,7 @@ fun MedicineListComposable(
 
             // Composant qui permet de swiper dans la lazyColumn
             SwipeBox(
+                medicineP = medicine,
                 onDelete = {
                     onItemSwiped(medicine.id)
                 },
@@ -334,6 +335,7 @@ fun MedicineItem(
 @Composable
 private fun SwipeBox(
     modifier: Modifier = Modifier,
+    medicineP: Medicine,
     onDelete: () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -343,13 +345,13 @@ private fun SwipeBox(
 
     // Composant de Compose
     SwipeToDismissBox(
-        modifier = modifier.animateContentSize(),
+        modifier = modifier.animateContentSize(), // Animation lors du changement de taille du composant
         state = swipeState,
         backgroundContent = {
 
             // Affichage de la partie qui va apparaître lors du swipe
 
-            // Afficher l'icône uniquement si l'élément est en cours de swipe EndToStart
+            // Afficher l'icône et le fond uniquement si l'élément est en cours de swipe EndToStart
             if (swipeState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
                 Box(
                     contentAlignment = Alignment.CenterEnd,
@@ -377,8 +379,6 @@ private fun SwipeBox(
     // Gestion du swipe de suppression
     if (swipeState.currentValue == SwipeToDismissBoxValue.EndToStart) {
 
-        // Le swipe est terminé
-
         // Affichage de la boite de dialogue de confirmation
         showDialog = true
 
@@ -400,7 +400,7 @@ private fun SwipeBox(
                 showDialog = false
             },
             title = { Text(stringResource(R.string.confirm_deletion)) },
-            text = { Text(stringResource(R.string.delete_confirm_question)) },
+            text = { Text(stringResource(R.string.delete_confirm_question,medicineP.name)) },
             confirmButton = {
                 TextButton(onClick = {
                     onDelete() // Appeler la fonction de suppression
