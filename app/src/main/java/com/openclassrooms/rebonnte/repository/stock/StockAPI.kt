@@ -36,5 +36,4 @@ interface StockAPI {
 
 
 
-
 }

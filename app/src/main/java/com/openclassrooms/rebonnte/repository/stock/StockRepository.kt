@@ -72,7 +72,7 @@ class StockRepository @Inject constructor(
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {
 
-            _flowMedicines.emit(
+            emit(
                 ResultCustom.Failure(
                     injectedContext.getInjectedContext().getString(R.string.no_network)
                 )
@@ -124,7 +124,7 @@ class StockRepository @Inject constructor(
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {
 
-            _flowMedicines.emit(
+            emit(
                 ResultCustom.Failure(
                     injectedContext.getInjectedContext().getString(R.string.no_network)
                 )
@@ -150,7 +150,7 @@ class StockRepository @Inject constructor(
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {
 
-            _flowMedicines.emit(
+            emit(
                 ResultCustom.Failure(
                     injectedContext.getInjectedContext().getString(R.string.no_network)
                 )
@@ -172,7 +172,7 @@ class StockRepository @Inject constructor(
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {
 
-            _flowMedicines.emit(
+            emit(
                 ResultCustom.Failure(
                     injectedContext.getInjectedContext().getString(R.string.no_network)
                 )
@@ -190,8 +190,28 @@ class StockRepository @Inject constructor(
 
     }.flowOn(Dispatchers.IO)
 
+    fun deleteMedecineById(sIDMedicineP : String) : Flow<ResultCustom<String>> = flow {
 
+        // Si pas d'Internet
+        if (!injectedContext.isInternetAvailable()) {
 
+            emit(
+                ResultCustom.Failure(
+                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                )
+            )
+
+        }
+        else{
+            emit(ResultCustom.Loading)
+
+            // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
+            stockApi.deleteMedicineByID(sIDMedicineP).collect { result ->
+                emit(result)
+            }
+        }
+
+    }
 
 
 }

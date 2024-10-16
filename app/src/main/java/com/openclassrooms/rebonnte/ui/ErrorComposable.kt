@@ -28,7 +28,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 fun ErrorComposable(
     modifier: Modifier = Modifier,
     sErrorMessage : String,
-    onClickRetryP: () -> Unit
+    onClickRetryP: (() -> Unit)?
 ) {
 
     Column(
@@ -51,10 +51,14 @@ fun ErrorComposable(
             text = sErrorMessage,
             style = MaterialTheme.typography.bodyMedium
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onClickRetryP) {
-            Text(stringResource(R.string.try_again))
+
+        if (onClickRetryP!=null){
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onClickRetryP) {
+                Text(stringResource(R.string.try_again))
+            }
         }
+
     }
 }
 
@@ -66,6 +70,19 @@ fun ErrorDialogPreview() {
         ErrorComposable(
             sErrorMessage = "message d'erreur",
             onClickRetryP = { }
+        )
+    }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ErrorDialogPreviewNoRetry() {
+
+    RebonnteTheme {
+        ErrorComposable(
+            sErrorMessage = "message d'erreur",
+            onClickRetryP = null
         )
     }
 

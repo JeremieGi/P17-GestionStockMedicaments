@@ -88,7 +88,8 @@ fun MedicineListScreen(
         filterByNameP = viewModel::filterByName,
         loadAllMedicinesP = viewModel::loadAllMedicines,
         onClickBottomAisleP = onClickBottomAisleP,
-        launcher = launcher
+        launcher = launcher,
+        onItemSwiped = viewModel::deleteMedicineById
     )
 
 
@@ -105,7 +106,8 @@ fun MedicineListStateComposable(
     filterByNameP : (String) -> Unit,
     loadAllMedicinesP : () -> Unit,
     onClickBottomAisleP: () -> Unit,
-    launcher: ActivityResultLauncher<Intent>?
+    launcher: ActivityResultLauncher<Intent>?,
+    onItemSwiped: (id : String) -> Unit,
 ) {
 
 
@@ -201,12 +203,13 @@ fun MedicineListStateComposable(
                         modifier = Modifier.padding(innerPadding),
                         listMedicines = uiStateMedicinesP.listMedicines,
                         launcher = launcher,
+                        onItemSwiped = onItemSwiped
                     )
 
                 }
 
-                // Exception
-                is MedicineListUIState.Error -> {
+                // Erreur lors du chargement de la liste
+                is MedicineListUIState.LoadingError -> {
 
                     val error = uiStateMedicinesP.sError ?: stringResource(
                         R.string.unknown_error
@@ -218,6 +221,20 @@ fun MedicineListStateComposable(
                         onClickRetryP = loadAllMedicinesP
                     )
 
+                }
+
+                // Erreur lors de la suppression
+                is MedicineListUIState.DeleteError -> {
+
+                    val error = uiStateMedicinesP.sError ?: stringResource(
+                        R.string.unknown_error
+                    )
+
+                    ErrorComposable(
+                        modifier= Modifier.padding(innerPadding),
+                        sErrorMessage = error,
+                        onClickRetryP = null
+                    )
 
                 }
             }
@@ -243,6 +260,7 @@ fun MedicineListStateComposable(
 fun MedicineListComposable(
     modifier: Modifier,
     listMedicines: List<Medicine>,
+    onItemSwiped: (id : String) -> Unit,
     launcher: ActivityResultLauncher<Intent>?) {
 
     val context = LocalContext.current
@@ -251,16 +269,34 @@ fun MedicineListComposable(
         modifier = modifier.fillMaxSize()
     ) {
         items(listMedicines) { medicine ->
-            MedicineItem(medicine = medicine, onClick = {
-                startDetailActivity(context, launcher, medicine.id)
-            })
+            MedicineItem(
+                medicineP = medicine,
+                onClick = {
+                    startDetailActivity(context, launcher, medicine.id)
+                },
+                onItemSwiped = onItemSwiped
+            )
         }
     }
 
 }
 
 @Composable
-fun MedicineItem(medicine: Medicine, onClick: () -> Unit) {
+@OptIn(ExperimentalMaterial3Api::class)
+fun MedicineItem(
+    medicineP: Medicine,
+    onClick: () -> Unit,
+    onItemSwiped: (id : String) -> Unit) {
+
+//    val dismissState = rememberDismissState {
+//        if (it == DismissValue.DismissedToEnd) {
+//            onItemSwiped(item) // Appeler la fonction de suppression après le swipe
+//            true
+//        } else {
+//            false
+//        }
+//    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -269,13 +305,16 @@ fun MedicineItem(medicine: Medicine, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Text(text = medicine.name, style = MaterialTheme.typography.bodyLarge)
-            Text(text = "${stringResource(R.string.stock)}: ${medicine.stock}", style = MaterialTheme.typography.bodyMedium)
+            Text(text = medicineP.name, style = MaterialTheme.typography.bodyLarge)
+            Text(text = "${stringResource(R.string.stock)}: ${medicineP.stock}", style = MaterialTheme.typography.bodyMedium)
         }
 
         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Arrow")
     }
+
 }
+
+
 
 // Lance l'activity en utilisant un launcher pour savoir quand l'activity se ferme
 private fun startDetailActivity(
@@ -320,7 +359,8 @@ fun MedicineListComposableSuccessPreview() {
             filterByNameP = {},
             loadAllMedicinesP = {},
             onClickBottomAisleP = {},
-            launcher = null
+            launcher = null,
+            onItemSwiped = {}
         )
     }
 }
@@ -338,7 +378,8 @@ fun MedicineListComposableLoadingPreview() {
             filterByNameP = {},
             loadAllMedicinesP = {},
             onClickBottomAisleP = {},
-            launcher = null
+            launcher = null,
+            onItemSwiped = {}
         )
     }
 }
@@ -350,14 +391,35 @@ fun MedicineListComposableErrorPreview() {
 
     RebonnteTheme {
         MedicineListStateComposable(
-            uiStateMedicinesP = MedicineListUIState.Error("Erreur de test de la preview"),
+            uiStateMedicinesP = MedicineListUIState.LoadingError("Erreur de test de la preview"),
             sortByNoneP = {},
             sortByNameP = {},
             sortByStockP = {},
             filterByNameP = {},
             loadAllMedicinesP = {},
             onClickBottomAisleP = {},
-            launcher = null
+            launcher = null,
+            onItemSwiped = {}
+        )
+    }
+}
+
+
+@Preview("Medicine delete  error")
+@Composable
+fun MedicineListComposableDeleteErrorPreview() {
+
+    RebonnteTheme {
+        MedicineListStateComposable(
+            uiStateMedicinesP = MedicineListUIState.DeleteError("Erreur de test de la preview"),
+            sortByNoneP = {},
+            sortByNameP = {},
+            sortByStockP = {},
+            filterByNameP = {},
+            loadAllMedicinesP = {},
+            onClickBottomAisleP = {},
+            launcher = null,
+            onItemSwiped = {}
         )
     }
 }

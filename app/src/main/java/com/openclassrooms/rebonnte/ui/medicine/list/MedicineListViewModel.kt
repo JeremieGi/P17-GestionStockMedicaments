@@ -37,7 +37,7 @@ class MedicineListViewModel @Inject constructor(
                     // Echec
                     is ResultCustom.Failure ->
                         // Propagation du message d'erreur
-                        _uiStateMedicines.value = MedicineListUIState.Error(resultFlow.errorMessage)
+                        _uiStateMedicines.value = MedicineListUIState.LoadingError(resultFlow.errorMessage)
 
                     // En chargement
                     is ResultCustom.Loading -> {
@@ -85,6 +85,42 @@ class MedicineListViewModel @Inject constructor(
     fun sortByStock() {
         _enumItemSort = StockRepository.EnumSortedItem.STOCK
         loadAllMedicines()
+    }
+
+    fun deleteMedicineById(sID: String) {
+        viewModelScope.launch {
+            stockRepository.deleteMedecineById(sID).collect{ resultFlow ->
+
+                // En fonction du résultat
+                when (resultFlow) {
+
+                    // Transmission au UIState dédié
+
+                    // Echec du au réseau
+                    is ResultCustom.Failure -> {
+
+                        // Récupération du message d'erreur
+                        val sError = resultFlow.errorMessage?:""
+                        _uiStateMedicines.value = MedicineListUIState.DeleteError(sError)
+
+                    }
+
+                    // En chargement
+                    is ResultCustom.Loading -> {
+                        // Propagation du chargement
+                        _uiStateMedicines.value = MedicineListUIState.IsLoading
+                    }
+
+                    // Succès
+                    is ResultCustom.Success -> {
+                        // Rechargement de la liste de médicaments
+                        loadAllMedicines()
+                    }
+
+                }
+
+            }
+        }
     }
 
 }

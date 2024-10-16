@@ -10,6 +10,9 @@ sealed class MedicineListUIState {
         val listMedicines : List<Medicine>
     ) : MedicineListUIState()
 
-    data class Error(val sError: String?) : MedicineListUIState()
+    data class LoadingError(val sError: String?) : MedicineListUIState()
+
+    // TODO Denis : Correct de gérer le retour d'erreur de la suppression comme çà ?
+    data class DeleteError(val sError: String?) : MedicineListUIState()
 
 }

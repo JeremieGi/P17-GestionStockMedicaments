@@ -142,7 +142,7 @@ class StockFakeAPI : StockAPI {
         author : User
     ): Flow<ResultCustom<String>> {
 
-
+        // TODO Denis : Ajout de l'historique => peut-être mieux de remonter cette logique dans le repository ?
         val newHistory = History(
             author = author,
             details = "Creation"
