@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -21,10 +22,11 @@ class MedicineDetailViewModel @Inject constructor (
     private val userRepository: UserRepository
 ): ViewModel() {
 
-    private var _uiStateMedicineDetail = MutableStateFlow<MedicineDetailUIState>(MedicineDetailUIState.IsLoading)
+    private var _uiStateMedicineDetail = MutableStateFlow( MedicineDetailUIState() )
     val uiStateMedicineDetail : StateFlow<MedicineDetailUIState> get() = _uiStateMedicineDetail
 
     private var _isAddMode = false
+
 
     fun loadMedicineByID(idMedicineP: String) {
 
@@ -38,18 +40,39 @@ class MedicineDetailViewModel @Inject constructor (
                     // Echec
                     is ResultCustom.Failure ->
                         // Propagation du message d'erreur
-                        _uiStateMedicineDetail.value = MedicineDetailUIState.Error(resultFlow.errorMessage)
+                        //_uiStateMedicineDetail.value = MedicineDetailUIState.Error(resultFlow.errorMessage)
+
+                        _uiStateMedicineDetail.update{ currentState ->
+                            currentState.copy(
+                                currentStateMedicine = CurrentMedicineUIState.LoadError(resultFlow.errorMessage?:""),
+                                formError = null
+                            )
+                        }
 
                     // En chargement
                     is ResultCustom.Loading -> {
                         // Propagation du chargement
-                        _uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
+                        //_uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
+
+                        _uiStateMedicineDetail.update{ currentState ->
+                            currentState.copy(
+                                currentStateMedicine = CurrentMedicineUIState.IsLoading,
+                                formError = null
+                            )
+                        }
                     }
 
                     // Succès
                     is ResultCustom.Success -> {
                         val medicine = resultFlow.value
-                        _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(medicine)
+//                        _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(medicine)
+
+                        _uiStateMedicineDetail.update{ currentState ->
+                            currentState.copy(
+                                currentStateMedicine = CurrentMedicineUIState.LoadSuccess(medicine)
+                            )
+                        }
+
 
                     }
 
@@ -67,14 +90,23 @@ class MedicineDetailViewModel @Inject constructor (
         val currentState = _uiStateMedicineDetail.value
 
         // Cette condition devrait toujours être vraie lors de l'appel à cette fonction
-        if (currentState is MedicineDetailUIState.LoadSuccess) {
+        if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
-            val nNewStock = currentState.medicineDetail.stock + 1
+            val nNewStock = currentState.currentStateMedicine.medicineValue.stock + 1
 
-            val updatedMedicine = currentState.medicineDetail.copy(stock = nNewStock)
+            val updatedMedicine = currentState.currentStateMedicine.medicineValue.copy(stock = nNewStock)
 
             // Met à jour l'état avec le nouvel objet Medicine modifié
-            _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
+            //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
+
+            _uiStateMedicineDetail.update{ currentStateP ->
+                currentStateP.copy(
+                    currentStateMedicine = CurrentMedicineUIState.LoadSuccess(updatedMedicine)
+                )
+            }
+
+            checkFormError()
+
         }
 
     }
@@ -84,17 +116,25 @@ class MedicineDetailViewModel @Inject constructor (
         val currentState = _uiStateMedicineDetail.value
 
         // Cette condition devrait toujours être vraie lors de l'appel à cette fonction
-        if (currentState is MedicineDetailUIState.LoadSuccess) {
+        if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
-            var nNewStock = currentState.medicineDetail.stock - 1
+            var nNewStock = currentState.currentStateMedicine.medicineValue.stock - 1
             if (nNewStock < 0) {
                 nNewStock = 0
             }
 
-            val updatedMedicine = currentState.medicineDetail.copy(stock = nNewStock)
+            val updatedMedicine = currentState.currentStateMedicine.medicineValue.copy(stock = nNewStock)
 
             // Met à jour l'état avec le nouvel objet Medicine modifié
-            _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
+            //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
+
+            _uiStateMedicineDetail.update{ currentStateP ->
+                currentStateP.copy(
+                    currentStateMedicine = CurrentMedicineUIState.LoadSuccess(updatedMedicine)
+                )
+            }
+
+            checkFormError()
         }
 
     }
@@ -102,53 +142,81 @@ class MedicineDetailViewModel @Inject constructor (
     fun updateOrInsertMedicine() {
 
         val currentState = _uiStateMedicineDetail.value
-        if (currentState is MedicineDetailUIState.LoadSuccess) {
+        if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
-            val updatedMedicine = currentState.medicineDetail
+            // Pas d'erreur de saisie
+            val formError = getFormError()
+            if (formError==null){
 
-            viewModelScope.launch {
+                // On fait l'update
+                val updatedMedicine = currentState.currentStateMedicine.medicineValue
 
-                val flowResult : Flow<ResultCustom<String>>
-                if (_isAddMode){
-                    flowResult = stockRepository.addMedicine(
-                        medicine = updatedMedicine,
-                        author = userRepository.getCurrentUser()
-                    )
-                }
-                else{
-                    flowResult = stockRepository.updateMedicine(
-                        updatedMedicine = updatedMedicine,
-                        author = userRepository.getCurrentUser()
-                    )
-                }
+                viewModelScope.launch {
 
-                flowResult.collect { resultFlow ->
+                    val flowResult : Flow<ResultCustom<String>>
+                    if (_isAddMode){
+                        flowResult = stockRepository.addMedicine(
+                            medicine = updatedMedicine,
+                            author = userRepository.getCurrentUser()
+                        )
+                    }
+                    else{
+                        flowResult = stockRepository.updateMedicine(
+                            updatedMedicine = updatedMedicine,
+                            author = userRepository.getCurrentUser()
+                        )
+                    }
 
-                    // En fonction du résultat
-                    when (resultFlow) {
+                    flowResult.collect { resultFlow ->
 
-                        // Transmission au UIState dédié
+                        // En fonction du résultat
+                        when (resultFlow) {
 
-                        // Echec du au réseau
-                        is ResultCustom.Failure -> {
+                            // Transmission au UIState dédié
 
-                            // Récupération du message d'erreur
-                            val sError = resultFlow.errorMessage
+                            // Echec du au réseau
+                            is ResultCustom.Failure -> {
 
-                            // Affiche la fenêtre d'erreur
-                            _uiStateMedicineDetail.value = MedicineDetailUIState.Error(sError)
+                                // Récupération du message d'erreur
+                                val sError = resultFlow.errorMessage?:""
 
-                        }
+                                // Affiche la fenêtre d'erreur
+                                //_uiStateMedicineDetail.value = MedicineDetailUIState.Error(sError)
 
-                        // En chargement
-                        is ResultCustom.Loading -> {
-                            // Propagation du chargement
-                            _uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
-                        }
+                                _uiStateMedicineDetail.update{ currentState ->
+                                    currentState.copy(
+                                        currentStateMedicine = CurrentMedicineUIState.ValidateError(sError),
+                                        formError = null,
+                                    )
+                                }
 
-                        // Succès
-                        is ResultCustom.Success -> {
-                            _uiStateMedicineDetail.value = MedicineDetailUIState.ValidateSuccess
+                            }
+
+                            // En chargement
+                            is ResultCustom.Loading -> {
+                                // Propagation du chargement
+                                //_uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
+
+                                _uiStateMedicineDetail.update{ currentState ->
+                                    currentState.copy(
+                                        currentStateMedicine = CurrentMedicineUIState.IsLoading,
+                                        formError = null,
+                                    )
+                                }
+                            }
+
+                            // Succès
+                            is ResultCustom.Success -> {
+                                //_uiStateMedicineDetail.value = MedicineDetailUIState.ValidateSuccess
+
+                                _uiStateMedicineDetail.update{ currentState ->
+                                    currentState.copy(
+                                        currentStateMedicine = CurrentMedicineUIState.ValidateSuccess,
+                                        formError = null,
+                                    )
+                                }
+                            }
+
                         }
 
                     }
@@ -156,6 +224,16 @@ class MedicineDetailViewModel @Inject constructor (
                 }
 
             }
+            else{
+                // Affichage des erreurs
+                _uiStateMedicineDetail.update{ currentStateP ->
+                    currentStateP.copy(
+                        formError = null
+                    )
+                }
+            }
+
+
 
 
         }
@@ -176,7 +254,15 @@ class MedicineDetailViewModel @Inject constructor (
             histories = mutableListOf()
         )
 
-        _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(newMedicine)
+        //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(newMedicine,null)
+
+        _uiStateMedicineDetail.update{ currentState ->
+            currentState.copy(
+                currentStateMedicine = CurrentMedicineUIState.LoadSuccess(newMedicine),
+                formError = null,
+            )
+        }
+
 
     }
 
@@ -187,11 +273,19 @@ class MedicineDetailViewModel @Inject constructor (
     fun onInputNameChanged(sInputNameP: String) {
 
         val currentState = _uiStateMedicineDetail.value
-        if (currentState is MedicineDetailUIState.LoadSuccess) {
+        if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
-            val updatedMedicine = currentState.medicineDetail.copy(name = sInputNameP)
-            _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
+            val updatedMedicine = currentState.currentStateMedicine.medicineValue.copy(name = sInputNameP)
+            //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
 
+            _uiStateMedicineDetail.update{ currentStateP ->
+                currentStateP.copy(
+                    currentStateMedicine = CurrentMedicineUIState.LoadSuccess(updatedMedicine),
+                    formError = null,
+                )
+            }
+
+            checkFormError()
 
         }
 
@@ -201,15 +295,78 @@ class MedicineDetailViewModel @Inject constructor (
     fun onInputAisleChanged(sInputAisleP: String) {
 
         val currentState = _uiStateMedicineDetail.value
-        if (currentState is MedicineDetailUIState.LoadSuccess) {
+        if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
-            val updatedAisle = currentState.medicineDetail.oAisle.copy(
+            val updatedAisle =  currentState.currentStateMedicine.medicineValue.oAisle.copy(
                 name = sInputAisleP
             )
-            val updatedMedicine = currentState.medicineDetail.copy(oAisle = updatedAisle)
-            _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
+            val updatedMedicine =  currentState.currentStateMedicine.medicineValue.copy(oAisle = updatedAisle)
+
+            //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
+
+            _uiStateMedicineDetail.update{ currentStateP ->
+                currentStateP.copy(
+                    currentStateMedicine = CurrentMedicineUIState.LoadSuccess(updatedMedicine),
+                    formError = null,
+                )
+            }
+
+            checkFormError()
 
         }
+
+    }
+
+
+    // Vérifie les erreurs du formulaire en cours de saisie
+    private fun checkFormError() {
+
+        // Mise à jour des erreurs
+        val formError = getFormError()
+
+        _uiStateMedicineDetail.update{ currentState ->
+            currentState.copy(
+                formError = formError,
+            )
+        }
+
+
+    }
+
+    private fun getFormError (): FormErrorAddMedicine? {
+
+        // TODO Denis : Je recopie souvent ces 2 lignes
+        val currentState = _uiStateMedicineDetail.value
+        if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
+
+            if (currentState.currentStateMedicine.medicineValue.name.isEmpty()){
+                return FormErrorAddMedicine.NameError
+            }
+
+            if (currentState.currentStateMedicine.medicineValue.oAisle.name.isEmpty()){
+                return FormErrorAddMedicine.AisleError("Please select an aisle")
+            }
+            else{
+               // TODO JG : Ajouter l'existance de l'allée
+            }
+
+            // En création
+            if (_isAddMode){
+                // On ne peut pas mettre un stock à zéro
+                if (currentState.currentStateMedicine.medicineValue.stock == 0){
+                    return FormErrorAddMedicine.StockError
+                }
+            }
+
+
+
+            return null
+
+        }
+
+
+
+        return null
 
     }
 

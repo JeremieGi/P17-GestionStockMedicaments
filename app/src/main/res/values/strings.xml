@@ -21,4 +21,6 @@
     <string name="search">Search</string>
     <string name="add">Add</string>
     <string name="please_select_aisle">Please select an aisle</string>
+    <string name="mandatoryname">Mandatory name</string>
+    <string name="mandatorystock">Stock must be positive when you create a new medicine</string>
 </resources>

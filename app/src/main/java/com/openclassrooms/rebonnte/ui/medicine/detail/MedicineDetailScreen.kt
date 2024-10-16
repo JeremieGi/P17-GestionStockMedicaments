@@ -102,19 +102,20 @@ fun MedicineDetailStateComposable(
 
     Scaffold { contentPadding ->
 
-        when (uiStateMedicineDetailP) {
+        when (uiStateMedicineDetailP.currentStateMedicine) {
 
             // Chargement
-            is MedicineDetailUIState.IsLoading -> {
+            is CurrentMedicineUIState.IsLoading -> {
                 LoadingComposable(Modifier.padding(contentPadding))
             }
 
             // Récupération des données avec succès
-            is MedicineDetailUIState.LoadSuccess -> {
+            is CurrentMedicineUIState.LoadSuccess -> {
 
                 MedicineDetailSuccessComposable(
                     modifier=Modifier.padding(contentPadding),
-                    medicineP = uiStateMedicineDetailP.medicineDetail,
+                    medicineP = uiStateMedicineDetailP.currentStateMedicine.medicineValue,
+                    formErrorP = uiStateMedicineDetailP.formError,
                     decrementStockP = decrementStockP,
                     incrementStockP = incrementStockP,
                     updateOrInsertMedicineP = updateOrInsertMedicineP,
@@ -125,34 +126,41 @@ fun MedicineDetailStateComposable(
 
             }
 
-            // Exception
-            is MedicineDetailUIState.Error -> {
 
-                val error = uiStateMedicineDetailP.sError ?: stringResource(
-                    R.string.unknown_error
-                )
+            is CurrentMedicineUIState.ValidateSuccess -> {
+                onMedicineUpdated() // Retour à la liste avec notification de la modification
+            }
+
+            else -> {
+                // Cas d'erreur
 
                 val onRetry : () -> Unit
-                //if (bAddModeP){
-                    //onRetry = // TODO Denis : Je ne sais pas quoi mettre ici
-                //}
-                //else{
-                    onRetry = loadMedicineByIDP
-                //}
+                val sError : String
+
+                when (uiStateMedicineDetailP.currentStateMedicine) {
+                    is CurrentMedicineUIState.LoadError -> {
+                        sError = uiStateMedicineDetailP.currentStateMedicine.sError
+                        onRetry = loadMedicineByIDP
+                    }
+                    is CurrentMedicineUIState.ValidateError -> {
+                        sError = uiStateMedicineDetailP.currentStateMedicine.sError
+                        onRetry = updateOrInsertMedicineP
+                    }
+                    else -> {
+                        sError = "Unkown State"
+                        onRetry = {}
+                    }
+                }
+
 
                 ErrorComposable(
                     modifier=Modifier
                         .padding(contentPadding)
                     ,
-                    sErrorMessage = error,
+                    sErrorMessage = sError,
                     onClickRetryP = onRetry
                 )
 
-
-            }
-
-            is MedicineDetailUIState.ValidateSuccess -> {
-                onMedicineUpdated() // Retour à la liste avec notification de la modification
             }
         }
 
@@ -166,6 +174,7 @@ fun MedicineDetailStateComposable(
 fun MedicineDetailSuccessComposable(
     modifier: Modifier,
     medicineP: Medicine,
+    formErrorP : FormErrorAddMedicine?,
     decrementStockP : () -> Unit,
     incrementStockP : () -> Unit,
     updateOrInsertMedicineP : () -> Unit,
@@ -181,6 +190,7 @@ fun MedicineDetailSuccessComposable(
     ) {
         TextField(
             value = medicineP.name,
+            isError = (formErrorP is FormErrorAddMedicine.NameError),
             onValueChange = {
                 onInputNameChangedP(it)
             },
@@ -188,9 +198,17 @@ fun MedicineDetailSuccessComposable(
             enabled = bAddModeP,
             modifier = Modifier.fillMaxWidth()
         )
+        if (formErrorP is FormErrorAddMedicine.NameError) {
+            Text(
+                text = stringResource(id = R.string.mandatoryname),
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
+
         TextField(
             value = medicineP.oAisle.name,
+            isError = (formErrorP is FormErrorAddMedicine.AisleError),
             onValueChange = {
                 onInputAisleChangedP(it)
             },
@@ -198,7 +216,18 @@ fun MedicineDetailSuccessComposable(
             enabled = bAddModeP,
             modifier = Modifier.fillMaxWidth()
         )
+        if (formErrorP is FormErrorAddMedicine.AisleError) {
+            val sErrorAisle = formErrorP.error?: stringResource(
+                R.string.unknown_error
+            )
+            Text(
+                text = sErrorAisle,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
+
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -217,7 +246,8 @@ fun MedicineDetailSuccessComposable(
             }
             TextField(
                 value = medicineP.stock.toString(),
-                onValueChange = {},
+                isError = (formErrorP is FormErrorAddMedicine.StockError),
+                onValueChange = {}, // Paramètre obligatoire mais champ grisé => onValueChange jamais exécuté
                 label = { Text(stringResource(R.string.stock)) },
                 enabled = false,
                 modifier = Modifier.weight(1f)
@@ -232,6 +262,13 @@ fun MedicineDetailSuccessComposable(
                 )
             }
         }
+        if (formErrorP is FormErrorAddMedicine.StockError) {
+            Text(
+                text = stringResource(id = R.string.mandatorystock),
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
 
         // T003a - Mise à jour de stock : Ne doit pas bloquer le thread principal
@@ -297,7 +334,10 @@ fun MedicineDetailStateComposableSuccessPreview() {
 
 
     val listFakeMedicines = StockFakeAPI.initFakeMedicines()
-    val uiStateSuccess = MedicineDetailUIState.LoadSuccess(listFakeMedicines[0])
+    val uiStateSuccess = MedicineDetailUIState(
+        currentStateMedicine = CurrentMedicineUIState.LoadSuccess(listFakeMedicines[0]),
+        formError = null
+    )
 
     RebonnteTheme {
 
@@ -324,7 +364,41 @@ fun MedicineDetailStateComposableAdd() {
 
 
     val listFakeMedicines = StockFakeAPI.initFakeMedicines()
-    val uiStateSuccess = MedicineDetailUIState.LoadSuccess(listFakeMedicines[0])
+    val uiStateSuccess = MedicineDetailUIState(
+        currentStateMedicine = CurrentMedicineUIState.LoadSuccess(listFakeMedicines[0]),
+        formError = null
+    )
+
+    RebonnteTheme {
+
+        MedicineDetailStateComposable(
+            uiStateMedicineDetailP = uiStateSuccess,
+            loadMedicineByIDP = {},
+            decrementStockP = {},
+            incrementStockP = {},
+            updateOrInsertMedicineP = {},
+            onMedicineUpdated = {},
+            bAddModeP = true,
+            onInputNameChangedP= {},
+            onInputAisleChangedP= {},
+        )
+
+    }
+
+
+}
+
+
+@Preview("Medicine Detail Success - Mode Add - with errorForm")
+@Composable
+fun MedicineDetailStateComposableAddWithErrorForm() {
+
+
+    val listFakeMedicines = StockFakeAPI.initFakeMedicines()
+    val uiStateSuccess = MedicineDetailUIState(
+        currentStateMedicine = CurrentMedicineUIState.LoadSuccess(listFakeMedicines[0]),
+        formError = FormErrorAddMedicine.NameError
+    )
 
     RebonnteTheme {
 
@@ -351,7 +425,10 @@ fun MedicineDetailStateComposableAdd() {
 @Composable
 fun MedicineDetailStateComposableLoadingPreview() {
 
-    val uiStateLoading = MedicineDetailUIState.IsLoading
+    val uiStateLoading = MedicineDetailUIState(
+        currentStateMedicine = CurrentMedicineUIState.IsLoading,
+        formError = null
+    )
 
     RebonnteTheme {
 
@@ -375,7 +452,10 @@ fun MedicineDetailStateComposableLoadingPreview() {
 @Composable
 fun MedicineDetailStateComposableErrorPreview() {
 
-    val uiStateError = MedicineDetailUIState.Error("Message de test pour la preview")
+    val uiStateError = MedicineDetailUIState(
+        currentStateMedicine = CurrentMedicineUIState.LoadError("Message de test pour la preview"),
+        formError = null
+    )
 
     RebonnteTheme {
 

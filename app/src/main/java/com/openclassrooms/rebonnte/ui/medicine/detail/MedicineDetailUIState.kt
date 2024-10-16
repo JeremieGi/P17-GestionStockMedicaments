@@ -2,16 +2,38 @@ package com.openclassrooms.rebonnte.ui.medicine.detail
 
 import com.openclassrooms.rebonnte.model.Medicine
 
+/**
+ * UI State principal
+ */
+data class MedicineDetailUIState (
+    // Valeur en mémoire du médicament affiché
+    val currentStateMedicine : CurrentMedicineUIState = CurrentMedicineUIState.IsLoading,
+    // Erreurs de formulaire
+    val formError: FormErrorAddMedicine? = null      // TODO Denis => Voir si cette manière de faire est correcte
+)
 
-sealed class MedicineDetailUIState {
 
-    data object IsLoading : MedicineDetailUIState()
+sealed class CurrentMedicineUIState {
+
+    data object IsLoading : CurrentMedicineUIState()
 
     data class LoadSuccess(
-        val medicineDetail : Medicine
-    ) : MedicineDetailUIState()
+        val medicineValue : Medicine
+    ) : CurrentMedicineUIState()
 
-    data class Error(val sError: String?) : MedicineDetailUIState()
+    data class LoadError(val sError: String) : CurrentMedicineUIState()
+    data class ValidateError(val sError: String) : CurrentMedicineUIState()
 
-    data object ValidateSuccess : MedicineDetailUIState() // upload or insert
+    data object ValidateSuccess : CurrentMedicineUIState() // upload or insert
+}
+
+/**
+ * Différents types d'erreur sur le formulaire d'ajout
+ */
+sealed class FormErrorAddMedicine {
+
+    data object NameError : FormErrorAddMedicine()
+    data class AisleError(val error: String?) : FormErrorAddMedicine()
+    data object StockError : FormErrorAddMedicine()
+
 }
