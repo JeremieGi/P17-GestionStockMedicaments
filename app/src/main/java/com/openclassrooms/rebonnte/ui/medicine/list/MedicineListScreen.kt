@@ -22,9 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberSwipeToDismissBoxState
@@ -49,8 +49,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -373,14 +371,56 @@ private fun SwipeBox(
     }
 
     // État pour gérer l'affichage de la boîte de dialogue de confirmation
-    //var showDialog by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+
 
     // Gestion du swipe de suppression
     if (swipeState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-        // Le swipe est terminé (appel une seule fois)
-        //showDialog = true // Affichage de la boite de dialogue de confirmation
-        onDelete() // Appeler la fonction de suppression
+
+        // Le swipe est terminé
+
+        // Affichage de la boite de dialogue de confirmation
+        showDialog = true
+
+        // Je remets la ligne en non-swipée car sinon ce bloc de code s'exécute à chaque redessin et l'AlertDialog réapparait
+        LaunchedEffect(swipeState) {
+            // Retour immédiat à la position initiale
+            swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+        }
+
+
     }
+
+    // Si l'utilisateur a confirmé la suppression
+    if (showDialog) {
+
+
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+            },
+            title = { Text(stringResource(R.string.confirm_deletion)) },
+            text = { Text(stringResource(R.string.delete_confirm_question)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDelete() // Appeler la fonction de suppression
+                    showDialog = false // Fermer la boîte de dialogue
+                }) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false // Fermer la boîte de dialogue
+                }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+
+    }
+
+
 
     // Désactivation du swipe StartToEnd
     // Si l'utilisateur swipe vers la droite, le retour à la position initiale se fait instantanément
@@ -390,6 +430,8 @@ private fun SwipeBox(
             swipeState.snapTo(SwipeToDismissBoxValue.Settled)
         }
     }
+
+
 }
 
 
