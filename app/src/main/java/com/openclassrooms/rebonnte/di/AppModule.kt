@@ -4,6 +4,7 @@ import android.content.Context
 import com.openclassrooms.rebonnte.repository.InjectedContext
 import com.openclassrooms.rebonnte.repository.stock.StockAPI
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
+import com.openclassrooms.rebonnte.repository.stock.StockFirebaseAPI
 import com.openclassrooms.rebonnte.repository.user.UserAPI
 import com.openclassrooms.rebonnte.repository.user.UserFirebaseAPI
 import dagger.Module
@@ -20,7 +21,7 @@ class AppModule {
     @Provides
     @Singleton
     fun provideStockAPI(): StockAPI {
-        //return StockFirestoreAPI()
+        //return StockFirebaseAPI()
         return StockFakeAPI()
     }
 

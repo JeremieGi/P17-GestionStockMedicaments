@@ -143,16 +143,9 @@ class StockFakeAPI : StockAPI {
     }
 
     override fun addMedicine(
-        medicine: Medicine,
-        author : User
+        medicine: Medicine
     ): Flow<ResultCustom<String>> {
 
-        // TODO Denis : Ajout de l'historique => peut-être mieux de remonter cette logique dans le repository ?
-        val newHistory = History(
-            author = author,
-            details = "Creation"
-        )
-        medicine.addHistory(newHistory)
 
         val isAdded = _listMedicines.add(medicine)
 
@@ -177,8 +170,7 @@ class StockFakeAPI : StockAPI {
     }
 
     override fun updateMedicine(
-        updatedMedicine: Medicine,
-        author : User
+        updatedMedicine: Medicine
     ): Flow<ResultCustom<String>> {
 
         val index = _listMedicines.indexOfFirst { it.id == updatedMedicine.id }
@@ -190,15 +182,7 @@ class StockFakeAPI : StockAPI {
 
             if (index >= 0){
 
-                val sDetail = _listMedicines[index].sDiff(updatedMedicine)
-
                 _listMedicines[index] = updatedMedicine
-
-                val newHistory = History(
-                    author = author,
-                    details = sDetail
-                )
-                _listMedicines[index].addHistory(newHistory)
 
                 trySend(ResultCustom.Success(""))
             }

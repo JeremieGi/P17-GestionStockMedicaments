@@ -8,7 +8,6 @@ data class Medicine(
     val histories: MutableList<History>
 ) {
 
-    // Utile uniquement en utilisant les FakeAPI
     fun addHistory(newHistory: History) {
         this.histories.add(0, newHistory)
     }

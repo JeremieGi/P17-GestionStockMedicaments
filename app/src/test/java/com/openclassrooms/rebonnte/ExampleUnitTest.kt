@@ -14,4 +14,5 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+    // TODO JG : T097 - Tests unitaires des viewModels + Repo
 }

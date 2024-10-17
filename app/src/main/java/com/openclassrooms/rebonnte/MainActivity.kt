@@ -147,23 +147,7 @@ fun NavGraph(
 
 //        // Fenêtre d'un médicament (Pas besoin de route pour cet écran => une activité dédiée sera ouverte)
 //        composable(Screen.MedicineDetail.route) { backStackEntry -> // BackStackEntry ici permet de récupérer les paramètres
-//
-//            val medecineId = backStackEntry.arguments?.getString(Screen.CTE_PARAM_ID_MEDECINE)
-//                ?: error("Missing required argument medicineId") // pour lever une exception de type IllegalArgumentException avec le message spécifié.
-//
-//            MedicineDetailScreen(
-//                idMedicineP = medecineId,
-//                onBackClick = { navController.navigateUp() }
-//            )
-//
-//        }
 
-        // Fenêtre d'un médicament (Pas besoin de route pour cet écran => une activité dédiée sera ouverte)
-//        composable(route = Screen.MedicineAdd.route) {
-////            MedicineAddScreen(
-////                onBackClick = { navController.navigateUp() }
-////            )
-//        }
 
         composable(route = Screen.AisleList.route) {
             AisleListScreen(
@@ -202,11 +186,6 @@ fun NavGraph(
 //    }
 //}
 
-//@Composable
-//fun currentRoute(navController: NavController): String? {
-//    val navBackStackEntry by navController.currentBackStackEntryAsState()
-//    return navBackStackEntry?.destination?.route
-//}
 
 @Composable
 fun EmbeddedSearchBar(

@@ -3,6 +3,7 @@ package com.openclassrooms.rebonnte.repository.stock
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.repository.InjectedContext
 import com.openclassrooms.rebonnte.model.Aisle
+import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.model.User
 import com.openclassrooms.rebonnte.repository.ResultCustom
@@ -134,8 +135,15 @@ class StockRepository @Inject constructor(
         else{
             emit(ResultCustom.Loading)
 
+            // Ajout de l'historique dans le repository
+            val newHistory = History(
+                author = author,
+                details = "Creation"
+            )
+            medicine.addHistory(newHistory)
+
             // Emettre son propre Flow (avec les éventuelles erreurs ou succès)
-            stockApi.addMedicine(medicine,author).collect { result ->
+            stockApi.addMedicine(medicine).collect { result ->
                 emit(result)
             }
         }
@@ -143,6 +151,7 @@ class StockRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)  // Exécuter sur un thread d'entrée/sortie (IO)
 
     fun updateMedicine(
+        oldMedicine : Medicine,
         updatedMedicine: Medicine,
         author : User
     ) : Flow<ResultCustom<String>> = flow {
@@ -160,7 +169,15 @@ class StockRepository @Inject constructor(
         else{
             emit(ResultCustom.Loading)
 
-            stockApi.updateMedicine(updatedMedicine,author).collect { result ->
+            val sDetail = oldMedicine.sDiff(updatedMedicine)
+
+            val newHistory = History(
+                author = author,
+                details = sDetail
+            )
+            updatedMedicine.addHistory(newHistory)
+
+            stockApi.updateMedicine(updatedMedicine).collect { result ->
                 emit(result)
             }
         }

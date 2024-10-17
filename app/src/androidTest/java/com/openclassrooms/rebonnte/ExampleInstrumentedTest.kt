@@ -21,4 +21,5 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.openclassrooms.rebonnte", appContext.packageName)
     }
+    // TODO JG : T098 Tests instrumentés Ajout / modif / suppression / navigation via bottom bar / recherche / tri
 }

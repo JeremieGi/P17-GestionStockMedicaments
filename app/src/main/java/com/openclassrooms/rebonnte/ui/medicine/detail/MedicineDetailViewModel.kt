@@ -27,6 +27,8 @@ class MedicineDetailViewModel @Inject constructor (
 
     private var _isAddMode = false
 
+    private lateinit var _oldMedicine : Medicine
+
 
     fun loadMedicineByID(idMedicineP: String) {
 
@@ -72,6 +74,8 @@ class MedicineDetailViewModel @Inject constructor (
                                 currentStateMedicine = CurrentMedicineUIState.LoadSuccess(medicine)
                             )
                         }
+
+                        _oldMedicine = medicine // Conservation de la valeur initiale pour vérifier les modifications
 
 
                     }
@@ -150,10 +154,10 @@ class MedicineDetailViewModel @Inject constructor (
             if (formError==null){
 
                 // Current user
-                val currentUSer = userRepository.getCurrentUser()
+                val currentUser = userRepository.getCurrentUser()
 
                 // Utilisateur non identifié
-                if (currentUSer==null){
+                if (currentUser==null){
 
                     // Ce cas ne devrait jamais se produire // TODO Denis => existence d'assert ?
                     _uiStateMedicineDetail.update{ currentStateParam ->
@@ -175,13 +179,14 @@ class MedicineDetailViewModel @Inject constructor (
                         if (_isAddMode){
                             flowResult = stockRepository.addMedicine(
                                 medicine = updatedMedicine,
-                                author = currentUSer
+                                author = currentUser
                             )
                         }
                         else{
                             flowResult = stockRepository.updateMedicine(
+                                oldMedicine = _oldMedicine,
                                 updatedMedicine = updatedMedicine,
-                                author = currentUSer
+                                author = currentUser
                             )
                         }
 

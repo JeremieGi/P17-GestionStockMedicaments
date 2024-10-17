@@ -190,6 +190,8 @@ fun MedicineDetailSuccessComposable(
     Column(
         modifier = modifier
             .padding(16.dp)
+            //.verticalScroll(rememberScrollState()) // TODO Denis : Erreur ici pour faire un scroll car la lazyColumn plus bas est déjà scrollable
+            // permet de rendre la colonne défilable verticalement si le contenu dépasse la taille de l'écran.
     ) {
         TextField(
             value = medicineP.name,
