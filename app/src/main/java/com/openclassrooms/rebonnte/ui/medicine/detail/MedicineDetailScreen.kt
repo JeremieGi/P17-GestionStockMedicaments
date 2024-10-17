@@ -316,7 +316,7 @@ fun HistoryItem(history: History) {
             .padding(vertical = 4.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        // TODO JG : Ne pas oublier d'utiliser les ressources chaines ici
+        // TODO JG : Ne pas oublier d'utiliser les ressources chaines ici ou voir quel design faire
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "User: ${history.author.sEmail}")
             Text(text = "Date: ${history.date}")

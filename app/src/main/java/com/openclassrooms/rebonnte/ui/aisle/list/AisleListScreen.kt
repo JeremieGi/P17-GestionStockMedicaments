@@ -31,6 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
@@ -45,6 +47,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 fun AisleListScreen(
     viewModel: AisleListViewModel = hiltViewModel(),
     onClickMedicineOnBottomBarP : () -> Unit,
+    onBackClickP: () -> Unit
 ) {
 
     val uiStateList by viewModel.uiStateListAile.collectAsState()
@@ -57,6 +60,8 @@ fun AisleListScreen(
         uiStateListP = uiStateList,
         loadAllAilesP = viewModel::loadAllAisle,
         onClickMedicineOnBottomBarP = onClickMedicineOnBottomBarP,
+        onClickLogoutOnBottomBarP = viewModel::logout,
+        onBackClickP = onBackClickP
     )
 
 
@@ -69,6 +74,8 @@ fun AisleListStateComposable(
     uiStateListP: AisleListUIState,
     loadAllAilesP : () -> Unit,
     onClickMedicineOnBottomBarP : () -> Unit,
+    onClickLogoutOnBottomBarP : (Context) -> Task<Void>,
+    onBackClickP: () -> Unit
 ) {
 
     Scaffold(
@@ -83,7 +90,10 @@ fun AisleListStateComposable(
             BottomBarComposable(
                 sActiveScreenP = Screen.CTE_AISLE_LIST_SCREEN,
                 onClickMedicinesP = onClickMedicineOnBottomBarP,
-                onClickAislesP = { /* Bouton non clickable */ })
+                onClickAislesP = { /* Bouton non clickable */ },
+                onClickLogoutP = onClickLogoutOnBottomBarP,
+                onBackClickP = onBackClickP
+            )
         },
         content = { innerPadding ->
 
@@ -196,12 +206,20 @@ fun AisleListComposableSuccessPreview() {
     val listFakeAisles = StockFakeAPI.initFakeAisles()
     val uiStateSuccess = AisleListUIState.Success(listFakeAisles)
 
+    val mockContext : (Context) -> Task<Void> = { _ ->
+        // Simulate a successful sign-out task
+        Tasks.forResult(null)
+    }
+
+
     RebonnteTheme {
 
         AisleListStateComposable(
             uiStateListP = uiStateSuccess,
             loadAllAilesP = {},
-            onClickMedicineOnBottomBarP = {}
+            onClickMedicineOnBottomBarP = {},
+            onClickLogoutOnBottomBarP = mockContext,
+            onBackClickP = {},
 
         )
     }
@@ -211,11 +229,18 @@ fun AisleListComposableSuccessPreview() {
 @Composable
 fun AisleListComposableLoadingPreview() {
 
+    val mockContext : (Context) -> Task<Void> = { _ ->
+        // Simulate a successful sign-out task
+        Tasks.forResult(null)
+    }
+
     RebonnteTheme {
         AisleListStateComposable(
             uiStateListP = AisleListUIState.IsLoading,
             loadAllAilesP = {},
-            onClickMedicineOnBottomBarP = {}
+            onClickMedicineOnBottomBarP = {},
+            onClickLogoutOnBottomBarP = mockContext,
+            onBackClickP = {},
         )
     }
 }
@@ -225,11 +250,18 @@ fun AisleListComposableLoadingPreview() {
 @Composable
 fun AisleListComposableErrorPreview() {
 
+    val mockContext : (Context) -> Task<Void> = { _ ->
+        // Simulate a successful sign-out task
+        Tasks.forResult(null)
+    }
+
     RebonnteTheme {
         AisleListStateComposable(
             uiStateListP = AisleListUIState.Error("Erreur de test de la preview"),
             loadAllAilesP = {},
-            onClickMedicineOnBottomBarP = {}
+            onClickMedicineOnBottomBarP = {},
+            onClickLogoutOnBottomBarP = mockContext,
+            onBackClickP = {},
         )
     }
 }

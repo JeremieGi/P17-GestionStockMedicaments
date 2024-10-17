@@ -27,4 +27,9 @@
     <string name="delete_confirm_question">Are you sure you want to delete ""%1$s""?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="connexion_ok">Login successful</string>
+    <string name="loginCancel">Login canceled by user</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirmation_message">Are you sure you want to logout?</string>
+    <string name="deconnexion_ok">Logout successfully</string>
 </resources>

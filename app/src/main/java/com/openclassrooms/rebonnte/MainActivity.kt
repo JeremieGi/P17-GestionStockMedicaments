@@ -115,11 +115,9 @@ fun NavGraph(
         composable(route = Screen.Launch.route) {
 
             LaunchScreen(
-//                onMedicineClickP = { medicine ->
-//                    navController.navigate(Screen.MedicineItem.createRoute(medicine.id))
-//                },
-                onClickBottomAisleP = {
-                    navController.navigate(Screen.AisleList.route)
+                navigatebyMedicineListScreenP = {
+                    // Il faut lancer l'écran principal via navigate pour pourvoir revenir à LaunchScreen lors du logout
+                    navController.navigate(Screen.MedicinesList.route)
                 }
             )
 
@@ -130,6 +128,9 @@ fun NavGraph(
         composable(Screen.MedicinesList.route) {
 
             MedicineListScreen(
+                onBackClickP = {
+                    navController.navigateUp()
+                },
                 onClickBottomAisleP = {
                     navController.navigate(Screen.AisleList.route){
                         // permet de ne pas ouvrir un nouvel écran (pour ne pas surcharger la pile)
@@ -166,6 +167,9 @@ fun NavGraph(
 
         composable(route = Screen.AisleList.route) {
             AisleListScreen(
+                onBackClickP = {
+                    navController.navigateUp()
+                },
                 onClickMedicineOnBottomBarP = {
                     navController.navigate(Screen.MedicinesList.route){
                         // permet de ne pas ouvrir un nouvel écran (pour ne pas surcharger la pile)

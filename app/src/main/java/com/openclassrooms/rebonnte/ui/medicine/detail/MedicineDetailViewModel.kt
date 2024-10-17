@@ -144,77 +144,97 @@ class MedicineDetailViewModel @Inject constructor (
         val currentState = _uiStateMedicineDetail.value
         if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
+
             // Pas d'erreur de saisie
             val formError = getFormError()
             if (formError==null){
 
-                // On fait l'update
-                val updatedMedicine = currentState.currentStateMedicine.medicineValue
+                // Current user
+                val currentUSer = userRepository.getCurrentUser()
 
-                viewModelScope.launch {
+                // Utilisateur non identifié
+                if (currentUSer==null){
 
-                    val flowResult : Flow<ResultCustom<String>>
-                    if (_isAddMode){
-                        flowResult = stockRepository.addMedicine(
-                            medicine = updatedMedicine,
-                            author = userRepository.getCurrentUser()
-                        )
-                    }
-                    else{
-                        flowResult = stockRepository.updateMedicine(
-                            updatedMedicine = updatedMedicine,
-                            author = userRepository.getCurrentUser()
+                    // Ce cas ne devrait jamais se produire // TODO Denis => existence d'assert ?
+                    _uiStateMedicineDetail.update{ currentStateParam ->
+                        currentStateParam.copy(
+                            currentStateMedicine = CurrentMedicineUIState.ValidateError("No user is logged in"), // TODO Denis : Autre méthode que d'inrecter le context ici ?
+                            formError = null,
                         )
                     }
 
-                    flowResult.collect { resultFlow ->
+                }
+                else{
 
-                        // En fonction du résultat
-                        when (resultFlow) {
+                    // On fait l'update
+                    val updatedMedicine = currentState.currentStateMedicine.medicineValue
 
-                            // Transmission au UIState dédié
+                    viewModelScope.launch {
 
-                            // Echec du au réseau
-                            is ResultCustom.Failure -> {
+                        val flowResult : Flow<ResultCustom<String>>
+                        if (_isAddMode){
+                            flowResult = stockRepository.addMedicine(
+                                medicine = updatedMedicine,
+                                author = currentUSer
+                            )
+                        }
+                        else{
+                            flowResult = stockRepository.updateMedicine(
+                                updatedMedicine = updatedMedicine,
+                                author = currentUSer
+                            )
+                        }
 
-                                // Récupération du message d'erreur
-                                val sError = resultFlow.errorMessage?:""
+                        flowResult.collect { resultFlow ->
 
-                                // Affiche la fenêtre d'erreur
-                                //_uiStateMedicineDetail.value = MedicineDetailUIState.Error(sError)
+                            // En fonction du résultat
+                            when (resultFlow) {
 
-                                _uiStateMedicineDetail.update{ currentState ->
-                                    currentState.copy(
-                                        currentStateMedicine = CurrentMedicineUIState.ValidateError(sError),
-                                        formError = null,
-                                    )
+                                // Transmission au UIState dédié
+
+                                // Echec du au réseau
+                                is ResultCustom.Failure -> {
+
+                                    // Récupération du message d'erreur
+                                    val sError = resultFlow.errorMessage?:""
+
+                                    // Affiche la fenêtre d'erreur
+                                    //_uiStateMedicineDetail.value = MedicineDetailUIState.Error(sError)
+
+                                    _uiStateMedicineDetail.update{ currentState ->
+                                        currentState.copy(
+                                            currentStateMedicine = CurrentMedicineUIState.ValidateError(sError),
+                                            formError = null,
+                                        )
+                                    }
+
                                 }
 
-                            }
+                                // En chargement
+                                is ResultCustom.Loading -> {
+                                    // Propagation du chargement
+                                    //_uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
 
-                            // En chargement
-                            is ResultCustom.Loading -> {
-                                // Propagation du chargement
-                                //_uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
-
-                                _uiStateMedicineDetail.update{ currentState ->
-                                    currentState.copy(
-                                        currentStateMedicine = CurrentMedicineUIState.IsLoading,
-                                        formError = null,
-                                    )
+                                    _uiStateMedicineDetail.update{ currentState ->
+                                        currentState.copy(
+                                            currentStateMedicine = CurrentMedicineUIState.IsLoading,
+                                            formError = null,
+                                        )
+                                    }
                                 }
-                            }
 
-                            // Succès
-                            is ResultCustom.Success -> {
-                                //_uiStateMedicineDetail.value = MedicineDetailUIState.ValidateSuccess
+                                // Succès
+                                is ResultCustom.Success -> {
+                                    //_uiStateMedicineDetail.value = MedicineDetailUIState.ValidateSuccess
 
-                                _uiStateMedicineDetail.update{ currentState ->
-                                    currentState.copy(
-                                        currentStateMedicine = CurrentMedicineUIState.ValidateSuccess,
-                                        formError = null,
-                                    )
+                                    _uiStateMedicineDetail.update{ currentState ->
+                                        currentState.copy(
+                                            currentStateMedicine = CurrentMedicineUIState.ValidateSuccess,
+                                            formError = null,
+                                        )
+                                    }
                                 }
+
                             }
 
                         }
@@ -222,6 +242,8 @@ class MedicineDetailViewModel @Inject constructor (
                     }
 
                 }
+
+
 
             }
             else{
@@ -333,6 +355,8 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
+    // T012 - Ajout de stock - Contrôle de saisie
+    // Renvoie les erreurs de formulaire (champs obligatoires)
     private fun getFormError (): FormErrorAddMedicine? {
 
         // TODO Denis : Je recopie souvent ces 2 lignes
@@ -347,7 +371,9 @@ class MedicineDetailViewModel @Inject constructor (
                 return FormErrorAddMedicine.AisleError("Please select an aisle")
             }
             else{
-               // TODO JG : Ajouter l'existance de l'allée
+                // TODO Denis JG : Ajouter l'existence de l'allée => Comment ?
+                // -  quel type de champs
+                // - chargé la liste des allées à l'init du viewModel
             }
 
             // En création

@@ -5,7 +5,7 @@ import com.openclassrooms.rebonnte.repository.InjectedContext
 import com.openclassrooms.rebonnte.repository.stock.StockAPI
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import com.openclassrooms.rebonnte.repository.user.UserAPI
-import com.openclassrooms.rebonnte.repository.user.UserFakeAPI
+import com.openclassrooms.rebonnte.repository.user.UserFirebaseAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,8 +27,8 @@ class AppModule {
     @Provides
     @Singleton
     fun provideUserAPI(): UserAPI {
-        //return UserFirestoreAPI()
-        return UserFakeAPI()
+        return UserFirebaseAPI()
+        //return UserFakeAPI()
     }
 
 

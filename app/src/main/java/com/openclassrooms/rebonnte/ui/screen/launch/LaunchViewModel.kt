@@ -15,13 +15,8 @@ class LaunchViewModel @Inject constructor (
         return userRepository.userLogged()
     }
 
-//    fun getCurrentUser() : User? {
-//        return userRepository.getCurrentUser()
-//    }
-//
-//    fun insertCurrentUser() {
-//        return userRepository.insertCurrentUser()
-//    }
-
+    fun getCurrentUser() : User? {
+        return userRepository.getCurrentUser()
+    }
 
 }

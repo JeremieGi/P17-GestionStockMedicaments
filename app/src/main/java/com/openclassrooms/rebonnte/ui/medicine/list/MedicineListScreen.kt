@@ -55,6 +55,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.rebonnte.EmbeddedSearchBar
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.Medicine
@@ -71,9 +73,9 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 @Composable
 fun MedicineListScreen(
     viewModel: MedicineListViewModel = hiltViewModel(),
-    onClickBottomAisleP: () -> Unit
+    onClickBottomAisleP: () -> Unit,
+    onBackClickP: () -> Unit
 ) {
-
 
     val uiStateMedicines by viewModel.uiStateMedicines.collectAsState()
 
@@ -98,7 +100,9 @@ fun MedicineListScreen(
         loadAllMedicinesP = viewModel::loadAllMedicines,
         onClickBottomAisleP = onClickBottomAisleP,
         launcher = launcher,
-        onItemSwiped = viewModel::deleteMedicineById
+        onItemSwiped = viewModel::deleteMedicineById,
+        onClickLogoutOnBottomBarP = viewModel::logout,
+        onBackClickP = onBackClickP,
     )
 
 
@@ -117,6 +121,8 @@ fun MedicineListStateComposable(
     onClickBottomAisleP: () -> Unit,
     launcher: ActivityResultLauncher<Intent>?,
     onItemSwiped: (id : String) -> Unit,
+    onClickLogoutOnBottomBarP : (Context) -> Task<Void>,
+    onBackClickP: () -> Unit
 ) {
 
 
@@ -192,7 +198,9 @@ fun MedicineListStateComposable(
             BottomBarComposable(
                 sActiveScreenP = Screen.CTE_MEDICINE_LIST_SCREEN,
                 onClickMedicinesP = { /*L'icone sera grisée*/ },
-                onClickAislesP = onClickBottomAisleP
+                onClickAislesP = onClickBottomAisleP,
+                onClickLogoutP = onClickLogoutOnBottomBarP,
+                onBackClickP = onBackClickP
             )
         },
         content = { innerPadding ->
@@ -468,6 +476,11 @@ fun MedicineListComposableSuccessPreview() {
     val listFakeMedicines = StockFakeAPI.initFakeMedicines()
     val uiStateSuccess = MedicineListUIState.Success(listFakeMedicines)
 
+    val mockContext : (Context) -> Task<Void> = { _ ->
+        // Simulate a successful sign-out task
+        Tasks.forResult(null)
+    }
+
     RebonnteTheme {
 
         MedicineListStateComposable(
@@ -479,7 +492,9 @@ fun MedicineListComposableSuccessPreview() {
             loadAllMedicinesP = {},
             onClickBottomAisleP = {},
             launcher = null,
-            onItemSwiped = {}
+            onItemSwiped = {},
+            onClickLogoutOnBottomBarP = mockContext,
+            onBackClickP = {},
         )
     }
 }
@@ -487,6 +502,11 @@ fun MedicineListComposableSuccessPreview() {
 @Preview("Medicine list loading")
 @Composable
 fun MedicineListComposableLoadingPreview() {
+
+    val mockContext : (Context) -> Task<Void> = { _ ->
+        // Simulate a successful sign-out task
+        Tasks.forResult(null)
+    }
 
     RebonnteTheme {
         MedicineListStateComposable(
@@ -498,7 +518,9 @@ fun MedicineListComposableLoadingPreview() {
             loadAllMedicinesP = {},
             onClickBottomAisleP = {},
             launcher = null,
-            onItemSwiped = {}
+            onItemSwiped = {},
+            onClickLogoutOnBottomBarP = mockContext,
+            onBackClickP = {},
         )
     }
 }
@@ -507,6 +529,12 @@ fun MedicineListComposableLoadingPreview() {
 @Preview("Medicine list error")
 @Composable
 fun MedicineListComposableErrorPreview() {
+
+    val mockContext : (Context) -> Task<Void> = { _ ->
+        // Simulate a successful sign-out task
+        Tasks.forResult(null)
+    }
+
 
     RebonnteTheme {
         MedicineListStateComposable(
@@ -518,7 +546,9 @@ fun MedicineListComposableErrorPreview() {
             loadAllMedicinesP = {},
             onClickBottomAisleP = {},
             launcher = null,
-            onItemSwiped = {}
+            onItemSwiped = {},
+            onClickLogoutOnBottomBarP = mockContext,
+            onBackClickP = {},
         )
     }
 }
@@ -527,6 +557,11 @@ fun MedicineListComposableErrorPreview() {
 @Preview("Medicine delete  error")
 @Composable
 fun MedicineListComposableDeleteErrorPreview() {
+
+    val mockContext : (Context) -> Task<Void> = { _ ->
+        // Simulate a successful sign-out task
+        Tasks.forResult(null)
+    }
 
     RebonnteTheme {
         MedicineListStateComposable(
@@ -538,7 +573,9 @@ fun MedicineListComposableDeleteErrorPreview() {
             loadAllMedicinesP = {},
             onClickBottomAisleP = {},
             launcher = null,
-            onItemSwiped = {}
+            onItemSwiped = {},
+            onClickLogoutOnBottomBarP = mockContext,
+            onBackClickP = {},
         )
     }
 }

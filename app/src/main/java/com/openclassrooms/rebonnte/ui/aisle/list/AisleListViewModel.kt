@@ -1,9 +1,12 @@
 package com.openclassrooms.rebonnte.ui.aisle.list
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Task
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockRepository
+import com.openclassrooms.rebonnte.repository.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AisleListViewModel  @Inject constructor(
-    private val stockRepository: StockRepository
+    private val stockRepository: StockRepository,
+    private val userRepository : UserRepository
 ): ViewModel() {
 
     private var _uiStateListAile = MutableStateFlow<AisleListUIState>(AisleListUIState.IsLoading)
@@ -61,6 +65,10 @@ class AisleListViewModel  @Inject constructor(
         viewModelScope.launch {
             stockRepository.loadAllAisles()
         }
+    }
+
+    fun logout(context : Context) : Task<Void> {
+        return userRepository.logout(context)
     }
 
 }
