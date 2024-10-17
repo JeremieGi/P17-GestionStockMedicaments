@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +39,8 @@ import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 import com.openclassrooms.rebonnte.ui.LoadingComposable
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 // Cet écran fait l'affichage de détails d'un médicament et aussi son ajout
 
@@ -310,22 +313,58 @@ fun MedicineDetailSuccessComposable(
 // => C'est déjà fait même si esthétiquement pas top => que faut-il faire exactement ?s
 @Composable
 fun HistoryItem(history: History) {
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        // TODO JG : Ne pas oublier d'utiliser les ressources chaines ici ou voir quel design faire
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "User: ${history.author.sEmail}")
-            Text(text = "Date: ${history.date}")
-            Text(text = "Details: ${history.details}")
+
+        // T011a - Affichage de l’historique - Améliorer l’UI
+
+        Column(modifier = Modifier.padding(5.dp)) {
+
+            HistoryLine(stringResource(R.string.user),history.author.sEmail)
+
+            // Pattern 18 juin 1985
+            val formatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+            // Formater la date
+            val formattedDate = formatter.format(history.date)
+
+            HistoryLine(stringResource(R.string.date),formattedDate)
+
+            HistoryLine(stringResource(R.string.details),history.details)
+
         }
     }
 }
 
+@Composable
+fun HistoryLine(sLabelP : String, sValueP : String) {
 
+    // Pourcentage de la largeur occupée pour l'affichage des labels
+    val fTitlePercent = 0.25f
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(
+            modifier = Modifier.weight(fTitlePercent),
+            fontWeight = FontWeight.Bold,
+            text = sLabelP,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Text(
+            modifier = Modifier.weight(1-fTitlePercent),
+            text = sValueP,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+
+}
 
 
 @Preview("Medicine Detail Success - Mode Details")
@@ -364,8 +403,9 @@ fun MedicineDetailStateComposableAdd() {
 
 
     val listFakeMedicines = StockFakeAPI.initFakeMedicines()
+    val fakeMedicine = listFakeMedicines[2]
     val uiStateSuccess = MedicineDetailUIState(
-        currentStateMedicine = CurrentMedicineUIState.LoadSuccess(listFakeMedicines[0]),
+        currentStateMedicine = CurrentMedicineUIState.LoadSuccess(fakeMedicine),
         formError = null
     )
 

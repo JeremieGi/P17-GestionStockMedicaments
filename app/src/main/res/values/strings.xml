@@ -32,4 +32,7 @@
     <string name="logout">Logout</string>
     <string name="logout_confirmation_message">Are you sure you want to logout?</string>
     <string name="deconnexion_ok">Logout successfully</string>
+    <string name="user">User:</string>
+    <string name="date">Date:</string>
+    <string name="details">Details:</string>
 </resources>

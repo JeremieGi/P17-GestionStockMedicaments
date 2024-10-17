@@ -130,9 +130,14 @@ fun launchAuthUI(signInLauncher: ManagedActivityResultLauncher<Intent, FirebaseA
 
     // Si l’utilisateur n’est pas connecté, redirige vers l’écran de création de compte / connexion
 
-    // Pour avoir l'écran de login, il faut paramétrer dans Firebase, Authentication, Settings, User actions, => décocher Email enumerattion protection
+    //  Note importante :
+    // Par sécurité, par défaut, Firebase ne permet pas la reconnexion avec un login existant (pour ne pas exposer les mails de ces utilisateurs)
+    // Si on veut avoir ce comportement il faut aller dans la console Firebase -> Authentication -> Settings -> User Actions -> décocher "Email enueration protection
 
-    // Ici : Authenfication mail / mot de passe
+    // Pour avoir l'écran de login, il faut paramétrer dans Firebase, Authentication, Settings, User actions, => décocher Email enumeration protection
+    // TODO Denis : Si on fait pas, on ne peut pas se déconnecter et se reconnecter...
+
+    // Authenfication mail / mot de passe
     val providers = arrayListOf(
         AuthUI.IdpConfig.EmailBuilder().build()
     )
@@ -141,7 +146,7 @@ fun launchAuthUI(signInLauncher: ManagedActivityResultLauncher<Intent, FirebaseA
     val signInIntent = AuthUI.getInstance()
         .createSignInIntentBuilder()
         .setAvailableProviders(providers)
-        .setTheme(R.style.Theme_Rebonnte)
+        .setTheme(R.style.FirebaseLoginTheme)
         .setAlwaysShowSignInMethodScreen(true) // Affiche la fenêtre Sign in with (même si ici on a que le provider email/password ...)
         .setLogo(R.drawable.baseline_medical_services_300)
         .build()

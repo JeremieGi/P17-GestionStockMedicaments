@@ -59,9 +59,14 @@ class StockFakeAPI : StockAPI {
                     name = "Medicine 3",
                     stock = 3,
                     oAisle = aisles[2],
-                    histories =  mutableListOf(
+                    histories =  mutableListOf( // Pour tester le scroll
                         History(users[0],dates[0],"Details 1"),
-                        History(users[1],dates[1],"Details 2")
+                        History(users[1],dates[1],"Details 2"),
+                        History(users[1],dates[2],"Details 3"),
+                        History(users[1],dates[2],"Details 4"),
+                        History(users[1],dates[2],"Details 5"),
+                        History(users[1],dates[2],"Details 6"),
+                        History(users[1],dates[2],"Details 7"),
                     )
                 )
             )

@@ -158,7 +158,7 @@ class MedicineDetailViewModel @Inject constructor (
                     // Ce cas ne devrait jamais se produire // TODO Denis => existence d'assert ?
                     _uiStateMedicineDetail.update{ currentStateParam ->
                         currentStateParam.copy(
-                            currentStateMedicine = CurrentMedicineUIState.ValidateError("No user is logged in"), // TODO Denis : Autre méthode que d'inrecter le context ici ?
+                            currentStateMedicine = CurrentMedicineUIState.ValidateError("No user is logged in"), // TODO Denis : Autre méthode que d'injecter le context ici ?
                             formError = null,
                         )
                     }

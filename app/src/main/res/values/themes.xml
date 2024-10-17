@@ -6,27 +6,33 @@
     <style name="Theme.Rebonnte" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="buttonStyle">@style/CustomButtonStyle</item>
     </style>
 
     <style name="Theme.Rebonnte.ActionBar" parent="android:Theme.Material.Light.DarkActionBar"/>
 
-    <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
-        <item name="android:background">#D3D3D3</item> <!-- Couleur de fond gris -->
-        <item name="android:textColor">#000000</item>  <!-- Texte noir -->
-    </style>
 
-    <style name="FirebaseLoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- TODO Denis : Comment visualiser les thèmes pour en choisir un ? -->
 
+    <style name="FirebaseLoginTheme" parent="FirebaseUI">
         <!-- Couleur des boutons -->
-        <item name="colorPrimary">@color/cardview_dark_background</item>
+        <item name="colorPrimary">@color/black</item>
 
-        <item name="buttonStyle">@style/CustomButtonStyle</item>
+        <item name="colorButtonNormal">@color/black</item>
+
+        <!-- Je n'ai pas réussi à modifier les styles des champs de saisie comme indiquer dans les maquettes -->
+        <!-- Couleur de fond des champs de saisie pas prise en compte -->
+        <item name="android:editTextBackground">@color/cardAndInput</item>
+        <!-- <item name="editTextStyle">@style/CustomTextInput</item> -->
+        <!-- donc je change la couleur de fond -->
+        <item name="android:background">@color/backgroundLoginLight</item>
+
+        <!-- Centrer les éléments - Marche pas non plus -->
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
 
         <!-- On API 21+ you can use android:statusBarColor -->
         <!-- Barre système en haut -->
-        <item name="colorPrimaryDark">@color/design_default_color_primary</item>
-
+        <item name="colorPrimaryDark">@color/backgroundLoginLight</item>
 
     </style>
 
