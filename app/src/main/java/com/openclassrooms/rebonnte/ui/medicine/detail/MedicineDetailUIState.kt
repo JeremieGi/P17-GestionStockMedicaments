@@ -9,7 +9,7 @@ data class MedicineDetailUIState (
     // Valeur en mémoire du médicament affiché
     val currentStateMedicine : CurrentMedicineUIState = CurrentMedicineUIState.IsLoading,
     // Erreurs de formulaire
-    val formError: FormErrorAddMedicine? = null      // TODO Denis => Voir si cette manière de faire est correcte
+    val formError: FormErrorAddMedicine? = null
 )
 
 

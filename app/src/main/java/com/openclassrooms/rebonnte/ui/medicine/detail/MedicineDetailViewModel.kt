@@ -364,7 +364,6 @@ class MedicineDetailViewModel @Inject constructor (
     // Renvoie les erreurs de formulaire (champs obligatoires)
     private fun getFormError (): FormErrorAddMedicine? {
 
-        // TODO Denis : Je recopie souvent ces 2 lignes
         val currentState = _uiStateMedicineDetail.value
         if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
@@ -376,9 +375,10 @@ class MedicineDetailViewModel @Inject constructor (
                 return FormErrorAddMedicine.AisleError("Please select an aisle")
             }
             else{
-                // TODO Denis JG : Ajouter l'existence de l'allée => Comment ?
-                // -  quel type de champs
-                // - chargé la liste des allées à l'init du viewModel
+                // TODO JG : Ajouter l'existence de l'allée => Faire un spinner ou autocompletion AutocompleteTextView
+                // charger la liste des allées à l'init du viewModel
+
+                // TODO JG : Coder l'ajout d'une allée
             }
 
             // En création

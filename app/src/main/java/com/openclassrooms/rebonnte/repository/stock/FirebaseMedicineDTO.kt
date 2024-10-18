@@ -2,7 +2,6 @@ package com.openclassrooms.rebonnte.repository.stock
 
 import com.google.firebase.firestore.PropertyName
 import com.openclassrooms.rebonnte.model.Aisle
-import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
 
 data class FirebaseMedicineDTO (
@@ -16,6 +15,7 @@ data class FirebaseMedicineDTO (
     @PropertyName(RUB_STOCK)
     val stock: Int = 0,
 
+    // TODO JG : Faire un Objet AisleDTo ici (parler du Data Connect en soutenance)
     @PropertyName("nameaisle")
     val sNameAisle: String = "",
 
@@ -32,20 +32,23 @@ data class FirebaseMedicineDTO (
         name = medicine.name,
         stock = medicine.stock,
         sNameAisle = medicine.oAisle.name,
-        histories = emptyList<FirebaseHistoryDTO>().toMutableList() // TODO JG : A continuer
+        //histories = emptyList<FirebaseHistoryDTO>().toMutableList()
+        histories = medicine.histories.map {
+            FirebaseHistoryDTO(it)
+        }.toMutableList()
     )
 
     fun toModel(): Medicine {
-
-        // TODO denis / JG
-        val aisleModel : Aisle =
 
         return Medicine(
             id = this.id,
             name = this.name,
             stock = this.stock,
             oAisle = Aisle("",this.sNameAisle),
-            histories = emptyList<History>().toMutableList() // TODO JG : A continuer
+            //histories = emptyList<History>().toMutableList()
+            histories = this.histories.map {
+                it.toModel()
+            }.toMutableList()
         )
     }
 

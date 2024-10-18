@@ -15,7 +15,7 @@ class MedicineDetailActivity : ComponentActivity() {
 
     companion object {
 
-        const val RESULT_MEDICINE_UPDATE = 1        // Indique à l'appelant (fenêtre de liste), que le medicatment a été mis à jour. Celà déclenchera le rafraichissement
+        const val RESULT_MEDICINE_UPDATE = 1        // Indique à l'appelant (fenêtre de liste), que le medicament a été mis à jour. Celà déclenchera le rafraichissement
 
         const val PARAM_MEDICINE_ADD = "AddMode"    // Paramètre en mode ajout
     }

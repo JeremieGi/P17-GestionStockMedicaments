@@ -11,7 +11,7 @@
     <style name="Theme.Rebonnte.ActionBar" parent="android:Theme.Material.Light.DarkActionBar"/>
 
 
-    <!-- TODO Denis : Comment visualiser les thèmes pour en choisir un ? -->
+    <!-- TODO JG : ne pas utiliser Firebase UI mais juste l'API -->
 
     <style name="FirebaseLoginTheme" parent="FirebaseUI">
         <!-- Couleur des boutons -->

@@ -12,7 +12,7 @@ sealed class MedicineListUIState {
 
     data class LoadingError(val sError: String?) : MedicineListUIState()
 
-    // TODO Denis : Correct de gérer le retour d'erreur de la suppression comme çà ?
+    // TODO JG : Mettre le success et l'erreur dans cet objet (pour mettre une snack bar) avec un bouton Retry éventuellement
     data class DeleteError(val sError: String?) : MedicineListUIState()
 
 }

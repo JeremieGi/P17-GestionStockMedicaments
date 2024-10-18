@@ -2,7 +2,6 @@ package com.openclassrooms.rebonnte.repository.stock
 
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.Medicine
-import com.openclassrooms.rebonnte.model.User
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockRepository.EnumSortedItem
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +31,7 @@ interface StockAPI {
     // Chargement d'une allée
     fun loadAisleByID(idAisle: String): Flow<ResultCustom<Aisle>>
 
+    fun addAisle(aisle: Aisle): Flow<ResultCustom<String>>
 
 
 }

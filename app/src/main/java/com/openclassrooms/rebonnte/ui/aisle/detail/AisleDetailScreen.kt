@@ -2,9 +2,15 @@ package com.openclassrooms.rebonnte.ui.aisle.detail
 
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,20 +32,35 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 fun AisleDetailScreen(
     modifier: Modifier = Modifier,
     idAisleP : String,
-    viewModel: AisleDetailViewModel = hiltViewModel()
+    viewModel: AisleDetailViewModel = hiltViewModel(),
+    onAisleInsertedP : () -> Unit,
 ) {
 
     // Lecture du post
     val uiStateAisleDetail by viewModel.uiStateAisleDetail.collectAsState()
 
     LaunchedEffect(idAisleP) {
-        viewModel.loadAisleByID(idAisleP)
+
+        // En mode ajout
+        if (idAisleP== AisleDetailActivity.PARAM_AISLE_ADD){
+            // T008 - Ajout d’un médicament
+            // Initialise un objet Medecine vide dans le viewModel dans le UiState
+            viewModel.initNewAisle()
+        }
+        else{
+            // Charge les données
+            viewModel.loadAisleByID(idAisleP)
+        }
     }
 
     AisleDetailStateComposable(
         modifier=modifier,
         uiStateAisleDetailP = uiStateAisleDetail,
-        loadAisleByIDP = { viewModel.loadAisleByID(idAisleP) }
+        bAddModeP = viewModel.bAddMode(),
+        loadAisleByIDP = { viewModel.loadAisleByID(idAisleP) },
+        onInputNameChangedP = viewModel::onInputNameChanged,
+        insertAisleP = viewModel::addAisle,
+        onAisleInsertedP = onAisleInsertedP
     )
 
 
@@ -49,43 +70,70 @@ fun AisleDetailScreen(
 fun AisleDetailStateComposable(
     modifier: Modifier = Modifier,
     uiStateAisleDetailP: AisleDetailUIState,
-    loadAisleByIDP: () -> Unit) {
+    loadAisleByIDP: () -> Unit,
+    bAddModeP: Boolean,
+    onInputNameChangedP : (String) -> Unit,
+    insertAisleP : () -> Unit,
+    onAisleInsertedP : () -> Unit,
+) {
 
     // Une actionBar avec le nom de l'appli ici car l'activity à un thème avec ActionBar
 
     Scaffold { contentPadding ->
-        when (uiStateAisleDetailP) {
+        when (uiStateAisleDetailP.currentStateAisle) {
 
             // Chargement
-            is AisleDetailUIState.IsLoading -> {
+            is CurrentAisleUIState.IsLoading -> {
                 LoadingComposable(modifier.padding(contentPadding))
             }
 
             // Récupération des données avec succès
-            is AisleDetailUIState.Success -> {
+            is CurrentAisleUIState.LoadSuccess -> {
 
                 AisleDetailSuccessComposable(
                     modifier=modifier.padding(contentPadding),
-                    aisleP = uiStateAisleDetailP.aisle
+                    aisleP = uiStateAisleDetailP.currentStateAisle.aisle,
+                    formErrorP = uiStateAisleDetailP.formError,
+                    bAddModeP = bAddModeP,
+                    onInputNameChangedP = onInputNameChangedP,
+                    insertAisleP = insertAisleP
                 )
 
             }
 
-            // Exception
-            is AisleDetailUIState.Error -> {
+            is CurrentAisleUIState.ValidateSuccess -> {
+                onAisleInsertedP() // Retour à la liste avec notification de la modification
+            }
 
-                val error = uiStateAisleDetailP.sError ?: stringResource(
-                    R.string.unknown_error
-                )
+            else -> {
+                // Cas d'erreur
+
+                val onRetry : () -> Unit
+                val sError : String
+
+                when (uiStateAisleDetailP.currentStateAisle) {
+                    is CurrentAisleUIState.LoadError -> {
+                        sError = uiStateAisleDetailP.currentStateAisle.sError?:stringResource(R.string.unknown_error)
+                        onRetry = loadAisleByIDP
+                    }
+                    is CurrentAisleUIState.ValidateError -> {
+                        sError = uiStateAisleDetailP.currentStateAisle.sError
+                        onRetry = insertAisleP
+                    }
+                    else -> {
+                        sError = "Unkown State"
+                        onRetry = {}
+                    }
+                }
+
 
                 ErrorComposable(
-                    modifier=modifier
+                    modifier=Modifier
                         .padding(contentPadding)
                     ,
-                    sErrorMessage = error,
-                    onClickRetryP = loadAisleByIDP
+                    sErrorMessage = sError,
+                    onClickRetryP = onRetry
                 )
-
 
             }
         }
@@ -98,7 +146,11 @@ fun AisleDetailStateComposable(
 @Composable
 fun AisleDetailSuccessComposable(
     modifier: Modifier,
-    aisleP: Aisle
+    aisleP: Aisle,
+    bAddModeP: Boolean,
+    formErrorP : FormErrorAddAisle?,
+    onInputNameChangedP : (String) -> Unit,
+    insertAisleP : () -> Unit,
 ) {
 
     Column(
@@ -106,8 +158,73 @@ fun AisleDetailSuccessComposable(
             8.dp
         )
     ){
-        Text(text = aisleP.name)
+
+
+        TextField(
+            value = aisleP.name,
+            isError = (formErrorP is FormErrorAddAisle.NameError),
+            onValueChange = {
+                onInputNameChangedP(it)
+            },
+            label = { Text(stringResource(R.string.name)) },
+            enabled = bAddModeP,
+            modifier = Modifier.fillMaxWidth()
+        )
+        if (formErrorP is FormErrorAddAisle.NameError) {
+            Text(
+                text = formErrorP.error?:stringResource(R.string.unknown_error),
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+
+
+        if (bAddModeP){
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                content = {
+                    Text(text = stringResource(id = R.string.validate))
+                },
+                onClick = {
+                    insertAisleP()
+                }
+            )
+
+        }
+
+
     }
+
+
+
+
+}
+
+@Preview("Aisle Item Success")
+@Composable
+fun AisleDetailStateComposableSuccessPreview() {
+
+
+    val listFakeAlsse = StockFakeAPI.initFakeAisles()
+    val uiStateSuccess = AisleDetailUIState(
+        currentStateAisle = CurrentAisleUIState.LoadSuccess(listFakeAlsse[0])
+    )
+
+    RebonnteTheme {
+
+        AisleDetailStateComposable(
+            uiStateAisleDetailP = uiStateSuccess,
+            loadAisleByIDP = {},
+            bAddModeP = false,
+            onInputNameChangedP = {},
+            insertAisleP = {},
+            onAisleInsertedP = {}
+        )
+
+    }
+
 
 }
 
@@ -116,37 +233,22 @@ fun AisleDetailSuccessComposable(
 @Composable
 fun AisleDetailStateComposableLoadingPreview() {
 
-    val uiStateLoading = AisleDetailUIState.IsLoading
+    val uiStateLoading = AisleDetailUIState(
+        currentStateAisle = CurrentAisleUIState.IsLoading
+    )
 
     RebonnteTheme {
 
         AisleDetailStateComposable(
             uiStateAisleDetailP = uiStateLoading,
-            loadAisleByIDP = {}
+            loadAisleByIDP = {},
+            bAddModeP = false,
+            onInputNameChangedP = {},
+            insertAisleP = {},
+            onAisleInsertedP = {}
         )
 
     }
-}
-
-
-@Preview("Aisle Item Success")
-@Composable
-fun AisleDetailStateComposableSuccessPreview() {
-
-
-    val listFakeAlsse = StockFakeAPI.initFakeAisles()
-    val uiStateSuccess = AisleDetailUIState.Success(listFakeAlsse[0])
-
-    RebonnteTheme {
-
-        AisleDetailStateComposable(
-            uiStateAisleDetailP = uiStateSuccess,
-            loadAisleByIDP = {}
-        )
-
-    }
-
-
 }
 
 
@@ -154,13 +256,19 @@ fun AisleDetailStateComposableSuccessPreview() {
 @Composable
 fun AisleDetailStateComposableErrorPreview() {
 
-    val uiStateError = AisleDetailUIState.Error("Message de test pour la preview")
+    val uiStateError = AisleDetailUIState(
+        currentStateAisle = CurrentAisleUIState.LoadError("Message de test pour la preview")
+    )
 
     RebonnteTheme {
 
         AisleDetailStateComposable(
             uiStateAisleDetailP = uiStateError,
-            loadAisleByIDP = {}
+            loadAisleByIDP = {},
+            bAddModeP = false,
+            onInputNameChangedP = {},
+            insertAisleP = {},
+            onAisleInsertedP = {}
         )
     }
 }

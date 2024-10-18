@@ -3,7 +3,6 @@ package com.openclassrooms.rebonnte.repository.stock
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
-import com.openclassrooms.rebonnte.model.User
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockRepository.EnumSortedItem
 import com.openclassrooms.rebonnte.repository.user.UserFakeAPI
@@ -280,6 +279,30 @@ class StockFakeAPI : StockAPI {
             }
             else{
                 trySend(ResultCustom.Success(aisles))
+            }
+
+            // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)
+            awaitClose {
+
+            }
+        }
+
+    }
+
+    override fun addAisle(aisle: Aisle): Flow<ResultCustom<String>> {
+
+        val isAdded = _listAisle.add(aisle)
+
+        return callbackFlow {
+
+            trySend(ResultCustom.Loading)
+            //delay(1*1000)
+
+            if (isAdded){
+                trySend(ResultCustom.Success(""))
+            }
+            else{
+                trySend(ResultCustom.Failure("Impossible to add aisle"))
             }
 
             // awaitClose : Permet de fermer le listener dès que le flow n'est plus écouté (pour éviter les fuites mémoire)

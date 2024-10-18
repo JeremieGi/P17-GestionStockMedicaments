@@ -2,6 +2,9 @@ package com.openclassrooms.rebonnte.ui.aisle.list
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,12 +59,21 @@ fun AisleListScreen(
         viewModel.loadAllAisle()
     }
 
+
+    // Pour déclencher le rafraichissement en cas de modification des données dans l'Activity de détails
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == AisleDetailActivity.RESULT_AISLE_ADD) {
+            viewModel.loadAllAisle()
+        }
+    }
+
     AisleListStateComposable(
         uiStateListP = uiStateList,
         loadAllAilesP = viewModel::loadAllAisle,
         onClickMedicineOnBottomBarP = onClickMedicineOnBottomBarP,
         onClickLogoutOnBottomBarP = viewModel::logout,
-        onBackClickP = onBackClickP
+        onBackClickP = onBackClickP,
+        launcherP = launcher
     )
 
 
@@ -75,7 +87,8 @@ fun AisleListStateComposable(
     loadAllAilesP : () -> Unit,
     onClickMedicineOnBottomBarP : () -> Unit,
     onClickLogoutOnBottomBarP : (Context) -> Task<Void>,
-    onBackClickP: () -> Unit
+    onBackClickP: () -> Unit,
+    launcherP : ActivityResultLauncher<Intent>?,
 ) {
 
     Scaffold(
@@ -109,7 +122,8 @@ fun AisleListStateComposable(
 
                     AisleListComposable(
                         modifier = modifier.padding(innerPadding),
-                        listAisles = uiStateListP.listAisles
+                        listAisles = uiStateListP.listAisles,
+                        launcherP = launcherP
                     )
 
                 }
@@ -139,7 +153,7 @@ fun AisleListStateComposable(
         floatingActionButton = {
             val context = LocalContext.current
             FloatingActionButton(onClick = {
-                startAisleDetailActivity(context, "") // id="" mode ajout
+                startAisleDetailActivity(context, launcherP , AisleDetailActivity.PARAM_AISLE_ADD)
             }) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
@@ -152,7 +166,8 @@ fun AisleListStateComposable(
 @Composable
 fun AisleListComposable(
     modifier: Modifier,
-    listAisles: List<Aisle>
+    listAisles: List<Aisle>,
+    launcherP : ActivityResultLauncher<Intent>?,
 ) {
 
     val context = LocalContext.current
@@ -162,7 +177,7 @@ fun AisleListComposable(
     ) {
         items(listAisles) { aisle ->
             AisleItem(aisle = aisle, onClick = {
-                startAisleDetailActivity(context, aisle.id)
+                startAisleDetailActivity(context, launcherP, aisle.id)
             })
         }
     }
@@ -188,11 +203,24 @@ fun AisleItem(
 
 
 
-private fun startAisleDetailActivity(context: Context, id : String) {
-    val intent = Intent(context, AisleDetailActivity::class.java).apply {
-        putExtra(Screen.CTE_PARAM_ID_AISLE, id)
+// Lance l'activity en utilisant un launcher pour savoir quand l'activity se ferme
+private fun startAisleDetailActivity(
+    context: Context,
+    launcher: ActivityResultLauncher<Intent>?,
+    id: String
+) {
+
+    // launcher peut-être nullable juste pour les previews Compose
+    launcher?.let {
+        val intent = Intent(context, AisleDetailActivity::class.java).apply {
+            putExtra(Screen.CTE_PARAM_ID_AISLE, id)
+        }
+        //context.startActivity(intent)
+        it.launch(intent)
     }
-    context.startActivity(intent)
+
+
+
 }
 
 
@@ -220,6 +248,7 @@ fun AisleListComposableSuccessPreview() {
             onClickMedicineOnBottomBarP = {},
             onClickLogoutOnBottomBarP = mockContext,
             onBackClickP = {},
+            launcherP = null
 
         )
     }
@@ -241,6 +270,7 @@ fun AisleListComposableLoadingPreview() {
             onClickMedicineOnBottomBarP = {},
             onClickLogoutOnBottomBarP = mockContext,
             onBackClickP = {},
+            launcherP = null
         )
     }
 }
@@ -262,6 +292,7 @@ fun AisleListComposableErrorPreview() {
             onClickMedicineOnBottomBarP = {},
             onClickLogoutOnBottomBarP = mockContext,
             onBackClickP = {},
+            launcherP = null
         )
     }
 }

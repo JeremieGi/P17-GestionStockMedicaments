@@ -190,7 +190,8 @@ fun MedicineDetailSuccessComposable(
     Column(
         modifier = modifier
             .padding(16.dp)
-            //.verticalScroll(rememberScrollState()) // TODO Denis : Erreur ici pour faire un scroll car la lazyColumn plus bas est déjà scrollable
+            //.verticalScroll(rememberScrollState()) // TODO JG : Erreur ici pour faire un scroll car la lazyColumn plus bas est déjà scrollable => voir NestedScroll
+            // https://medium.com/androiddevelopers/understanding-nested-scrolling-in-jetpack-compose-eb57c1ea0af0
             // permet de rendre la colonne défilable verticalement si le contenu dépasse la taille de l'écran.
     ) {
         TextField(
@@ -309,7 +310,6 @@ fun MedicineDetailSuccessComposable(
 
 
 // T011a - Affichage de l’historique - Améliorer l’UI
-// TODO Denis : "L’affichage de l’historique des changements est peu esthétique et se trouve en
 //bas de la liste. Intégrer l’historique dans le contenu scrollable de la fiche détail
 //d’un magasin serait appréciable."
 // => C'est déjà fait même si esthétiquement pas top => que faut-il faire exactement ?s

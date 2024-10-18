@@ -83,7 +83,7 @@ fun MedicineListScreen(
         viewModel.loadAllMedicines()
     }
 
-    // Pour déclencher le rafraichissement en cas de modification des donénes dans l'Activity de détails
+    // Pour déclencher le rafraichissement en cas de modification des données dans l'Activity de détails
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == MedicineDetailActivity.RESULT_MEDICINE_UPDATE) {
            viewModel.loadAllMedicines()

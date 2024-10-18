@@ -135,7 +135,6 @@ fun launchAuthUI(signInLauncher: ManagedActivityResultLauncher<Intent, FirebaseA
     // Si on veut avoir ce comportement il faut aller dans la console Firebase -> Authentication -> Settings -> User Actions -> décocher "Email enueration protection
 
     // Pour avoir l'écran de login, il faut paramétrer dans Firebase, Authentication, Settings, User actions, => décocher Email enumeration protection
-    // TODO Denis : Si on fait pas, on ne peut pas se déconnecter et se reconnecter...
 
     // Authenfication mail / mot de passe
     val providers = arrayListOf(

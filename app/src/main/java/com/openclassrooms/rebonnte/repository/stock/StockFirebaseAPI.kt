@@ -6,7 +6,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.Medicine
-import com.openclassrooms.rebonnte.model.User
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -188,6 +187,7 @@ class StockFirebaseAPI : StockAPI {
     }
 
     override fun deleteMedicineByID(idMedicine: String): Flow<ResultCustom<String>> {
+        // TODO JG : deleteMedicineByID dans FirebaseAPI
         TODO("Not yet implemented")
     }
 
@@ -244,5 +244,35 @@ class StockFirebaseAPI : StockAPI {
             }
         }
 
+    }
+
+    override fun addAisle(aisle: Aisle): Flow<ResultCustom<String>> {
+
+        return callbackFlow {
+
+            // Utilisation de l'ID pour créer une référence de document
+            val aisleDocument = getAislesCollection().document(aisle.id)
+
+            // Mise à jour dans la base de données Firestore
+            val aisleDTO = FirebaseAisleDTO(aisle)
+            aisleDocument.set(aisleDTO)
+                .addOnSuccessListener {
+                    // Succès de l'ajout dans Firestore
+                    trySend(ResultCustom.Success(""))
+                }
+                .addOnFailureListener { firestoreException ->
+                    // Gestion des erreurs lors de l'ajout dans Firestore
+                    trySend(ResultCustom.Failure("Failed to add aisle to Firestore: ${firestoreException.message}"))
+                }
+
+                .addOnCanceledListener {
+                    trySend(ResultCustom.Failure("addOnCanceledListener"))
+                }
+
+            awaitClose {
+
+            }
+
+        }
     }
 }

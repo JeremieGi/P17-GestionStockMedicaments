@@ -169,7 +169,7 @@ fun NavGraph(
 
 }
 
-// TODO Denis : "Toutes les données sont chargées immédiatement sans utilisation de lazy." => Ca veut dire quoi ?
+// TODO JG : "Toutes les données sont chargées immédiatement sans utilisation de lazy." => Aller voir cette notion de Lazy mais pas forcément utile ici
 // T004c - Charger les données aux bons moments => chaque viewModel est appelé quand il est necessaire
 // loading. Nous recommandons donc de l’implémenter..
 //@OptIn(ExperimentalMaterial3Api::class)
