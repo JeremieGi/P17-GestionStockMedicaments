@@ -162,7 +162,7 @@ class MedicineDetailViewModel @Inject constructor (
                 // Utilisateur non identifié
                 if (currentUser==null){
 
-                    // Ce cas ne devrait jamais se produire // TODO Denis => existence d'assert ?
+                    // Ce cas ne devrait jamais se produire
                     _uiStateMedicineDetail.update{ currentStateParam ->
                         currentStateParam.copy(
                             currentStateMedicine = CurrentMedicineUIState.ValidateError("No user is logged in"), // TODO Denis : Autre méthode que d'injecter le context ici ?
@@ -292,6 +292,7 @@ class MedicineDetailViewModel @Inject constructor (
         }
 
         // Lance le chargement de toutes les allées pour aide à la saisie
+        // (uniquement en mode Add pour ne pas faire des appels réseaux inutiles)
         observeFlowAllAisles()
         loadAllAisle()
 
@@ -429,12 +430,17 @@ class MedicineDetailViewModel @Inject constructor (
                 return FormErrorAddMedicine.AisleErrorEmpty
             }
             else{
-                // Vérifier l'existence de l'allée
+
                 // TODO Denis JG prio 3 => AutocompleteTextView non dispo en compose (Voir meilleure solution)
 
-                if ( aisleNameNotExist(currentState.currentStateMedicine.medicineValue.oAisle.name) ) {
-                    return FormErrorAddMedicine.AisleErrorNoExist
+                // en mode ajout uniquement
+                if (_isAddMode){
+                    // Vérifier l'existence de l'allée
+                    if ( aisleNameNotExist(currentState.currentStateMedicine.medicineValue.oAisle.name) ) {
+                        return FormErrorAddMedicine.AisleErrorNoExist
+                    }
                 }
+
 
             }
 
