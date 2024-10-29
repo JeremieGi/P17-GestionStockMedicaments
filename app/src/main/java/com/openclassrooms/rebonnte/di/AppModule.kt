@@ -22,7 +22,6 @@ class AppModule {
     fun provideStockAPI(): StockAPI {
         return StockFirebaseAPI()
 
-        // TODO JG : Le mail du user est bien enregistré en base mais n'apparait pas dans l'interface
         //return StockFakeAPI()
     }
 

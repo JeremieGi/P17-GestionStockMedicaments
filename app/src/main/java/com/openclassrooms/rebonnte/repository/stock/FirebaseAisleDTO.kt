@@ -5,10 +5,10 @@ import com.openclassrooms.rebonnte.model.Aisle
 
 data class FirebaseAisleDTO (
 
-    @PropertyName(RUB_AISLE_ID)
+    @get:PropertyName(RUB_AISLE_ID)
     val id : String = "",
 
-    @PropertyName("name")
+    @get:PropertyName("name")
     val name : String = ""
 
 ){

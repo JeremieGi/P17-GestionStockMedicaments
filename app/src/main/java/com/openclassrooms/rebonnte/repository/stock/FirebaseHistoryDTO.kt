@@ -11,13 +11,15 @@ import java.util.Date
 
 data class FirebaseHistoryDTO (
 
-    @PropertyName("emailauthor")
+    // TODO Denis : J'ai été obligé de mettre les propriétés en var + @get:PropertyName et  @set:PropertyName
+
+    @get:PropertyName("emailauthor")
     val sEmailAuthor : String = "",
 
-    @PropertyName("date")
+    @get:PropertyName("date")
     val lDate: Long = 0L,
 
-    @PropertyName("details")
+    @get:PropertyName("details")
     val details: String = ""
 
 ){
@@ -31,7 +33,11 @@ data class FirebaseHistoryDTO (
     fun toModel(): History {
 
         return History(
-            author = User("","",this.sEmailAuthor),
+            author = User(
+                id ="",
+                sName = "",
+                sEmail = this.sEmailAuthor)
+            ,
             date =  Date(this.lDate),
             details = this.details
         )

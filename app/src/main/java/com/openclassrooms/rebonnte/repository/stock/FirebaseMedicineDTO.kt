@@ -6,20 +6,22 @@ import com.openclassrooms.rebonnte.model.Medicine
 
 data class FirebaseMedicineDTO (
 
-    @PropertyName(RUB_ID)
+
+
+    @get:PropertyName(RUB_ID)
     val id : String = "",
 
-    @PropertyName(RUB_NAME)
+    @get:PropertyName(RUB_NAME)
     val name: String = "",
 
-    @PropertyName(RUB_STOCK)
+    @get:PropertyName(RUB_STOCK)
     val stock: Int = 0,
 
     // TODO JG : Faire un Objet AisleDTo ici (parler du Data Connect en soutenance)
-    @PropertyName("nameaisle")
+    @get:PropertyName("nameaisle")
     val sNameAisle: String = "",
 
-    @PropertyName("histories")
+    @get:PropertyName("histories")
     val histories: MutableList<FirebaseHistoryDTO> = mutableListOf()
 
 
