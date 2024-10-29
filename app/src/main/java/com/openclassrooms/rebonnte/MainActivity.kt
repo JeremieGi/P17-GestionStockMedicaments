@@ -48,7 +48,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var myBroadcastReceiver: MyBroadcastReceiver
+    //private lateinit var myBroadcastReceiver: MyBroadcastReceiver
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,11 +67,11 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        startBroadcastReceiver()
+        //startBroadcastReceiver()
     }
 
     // TODO Openclassrooms + JG : A supprimer ou à libérer (car peut faire une fuite mémoire) => Mail à Openclassrooms car fuite non visible
-
+/*
     private fun startBroadcastReceiver() {
         myBroadcastReceiver = MyBroadcastReceiver()
         val filter = IntentFilter().apply {
@@ -83,29 +83,25 @@ class MainActivity : ComponentActivity() {
             registerReceiver(myBroadcastReceiver, filter)
         }
 
-//        Handler().postDelayed({
-//            val intent = Intent("com.rebonnte.ACTION_UPDATE")
-//            sendBroadcast(intent)
-//        }, 500)
 
         Handler().postDelayed({
             startMyBroadcast()
         }, 200)
     }
-
-    private fun startMyBroadcast() {
-        val intent = Intent("com.rebonnte.ACTION_UPDATE")
-        sendBroadcast(intent)
-        startBroadcastReceiver()
-    }
-
-
-    class MyBroadcastReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            Toast.makeText(mainActivity, "Update reçu", Toast.LENGTH_SHORT).show()
-            //Log.v("DBG","Update reçu")
-        }
-    }
+*/
+//    private fun startMyBroadcast() {
+//        val intent = Intent("com.rebonnte.ACTION_UPDATE")
+//        sendBroadcast(intent)
+//        startBroadcastReceiver()
+//    }
+//
+//
+//    class MyBroadcastReceiver : BroadcastReceiver() {
+//        override fun onReceive(context: Context?, intent: Intent?) {
+//            Toast.makeText(mainActivity, "Update reçu", Toast.LENGTH_SHORT).show()
+//            //Log.v("DBG","Update reçu")
+//        }
+//    }
 
     companion object {
         lateinit var mainActivity: MainActivity

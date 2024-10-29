@@ -32,8 +32,6 @@ data class FirebaseMedicineDTO (
 
 ) {
 
-
-
     constructor(medicine: Medicine) : this (
         id = medicine.id,
         name = medicine.name,

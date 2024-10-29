@@ -2,6 +2,7 @@ package com.openclassrooms.rebonnte.ui.medicine.list
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -58,6 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.rebonnte.EmbeddedSearchBar
+import com.openclassrooms.rebonnte.MainActivity.Companion.mainActivity
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
@@ -125,6 +128,7 @@ fun MedicineListStateComposable(
     onBackClickP: () -> Unit
 ) {
 
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -214,7 +218,7 @@ fun MedicineListStateComposable(
                 }
 
                 // Récupération des données avec succès
-                is MedicineListUIState.Success -> {
+                is MedicineListUIState.LoadSuccess -> {
 
                     MedicineListComposable(
                         modifier = Modifier.padding(innerPadding),
@@ -247,12 +251,21 @@ fun MedicineListStateComposable(
                         R.string.unknown_error
                     )
 
-                    ErrorComposable(
-                        modifier= Modifier.padding(innerPadding),
-                        sErrorMessage = error,
-                        onClickRetryP = null
-                    )
+                    Toast.makeText(context,
+                        stringResource(R.string.delete_error, error), Toast.LENGTH_SHORT).show()
 
+//                    ErrorComposable(
+//                        modifier= Modifier.padding(innerPadding),
+//                        sErrorMessage = error,
+//                        onClickRetryP = null
+//                    )
+
+                }
+
+                is MedicineListUIState.DeleteSuccess -> {
+                    Toast.makeText(context,
+                        stringResource(R.string.medicine_successfull_deleted), Toast.LENGTH_SHORT).show()
+                    loadAllMedicinesP()
                 }
             }
 
@@ -474,7 +487,7 @@ private fun startDetailActivity(
 fun MedicineListComposableSuccessPreview() {
 
     val listFakeMedicines = StockFakeAPI.initFakeMedicines()
-    val uiStateSuccess = MedicineListUIState.Success(listFakeMedicines)
+    val uiStateSuccess = MedicineListUIState.LoadSuccess(listFakeMedicines)
 
     val mockContext : (Context) -> Task<Void> = { _ ->
         // Simulate a successful sign-out task

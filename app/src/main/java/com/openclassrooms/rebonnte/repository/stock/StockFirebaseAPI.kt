@@ -187,9 +187,23 @@ class StockFirebaseAPI : StockAPI {
 
     }
 
+    // T009 - Suppression d’un médicament
     override fun deleteMedicineByID(idMedicine: String): Flow<ResultCustom<String>> {
-        // TODO JG : deleteMedicineByID dans FirebaseAPI
-        TODO("Not yet implemented")
+
+        return callbackFlow {
+
+            getMedicinesCollection().document(idMedicine).delete()
+                .addOnSuccessListener {
+                    trySend(ResultCustom.Success(""))
+                }
+                .addOnFailureListener { exception ->
+                    trySend(ResultCustom.Failure(exception.message))
+                }
+            awaitClose {
+
+            }
+        }
+
     }
 
     override fun loadAllAisles(): Flow<ResultCustom<List<Aisle>>> {

@@ -52,7 +52,7 @@ class MedicineListViewModel @Inject constructor(
                     // Succès
                     is ResultCustom.Success -> {
                         val listMedicines = resultFlow.value
-                        _uiStateMedicines.value = MedicineListUIState.Success(listMedicines)
+                        _uiStateMedicines.value = MedicineListUIState.LoadSuccess(listMedicines)
 
                     }
 
@@ -118,7 +118,8 @@ class MedicineListViewModel @Inject constructor(
                     // Succès
                     is ResultCustom.Success -> {
                         // Rechargement de la liste de médicaments
-                        loadAllMedicines()
+                        _uiStateMedicines.value = MedicineListUIState.DeleteSuccess
+                        //loadAllMedicines()
                     }
 
                 }

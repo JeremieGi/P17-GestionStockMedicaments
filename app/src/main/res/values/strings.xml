@@ -35,4 +35,6 @@
     <string name="user">User:</string>
     <string name="date">Date:</string>
     <string name="details">Details:</string>
+    <string name="delete_error">Delete error : %1$s</string>
+    <string name="medicine_successfull_deleted">Medicine successfull deleted</string>
 </resources>
