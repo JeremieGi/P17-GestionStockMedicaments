@@ -154,7 +154,6 @@ class StockFirebaseAPI : StockAPI {
                         // Récupérer le premier document (puisque ID est unique)
                         val documentSnapshot = querySnapshot.documents[0]
                         val medicineDTO = documentSnapshot.toObject(FirebaseMedicineDTO::class.java)
-                        //  TODO Denis : nameAisle / sEmailAuthor pas récupérés
                         val medicine = medicineDTO?.toModel()
                         if (medicine==null){
                             trySend(ResultCustom.Failure("Echec du toObject"))

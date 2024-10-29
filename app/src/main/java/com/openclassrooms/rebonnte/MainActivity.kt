@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
         //startBroadcastReceiver()
     }
 
-    // TODO Openclassrooms + JG : A supprimer ou à libérer (car peut faire une fuite mémoire) => Mail à Openclassrooms car fuite non visible
+    // TODO Openclassrooms + JG prio 1 : A supprimer ou à libérer (car peut faire une fuite mémoire) => Mail à Openclassrooms car fuite non visible
 /*
     private fun startBroadcastReceiver() {
         myBroadcastReceiver = MyBroadcastReceiver()

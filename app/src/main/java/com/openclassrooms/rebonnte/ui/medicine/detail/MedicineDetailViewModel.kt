@@ -430,7 +430,7 @@ class MedicineDetailViewModel @Inject constructor (
             }
             else{
                 // Vérifier l'existence de l'allée
-                // TODO Denis JG => AutocompleteTextView non dispo en compose (Voir meilleure solution)
+                // TODO Denis JG prio 3 => AutocompleteTextView non dispo en compose (Voir meilleure solution)
 
                 if ( aisleNameNotExist(currentState.currentStateMedicine.medicineValue.oAisle.name) ) {
                     return FormErrorAddMedicine.AisleErrorNoExist
