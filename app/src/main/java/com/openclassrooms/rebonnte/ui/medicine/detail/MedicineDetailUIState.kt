@@ -33,7 +33,11 @@ sealed class CurrentMedicineUIState {
 sealed class FormErrorAddMedicine {
 
     data object NameError : FormErrorAddMedicine()
-    data class AisleError(val error: String?) : FormErrorAddMedicine()
+
+    data object AisleErrorEmpty : FormErrorAddMedicine()
+    data object AisleErrorNoExist : FormErrorAddMedicine()
+
+
     data object StockError : FormErrorAddMedicine()
 
 }

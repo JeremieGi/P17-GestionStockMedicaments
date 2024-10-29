@@ -27,11 +27,14 @@ sealed class CurrentAisleUIState {
     data object ValidateSuccess : CurrentAisleUIState() // upload or insert
 }
 
+
+
 /**
  * Différents types d'erreur sur le formulaire d'ajout
  */
 sealed class FormErrorAddAisle {
 
-    data class NameError(val error: String?) : FormErrorAddAisle()
+    data object NameErrorEmpty : FormErrorAddAisle()
+    data object NameErrorAlreadyExist : FormErrorAddAisle()
 
 }

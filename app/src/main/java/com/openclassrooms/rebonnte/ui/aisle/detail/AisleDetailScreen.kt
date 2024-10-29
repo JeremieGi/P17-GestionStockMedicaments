@@ -162,7 +162,11 @@ fun AisleDetailSuccessComposable(
 
         TextField(
             value = aisleP.name,
-            isError = (formErrorP is FormErrorAddAisle.NameError),
+            isError = (
+                    formErrorP is FormErrorAddAisle.NameErrorEmpty
+                    ||
+                    formErrorP is FormErrorAddAisle.NameErrorAlreadyExist
+                    ),
             onValueChange = {
                 onInputNameChangedP(it)
             },
@@ -170,9 +174,15 @@ fun AisleDetailSuccessComposable(
             enabled = bAddModeP,
             modifier = Modifier.fillMaxWidth()
         )
-        if (formErrorP is FormErrorAddAisle.NameError) {
+        if (formErrorP is FormErrorAddAisle.NameErrorEmpty) {
             Text(
-                text = formErrorP.error?:stringResource(R.string.unknown_error),
+                text = stringResource(R.string.mandatoryname),
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+        if (formErrorP is FormErrorAddAisle.NameErrorAlreadyExist) {
+            Text(
+                text = stringResource(R.string.this_aisle_already_exists),
                 color = MaterialTheme.colorScheme.error,
             )
         }

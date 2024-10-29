@@ -20,10 +20,9 @@ data class FirebaseMedicineDTO (
     @set:PropertyName(RUB_STOCK)
     var stock: Int = 0,
 
-    // TODO JG : Faire un Objet AisleDTo ici (parler du Data Connect en soutenance)
-    @get:PropertyName("nameaisle")
-    @set:PropertyName("nameaisle")
-    var sNameAisle: String = "",
+    @get:PropertyName("aisle")
+    @set:PropertyName("aisle")
+    var aisle : FirebaseAisleDTO = FirebaseAisleDTO(),
 
     @get:PropertyName("histories")
     @set:PropertyName("histories")
@@ -36,8 +35,7 @@ data class FirebaseMedicineDTO (
         id = medicine.id,
         name = medicine.name,
         stock = medicine.stock,
-        sNameAisle = medicine.oAisle.name,
-        //histories = emptyList<FirebaseHistoryDTO>().toMutableList()
+        aisle = FirebaseAisleDTO(medicine.oAisle),
         histories = medicine.histories.map {
             FirebaseHistoryDTO(it)
         }.toMutableList()
@@ -49,8 +47,7 @@ data class FirebaseMedicineDTO (
             id = this.id,
             name = this.name,
             stock = this.stock,
-            oAisle = Aisle("",this.sNameAisle),
-            //histories = emptyList<History>().toMutableList()
+            oAisle = this.aisle.toModel(),
             histories = this.histories.map {
                 it.toModel()
             }.toMutableList()

@@ -1,5 +1,8 @@
 package com.openclassrooms.rebonnte.ui.medicine.detail
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +18,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,14 +29,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.R
+import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
@@ -212,9 +223,14 @@ fun MedicineDetailSuccessComposable(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
+
         TextField(
             value = medicineP.oAisle.name,
-            isError = (formErrorP is FormErrorAddMedicine.AisleError),
+            isError = (
+                    formErrorP is FormErrorAddMedicine.AisleErrorEmpty
+                    ||
+                    formErrorP is FormErrorAddMedicine.AisleErrorNoExist
+                    ),
             onValueChange = {
                 onInputAisleChangedP(it)
             },
@@ -222,15 +238,20 @@ fun MedicineDetailSuccessComposable(
             enabled = bAddModeP,
             modifier = Modifier.fillMaxWidth()
         )
-        if (formErrorP is FormErrorAddMedicine.AisleError) {
-            val sErrorAisle = formErrorP.error?: stringResource(
-                R.string.unknown_error
-            )
+        if (formErrorP is FormErrorAddMedicine.AisleErrorEmpty) {
             Text(
-                text = sErrorAisle,
+                text = stringResource(R.string.please_select_an_aisle),
                 color = MaterialTheme.colorScheme.error,
             )
         }
+        if (formErrorP is FormErrorAddMedicine.AisleErrorNoExist) {
+            Text(
+                text = stringResource(R.string.please_select_an_existing_aisle),
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+
+
         Spacer(modifier = Modifier.height(8.dp))
 
 
@@ -429,6 +450,7 @@ fun MedicineDetailStateComposableAdd() {
 
 
 }
+
 
 
 @Preview("Medicine Detail Success - Mode Add - with errorForm")

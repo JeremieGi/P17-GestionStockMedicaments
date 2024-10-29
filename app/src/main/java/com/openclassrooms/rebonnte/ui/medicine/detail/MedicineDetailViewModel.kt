@@ -7,6 +7,7 @@ import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockRepository
 import com.openclassrooms.rebonnte.repository.user.UserRepository
+import com.openclassrooms.rebonnte.ui.aisle.detail.FormErrorAddAisle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,9 @@ class MedicineDetailViewModel @Inject constructor (
     private var _isAddMode = false
 
     private lateinit var _oldMedicine : Medicine
+
+    // Liste chargée une fois (pour autocompletion lors de la saisie des allées)
+    private var _listExistingAisles : List<Aisle> = emptyList()
 
 
     fun loadMedicineByID(idMedicineP: String) {
@@ -281,8 +285,6 @@ class MedicineDetailViewModel @Inject constructor (
             histories = mutableListOf()
         )
 
-        //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(newMedicine,null)
-
         _uiStateMedicineDetail.update{ currentState ->
             currentState.copy(
                 currentStateMedicine = CurrentMedicineUIState.LoadSuccess(newMedicine),
@@ -290,7 +292,53 @@ class MedicineDetailViewModel @Inject constructor (
             )
         }
 
+        // Lance le chargement de toutes les allées pour aide à la saisie
+        observeFlowAllAisles()
+        loadAllAisle()
 
+
+    }
+
+
+    private fun observeFlowAllAisles() {
+
+        viewModelScope.launch {
+
+            stockRepository.flowAisles.collect { resultFlow ->
+
+                // TODO Denis : Revue : Chargement de la liste des allées lors de l'ajout d'une nouvelle allée
+
+                // En fonction du résultat
+                when (resultFlow) {
+
+                    // Echec
+                    is ResultCustom.Failure -> {
+                        // Propagation du message d'erreur
+
+                    }
+
+                    // En chargement
+                    is ResultCustom.Loading -> {
+                        // Propagation du chargement
+
+                    }
+
+                    // Succès
+                    is ResultCustom.Success -> {
+                        _listExistingAisles = resultFlow.value
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    private fun loadAllAisle() {
+        viewModelScope.launch {
+            stockRepository.loadAllAisles()
+        }
     }
 
     fun bAddMode(): Boolean {
@@ -344,6 +392,13 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
+    private fun aisleNameNotExist(sAisleInputNameP : String) : Boolean {
+
+        // any, qui retourne true si un élément correspondant au critère existe, et false sinon.
+        return ! _listExistingAisles.any { it.name == sAisleInputNameP }
+
+    }
+
 
     // Vérifie les erreurs du formulaire en cours de saisie
     private fun checkFormError() {
@@ -372,11 +427,16 @@ class MedicineDetailViewModel @Inject constructor (
             }
 
             if (currentState.currentStateMedicine.medicineValue.oAisle.name.isEmpty()){
-                return FormErrorAddMedicine.AisleError("Please select an aisle")
+                return FormErrorAddMedicine.AisleErrorEmpty
             }
             else{
-                // TODO JG : Ajouter l'existence de l'allée => Faire un spinner ou autocompletion AutocompleteTextView
-                // charger la liste des allées à l'init du viewModel
+                // Vérifier l'existence de l'allée
+                // TODO Denis => AutocompleteTextView non dispo en compose
+
+                if ( aisleNameNotExist(currentState.currentStateMedicine.medicineValue.oAisle.name) ) {
+                    return FormErrorAddMedicine.AisleErrorNoExist
+                }
+
             }
 
             // En création

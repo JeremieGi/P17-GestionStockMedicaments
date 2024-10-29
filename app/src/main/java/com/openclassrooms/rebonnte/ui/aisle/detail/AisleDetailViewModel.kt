@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockRepository
+import com.openclassrooms.rebonnte.ui.aisle.list.AisleListUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,11 +20,53 @@ class AisleDetailViewModel @Inject constructor (
     private val stockRepository: StockRepository
 ): ViewModel() {
 
-    // UI state - Chargement par défaut
     private val _uiStateAisleDetail = MutableStateFlow(AisleDetailUIState())
     val uiStateAisleDetail : StateFlow<AisleDetailUIState> = _uiStateAisleDetail.asStateFlow() // Accès en lecture seule de l'extérieur
 
     private var _isAddMode = false
+
+    // Liste chargée une fois
+    private var _listExistingAisles : List<Aisle> = emptyList()
+
+
+    private fun observeFlowAllAisles() {
+
+        viewModelScope.launch {
+
+            stockRepository.flowAisles.collect { resultFlow ->
+
+                // En fonction du résultat
+                when (resultFlow) {
+
+                    // Echec
+                    is ResultCustom.Failure -> {
+                        // Propagation du message d'erreur
+
+                    }
+
+                    // En chargement
+                    is ResultCustom.Loading -> {
+                        // Propagation du chargement
+
+                    }
+
+                    // Succès
+                    is ResultCustom.Success -> {
+                        _listExistingAisles = resultFlow.value
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    private fun loadAllAisle() {
+        viewModelScope.launch {
+            stockRepository.loadAllAisles()
+        }
+    }
 
     fun loadAisleByID (idAisle : String) {
 
@@ -94,6 +137,10 @@ class AisleDetailViewModel @Inject constructor (
                 formError = null,
             )
         }
+
+        // Chargement des allées au chargement du viewModel (pour contrôle de l'existence)
+        observeFlowAllAisles()
+        loadAllAisle()
     }
 
     fun bAddMode(): Boolean {
@@ -135,6 +182,13 @@ class AisleDetailViewModel @Inject constructor (
 
     }
 
+    private fun aisleNameExist(sAisleInputNameP : String) : Boolean {
+
+        // any, qui retourne true si un élément correspondant au critère existe, et false sinon.
+        return _listExistingAisles.any { it.name == sAisleInputNameP }
+
+    }
+
     // Renvoie les erreurs de formulaire (champs obligatoires)
     private fun getFormError (): FormErrorAddAisle? {
 
@@ -142,10 +196,13 @@ class AisleDetailViewModel @Inject constructor (
         if (currentState.currentStateAisle is CurrentAisleUIState.LoadSuccess) {
 
             if (currentState.currentStateAisle.aisle.name.isEmpty()){
-                return FormErrorAddAisle.NameError("Mandatory name") // TODo JG : Utiliser les ressources chaines
+                return FormErrorAddAisle.NameErrorEmpty
             }
             else{
-                // TODO JG : Vérifier que l'allée n'existe pas déjà
+                // Vérifier que l'allée n'existe pas déjà
+                if ( aisleNameExist(currentState.currentStateAisle.aisle.name) ) {
+                    return FormErrorAddAisle.NameErrorAlreadyExist
+                }
             }
 
             return null
