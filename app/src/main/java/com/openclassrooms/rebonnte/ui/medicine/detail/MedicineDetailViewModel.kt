@@ -7,7 +7,6 @@ import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockRepository
 import com.openclassrooms.rebonnte.repository.user.UserRepository
-import com.openclassrooms.rebonnte.ui.aisle.detail.FormErrorAddAisle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -431,7 +430,7 @@ class MedicineDetailViewModel @Inject constructor (
             }
             else{
                 // Vérifier l'existence de l'allée
-                // TODO Denis => AutocompleteTextView non dispo en compose
+                // TODO Denis JG => AutocompleteTextView non dispo en compose (Voir meilleure solution)
 
                 if ( aisleNameNotExist(currentState.currentStateMedicine.medicineValue.oAisle.name) ) {
                     return FormErrorAddMedicine.AisleErrorNoExist

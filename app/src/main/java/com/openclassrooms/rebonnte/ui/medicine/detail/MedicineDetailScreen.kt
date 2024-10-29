@@ -1,8 +1,6 @@
 package com.openclassrooms.rebonnte.ui.medicine.detail
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +16,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,21 +26,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.R
-import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
@@ -198,134 +188,147 @@ fun MedicineDetailSuccessComposable(
 ) {
 
 
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            //.verticalScroll(rememberScrollState()) // TODO JG : Erreur ici pour faire un scroll car la lazyColumn plus bas est déjà scrollable => voir NestedScroll
-            // https://medium.com/androiddevelopers/understanding-nested-scrolling-in-jetpack-compose-eb57c1ea0af0
-            // permet de rendre la colonne défilable verticalement si le contenu dépasse la taille de l'écran.
+    LazyColumn(modifier = modifier
+        .padding(16.dp)
+        .fillMaxSize()
     ) {
-        TextField(
-            value = medicineP.name,
-            isError = (formErrorP is FormErrorAddMedicine.NameError),
-            onValueChange = {
-                onInputNameChangedP(it)
-            },
-            label = { Text(stringResource(R.string.name)) },
-            enabled = bAddModeP,
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (formErrorP is FormErrorAddMedicine.NameError) {
-            Text(
-                text = stringResource(id = R.string.mandatoryname),
-                color = MaterialTheme.colorScheme.error,
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
 
+        item {
 
-        TextField(
-            value = medicineP.oAisle.name,
-            isError = (
-                    formErrorP is FormErrorAddMedicine.AisleErrorEmpty
-                    ||
-                    formErrorP is FormErrorAddMedicine.AisleErrorNoExist
-                    ),
-            onValueChange = {
-                onInputAisleChangedP(it)
-            },
-            label = { Text(stringResource(R.string.aisle)) },
-            enabled = bAddModeP,
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (formErrorP is FormErrorAddMedicine.AisleErrorEmpty) {
-            Text(
-                text = stringResource(R.string.please_select_an_aisle),
-                color = MaterialTheme.colorScheme.error,
-            )
-        }
-        if (formErrorP is FormErrorAddMedicine.AisleErrorNoExist) {
-            Text(
-                text = stringResource(R.string.please_select_an_existing_aisle),
-                color = MaterialTheme.colorScheme.error,
-            )
-        }
-
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Désincrémenter le stock
-            IconButton(onClick = {
-                // Correction T010
-                // Avant ici : java.lang.IndexOutOfBoundsException: Index 1 out of bounds for length 1
-                // Suite à un appel directement aux donénes en mémorie sans pattern MVVM
-                decrementStockP()
-            }) {
-                Icon(
-                    imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = stringResource(R.string.minus_one)
+            // TODO Denis : Erreur ici pour faire un scroll car la lazyColumn plus bas est déjà scrollable => voir NestedScroll
+            // Finalement j'ai utilisé item qui permet de faire une entête de lazyColumn
+            // .verticalScroll(rememberScrollState())
+            Column{
+                TextField(
+                    value = medicineP.name,
+                    isError = (formErrorP is FormErrorAddMedicine.NameError),
+                    onValueChange = {
+                        onInputNameChangedP(it)
+                    },
+                    label = { Text(stringResource(R.string.name)) },
+                    enabled = bAddModeP,
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
-            TextField(
-                value = medicineP.stock.toString(),
-                isError = (formErrorP is FormErrorAddMedicine.StockError),
-                onValueChange = {}, // Paramètre obligatoire mais champ grisé => onValueChange jamais exécuté
-                label = { Text(stringResource(R.string.stock)) },
-                enabled = false,
-                modifier = Modifier.weight(1f)
-            )
-            // Incrémenter le stock
-            IconButton(onClick = {
-                incrementStockP()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp,
-                    contentDescription = stringResource(R.string.plus_one)
-                )
-            }
-        }
-        if (formErrorP is FormErrorAddMedicine.StockError) {
-            Text(
-                text = stringResource(id = R.string.mandatorystock),
-                color = MaterialTheme.colorScheme.error,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // T003a - Mise à jour de stock : Ne doit pas bloquer le thread principal
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            content = {
-                Text(text = stringResource(id = R.string.validate))
-            },
-            onClick = {
-                updateOrInsertMedicineP()
-            }
-        )
-
-        // Historique uniquement en mode détails
-        if (!bAddModeP){
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(text = stringResource(R.string.history), style = MaterialTheme.typography.titleLarge)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(medicineP.histories) { history ->
-                    HistoryItem(history = history)
+                if (formErrorP is FormErrorAddMedicine.NameError) {
+                    Text(
+                        text = stringResource(id = R.string.mandatoryname),
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+
+
+                TextField(
+                    value = medicineP.oAisle.name,
+                    isError = (
+                            formErrorP is FormErrorAddMedicine.AisleErrorEmpty
+                                    ||
+                                    formErrorP is FormErrorAddMedicine.AisleErrorNoExist
+                            ),
+                    onValueChange = {
+                        onInputAisleChangedP(it)
+                    },
+                    label = { Text(stringResource(R.string.aisle)) },
+                    enabled = bAddModeP,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (formErrorP is FormErrorAddMedicine.AisleErrorEmpty) {
+                    Text(
+                        text = stringResource(R.string.please_select_an_aisle),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+                if (formErrorP is FormErrorAddMedicine.AisleErrorNoExist) {
+                    Text(
+                        text = stringResource(R.string.please_select_an_existing_aisle),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    // Désincrémenter le stock
+                    IconButton(onClick = {
+                        // Correction T010
+                        // Avant ici : java.lang.IndexOutOfBoundsException: Index 1 out of bounds for length 1
+                        // Suite à un appel directement aux donénes en mémorie sans pattern MVVM
+                        decrementStockP()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.KeyboardArrowDown,
+                            contentDescription = stringResource(R.string.minus_one)
+                        )
+                    }
+                    TextField(
+                        value = medicineP.stock.toString(),
+                        isError = (formErrorP is FormErrorAddMedicine.StockError),
+                        onValueChange = {}, // Paramètre obligatoire mais champ grisé => onValueChange jamais exécuté
+                        label = { Text(stringResource(R.string.stock)) },
+                        enabled = false,
+                        modifier = Modifier.weight(1f)
+                    )
+                    // Incrémenter le stock
+                    IconButton(onClick = {
+                        incrementStockP()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowUp,
+                            contentDescription = stringResource(R.string.plus_one)
+                        )
+                    }
+                }
+                if (formErrorP is FormErrorAddMedicine.StockError) {
+                    Text(
+                        text = stringResource(id = R.string.mandatorystock),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // T003a - Mise à jour de stock : Ne doit pas bloquer le thread principal
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    content = {
+                        Text(text = stringResource(id = R.string.validate))
+                    },
+                    onClick = {
+                        updateOrInsertMedicineP()
+                    }
+                )
+
+                // Historique uniquement en mode détails
+                if (!bAddModeP){
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(text = stringResource(R.string.history), style = MaterialTheme.typography.titleLarge)
+//
+//                    Spacer(modifier = Modifier.height(8.dp))
+//
+//                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+//                        items(medicineP.histories) { history ->
+//                            HistoryItem(history = history)
+//                        }
+//                    }
+                }
+
+
             }
+
+
         }
 
-
+        items(medicineP.histories) { history ->
+            HistoryItem(history = history)
+        }
     }
+
 
 }
 
