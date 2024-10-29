@@ -83,16 +83,27 @@ class MainActivity : ComponentActivity() {
             registerReceiver(myBroadcastReceiver, filter)
         }
 
+//        Handler().postDelayed({
+//            val intent = Intent("com.rebonnte.ACTION_UPDATE")
+//            sendBroadcast(intent)
+//        }, 500)
+
         Handler().postDelayed({
-            val intent = Intent("com.rebonnte.ACTION_UPDATE")
-            sendBroadcast(intent)
-        }, 500)
+            startMyBroadcast()
+        }, 200)
+    }
+
+    private fun startMyBroadcast() {
+        val intent = Intent("com.rebonnte.ACTION_UPDATE")
+        sendBroadcast(intent)
+        startBroadcastReceiver()
     }
 
 
     class MyBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             Toast.makeText(mainActivity, "Update reçu", Toast.LENGTH_SHORT).show()
+            //Log.v("DBG","Update reçu")
         }
     }
 
@@ -169,7 +180,6 @@ fun NavGraph(
 
 }
 
-// TODO JG : "Toutes les données sont chargées immédiatement sans utilisation de lazy." => Aller voir cette notion de Lazy mais pas forcément utile ici
 // T004c - Charger les données aux bons moments => chaque viewModel est appelé quand il est necessaire
 // loading. Nous recommandons donc de l’implémenter..
 //@OptIn(ExperimentalMaterial3Api::class)

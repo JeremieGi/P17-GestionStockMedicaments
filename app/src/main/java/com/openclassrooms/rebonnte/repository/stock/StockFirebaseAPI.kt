@@ -18,7 +18,7 @@ class StockFirebaseAPI : StockAPI {
 
         // Nom des collections en base de données
         private const val COLLECTION_MEDICINE: String = "medicines"
-        private const val COLLECTION_AISLES: String = "ailes"
+        private const val COLLECTION_AISLES: String = "aisles"
 
     }
 

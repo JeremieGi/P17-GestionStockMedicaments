@@ -377,8 +377,6 @@ class MedicineDetailViewModel @Inject constructor (
             else{
                 // TODO JG : Ajouter l'existence de l'allée => Faire un spinner ou autocompletion AutocompleteTextView
                 // charger la liste des allées à l'init du viewModel
-
-                // TODO JG : Coder l'ajout d'une allée
             }
 
             // En création

@@ -21,63 +21,6 @@ class AppModule {
     @Singleton
     fun provideStockAPI(): StockAPI {
         return StockFirebaseAPI()
-        // TODO JG Voir PERMISSION DENIED sur Aisle => problème de droit
-        // J'ai tout ouvert mais il faut remettre des droits plus fin (qui plantent pour l'instant) :
-
-//        rules_version = '2';
-//
-//        service cloud.firestore {
-//            match /databases/{database}/documents {
-//
-//
-//                // Aisles
-//                match /aisles/{document=**} {
-//
-//                    allow read: if true;						// Tout le monde peut lire
-//                    allow write : if request.auth != null; 	// Pour écrire il faut être authentifié
-//
-//                }
-//
-//                // Medicines
-//                match /medicines/{document=**} {
-//
-//                    allow read: if true;						// Tout le monde peut lire
-//                    allow write : if request.auth != null; 	// Pour écrire il faut être authentifié
-//
-//                }
-//
-//
-//
-//            }
-//
-//        }rules_version = '2';
-//
-//        service cloud.firestore {
-//            match /databases/{database}/documents {
-//
-//
-//                // Aisles
-//                match /aisles/{document=**} {
-//
-//                    allow read: if true;						// Tout le monde peut lire
-//                    allow write : if request.auth != null; 	// Pour écrire il faut être authentifié
-//
-//                }
-//
-//                // Medicines
-//                match /medicines/{document=**} {
-//
-//                    allow read: if true;						// Tout le monde peut lire
-//                    allow write : if request.auth != null; 	// Pour écrire il faut être authentifié
-//
-//                }
-//
-//
-//
-//            }
-//
-//        }
-
 
         // TODO JG : Le mail du user est bien enregistré en base mais n'apparait pas dans l'interface
         //return StockFakeAPI()
