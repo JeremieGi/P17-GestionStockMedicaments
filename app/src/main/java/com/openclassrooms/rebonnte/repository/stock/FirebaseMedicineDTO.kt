@@ -6,23 +6,28 @@ import com.openclassrooms.rebonnte.model.Medicine
 
 data class FirebaseMedicineDTO (
 
-
+    // TODO Denis : J'ai été obligé de mettre les propriétés en var + @get:PropertyName et  @set:PropertyName
 
     @get:PropertyName(RUB_ID)
-    val id : String = "",
+    @set:PropertyName(RUB_ID)
+    var id : String = "",
 
     @get:PropertyName(RUB_NAME)
-    val name: String = "",
+    @set:PropertyName(RUB_NAME)
+    var name: String = "",
 
     @get:PropertyName(RUB_STOCK)
-    val stock: Int = 0,
+    @set:PropertyName(RUB_STOCK)
+    var stock: Int = 0,
 
     // TODO JG : Faire un Objet AisleDTo ici (parler du Data Connect en soutenance)
     @get:PropertyName("nameaisle")
-    val sNameAisle: String = "",
+    @set:PropertyName("nameaisle")
+    var sNameAisle: String = "",
 
     @get:PropertyName("histories")
-    val histories: MutableList<FirebaseHistoryDTO> = mutableListOf()
+    @set:PropertyName("histories")
+    var histories: MutableList<FirebaseHistoryDTO> = mutableListOf()
 
 
 ) {
