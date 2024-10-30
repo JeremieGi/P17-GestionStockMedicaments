@@ -42,4 +42,7 @@
     <string name="please_select_an_existing_aisle">Please select an existing aisle</string>
     <string name="impossible_to_validate_a_medicine_without_login">Impossible to validate a medicine without login</string>
     <string name="creation">Creation</string>
+    <string name="new_name">New name: %1$s</string>
+    <string name="new_stock">New stock: %1$s</string>
+    <string name="new_aisle">New aisle: %1$s</string>
 </resources>

@@ -41,7 +41,7 @@ class InjectedContext (
     /**
      * Accès au contexte (permet de récupérer les ressources Strings depuis un répository par exemple)
      */
-    fun getInjectedContext() : Context {
+    fun getContext() : Context {
         return _context
     }
 

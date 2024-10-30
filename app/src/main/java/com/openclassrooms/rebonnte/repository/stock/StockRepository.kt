@@ -51,7 +51,7 @@ class StockRepository @Inject constructor(
 
                 _flowMedicines.emit(
                     ResultCustom.Failure(
-                        injectedContext.getInjectedContext().getString(R.string.no_network)
+                        injectedContext.getContext().getString(R.string.no_network)
                     )
                 )
 
@@ -75,7 +75,7 @@ class StockRepository @Inject constructor(
 
             emit(
                 ResultCustom.Failure(
-                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                    injectedContext.getContext().getString(R.string.no_network)
                 )
             )
 
@@ -101,7 +101,7 @@ class StockRepository @Inject constructor(
 
             _flowAisles.emit(
                 ResultCustom.Failure(
-                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                    injectedContext.getContext().getString(R.string.no_network)
                 )
             )
 
@@ -127,7 +127,7 @@ class StockRepository @Inject constructor(
 
             emit(
                 ResultCustom.Failure(
-                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                    injectedContext.getContext().getString(R.string.no_network)
                 )
             )
 
@@ -138,7 +138,7 @@ class StockRepository @Inject constructor(
             // Ajout de l'historique dans le repository
             val newHistory = History(
                 author = author,
-                details =  injectedContext.getInjectedContext().getString(R.string.creation)
+                details =  injectedContext.getContext().getString(R.string.creation)
             )
             medicine.addHistory(newHistory)
 
@@ -161,7 +161,7 @@ class StockRepository @Inject constructor(
 
             emit(
                 ResultCustom.Failure(
-                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                    injectedContext.getContext().getString(R.string.no_network)
                 )
             )
 
@@ -169,7 +169,7 @@ class StockRepository @Inject constructor(
         else{
             emit(ResultCustom.Loading)
 
-            val sDetail = oldMedicine.sDiff(updatedMedicine)
+            val sDetail = oldMedicine.sDiff(updatedMedicine,injectedContext.getContext())
 
             val newHistory = History(
                 author = author,
@@ -191,7 +191,7 @@ class StockRepository @Inject constructor(
 
             emit(
                 ResultCustom.Failure(
-                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                    injectedContext.getContext().getString(R.string.no_network)
                 )
             )
 
@@ -214,7 +214,7 @@ class StockRepository @Inject constructor(
 
             emit(
                 ResultCustom.Failure(
-                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                    injectedContext.getContext().getString(R.string.no_network)
                 )
             )
 
@@ -237,7 +237,7 @@ class StockRepository @Inject constructor(
 
             emit(
                 ResultCustom.Failure(
-                    injectedContext.getInjectedContext().getString(R.string.no_network)
+                    injectedContext.getContext().getString(R.string.no_network)
                 )
             )
 

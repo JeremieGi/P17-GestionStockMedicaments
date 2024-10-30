@@ -116,9 +116,9 @@ class StockRepositoryTest {
             mockInjectedContext.isInternetAvailable()
         } returns false
 
-        // Configurer le comportement de injectedContext pour getInjectedContext()
+        // Configurer le comportement de injectedContext pour getContext()
         coEvery {
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
         } returns mockContext
 
         // Configurer le comportement de injectedContext pour getString()
@@ -145,7 +145,7 @@ class StockRepositoryTest {
         // coVerify : s'assure que les fonctions des mocks ont été appelées
         coVerify {
             mockInjectedContext.isInternetAvailable()
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
             mockContext.getString(any())
         }
 
@@ -225,9 +225,9 @@ class StockRepositoryTest {
             mockInjectedContext.isInternetAvailable()
         } returns false
 
-        // Configurer le comportement de injectedContext pour getInjectedContext()
+        // Configurer le comportement de injectedContext pour getContext()
         coEvery {
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
         } returns mockContext
 
         // Configurer le comportement de injectedContext pour getString()
@@ -254,7 +254,7 @@ class StockRepositoryTest {
         // coVerify : s'assure que les fonctions des mocks ont été appelées
         coVerify {
             mockInjectedContext.isInternetAvailable()
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
             mockContext.getString(any())
         }
 
@@ -282,7 +282,7 @@ class StockRepositoryTest {
 
         // Configurer le comportement de context
         coEvery {
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
         } returns mockContext
 
 
@@ -342,7 +342,7 @@ class StockRepositoryTest {
 
         // Configurer le comportement de context
         coEvery {
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
         } returns mockContext
 
         // Créer le collecteur du flow du repository
@@ -361,7 +361,7 @@ class StockRepositoryTest {
         coVerify {
             mockInjectedContext.isInternetAvailable()
             mockContext.getString(any())
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
         }
 
         // On attend les valeurs de mockAPI.loadAllEvents
@@ -390,7 +390,7 @@ class StockRepositoryTest {
 
         // Configurer le comportement de context
         coEvery {
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
         } returns mockContext
 
         // Configurer le comportement de injectedContext pour getString()
@@ -459,7 +459,7 @@ class StockRepositoryTest {
 
         // Configurer le comportement de context
         coEvery {
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
         } returns mockContext
 
         // Créer le collecteur du flow du repository
@@ -484,7 +484,7 @@ class StockRepositoryTest {
         coVerify {
             mockInjectedContext.isInternetAvailable()
             mockContext.getString(any())
-            mockInjectedContext.getInjectedContext()
+            mockInjectedContext.getContext()
         }
 
         // On attend les valeurs
@@ -512,8 +512,13 @@ class StockRepositoryTest {
 
         // Il faut aussi mocker l'appel à la fonction sDiff de la classse Medicine (pour que le test ne soit pas rouge en cas de regression sur cette fonction)
         coEvery {
-            mockMedicine.sDiff(any())
+            mockMedicine.sDiff(any(),any())
         } returns "mocked diff"
+
+        // Configurer le comportement de context
+        coEvery {
+            mockInjectedContext.getContext()
+        } returns mockContext
 
         // Mock partiel de Medicine -  mockAPI.addMedicine renverra la valeur reçue en paramètre
         val authorParam = User(id = "idTest", sName = "UserTest", sEmail = "")
