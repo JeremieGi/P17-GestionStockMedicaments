@@ -36,6 +36,9 @@ class StockRepositoryTest {
     // Contexte du test (mocké)
     private lateinit var mockContext: Context
 
+    // Mock de l'objet medicine
+    private lateinit var mockMedicine: Medicine
+
     /**
      * Création des mocks
      */
@@ -44,6 +47,7 @@ class StockRepositoryTest {
         mockAPI = mockk()
         mockInjectedContext = mockk()
         mockContext = mockk()
+        mockMedicine = mockk()
         cutStockRepository = StockRepository(mockAPI,mockInjectedContext)
     }
 
@@ -461,14 +465,14 @@ class StockRepositoryTest {
         // Créer le collecteur du flow du repository
         val resultList = mutableListOf<ResultCustom<Medicine>>()
 
-        val mockListMedicines  = StockFakeAPI.initFakeMedicines()
-        val mockMedicine = mockListMedicines[0]
+        val listMedicines  = StockFakeAPI.initFakeMedicines()
+        val medicineParam = listMedicines[0]
 
         val mockListUsers  = UserFakeAPI.initFakeUsers()
         val mockUser = mockListUsers[0]
 
         val jobCut = launch {
-            cutStockRepository.addMedicine(mockMedicine,mockUser).collect { result ->
+            cutStockRepository.addMedicine(medicineParam,mockUser).collect { result ->
                 resultList.add(result)
             }
         }
@@ -483,13 +487,78 @@ class StockRepositoryTest {
             mockInjectedContext.getInjectedContext()
         }
 
-        // On attend les valeurs de mockAPI.loadAllEvents
+        // On attend les valeurs
         assertEquals("One value expected in the result flow",1, resultList.size)
 
         assert(resultList[0] is ResultCustom.Failure)
 
         // Cancel the collection job
         jobCut.cancel()
+
+    }
+
+    /**
+    * Mise à jour d'un médicament avec succès
+    */
+    @Test
+    fun updateMedicine_success() = runTest {
+
+        // definition des mocks
+
+        // Connexion Internet OK
+        coEvery {
+            mockInjectedContext.isInternetAvailable()
+        } returns true
+
+        // Il faut aussi mocker l'appel à la fonction sDiff de la classse Medicine (pour que le test ne soit pas rouge en cas de regression sur cette fonction)
+        coEvery {
+            mockMedicine.sDiff(any())
+        } returns "mocked diff"
+
+        // Mock partiel de Medicine -  mockAPI.addMedicine renverra la valeur reçue en paramètre
+        val authorParam = User(id = "idTest", sName = "UserTest", sEmail = "")
+        val medicineTest = Medicine(
+            id = "idTest",
+            name = "nameTest",
+            stock = 5,
+            oAisle = Aisle("idAisle","nameAisle"),
+            histories = listOf(
+                History(author = authorParam, details="first historic line")
+            ).toMutableList()
+        )
+        val spyMedicine = spyk(medicineTest, recordPrivateCalls = true) // Enregistre les appels pour vérification
+        coEvery {
+            mockAPI.updateMedicine(spyMedicine)
+        } returns flowOf(ResultCustom.Success(spyMedicine))
+
+        // Test de la fonction updateMedicine
+
+        val resultList = cutStockRepository.updateMedicine(
+            oldMedicine = mockMedicine,
+            updatedMedicine = spyMedicine,
+            author = authorParam
+        ).toList()
+
+        // coVerify : s'assure que les fonctions des mocks ont été appelées
+        coVerify {
+            mockInjectedContext.isInternetAvailable()
+            mockAPI.updateMedicine(any())
+            spyMedicine.addHistory(any())
+        }
+
+        // On attend les valeurs
+        assertEquals(2, resultList.size)
+
+        assertEquals(ResultCustom.Loading,resultList[0])
+
+        val resultSuccess = resultList[1]
+        if (resultSuccess is ResultCustom.Success){
+            val resultMedicineWithHistory = resultSuccess.value
+            assertEquals("Check history - one line more : ",2,resultMedicineWithHistory.histories.size)
+        }
+        else{
+            assert(false) { "expected type ResultCustom.Success" }
+        }
 
     }
 
