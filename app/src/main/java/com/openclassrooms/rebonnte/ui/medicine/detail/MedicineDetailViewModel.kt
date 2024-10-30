@@ -45,7 +45,6 @@ class MedicineDetailViewModel @Inject constructor (
                     // Echec
                     is ResultCustom.Failure ->
                         // Propagation du message d'erreur
-                        //_uiStateMedicineDetail.value = MedicineDetailUIState.Error(resultFlow.errorMessage)
 
                         _uiStateMedicineDetail.update{ currentState ->
                             currentState.copy(
@@ -57,7 +56,6 @@ class MedicineDetailViewModel @Inject constructor (
                     // En chargement
                     is ResultCustom.Loading -> {
                         // Propagation du chargement
-                        //_uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
 
                         _uiStateMedicineDetail.update{ currentState ->
                             currentState.copy(
@@ -70,7 +68,6 @@ class MedicineDetailViewModel @Inject constructor (
                     // Succès
                     is ResultCustom.Success -> {
                         val medicine = resultFlow.value
-//                        _uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(medicine)
 
                         _uiStateMedicineDetail.update{ currentState ->
                             currentState.copy(
@@ -104,8 +101,6 @@ class MedicineDetailViewModel @Inject constructor (
             val updatedMedicine = currentState.currentStateMedicine.medicineValue.copy(stock = nNewStock)
 
             // Met à jour l'état avec le nouvel objet Medicine modifié
-            //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
-
             _uiStateMedicineDetail.update{ currentStateP ->
                 currentStateP.copy(
                     currentStateMedicine = CurrentMedicineUIState.LoadSuccess(updatedMedicine)
@@ -133,7 +128,6 @@ class MedicineDetailViewModel @Inject constructor (
             val updatedMedicine = currentState.currentStateMedicine.medicineValue.copy(stock = nNewStock)
 
             // Met à jour l'état avec le nouvel objet Medicine modifié
-            //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
 
             _uiStateMedicineDetail.update{ currentStateP ->
                 currentStateP.copy(
@@ -208,7 +202,6 @@ class MedicineDetailViewModel @Inject constructor (
                                     val sError = resultFlow.errorMessage?:""
 
                                     // Affiche la fenêtre d'erreur
-                                    //_uiStateMedicineDetail.value = MedicineDetailUIState.Error(sError)
 
                                     _uiStateMedicineDetail.update{ currentState ->
                                         currentState.copy(
@@ -222,7 +215,6 @@ class MedicineDetailViewModel @Inject constructor (
                                 // En chargement
                                 is ResultCustom.Loading -> {
                                     // Propagation du chargement
-                                    //_uiStateMedicineDetail.value = MedicineDetailUIState.IsLoading
 
                                     _uiStateMedicineDetail.update{ currentState ->
                                         currentState.copy(
@@ -234,7 +226,6 @@ class MedicineDetailViewModel @Inject constructor (
 
                                 // Succès
                                 is ResultCustom.Success -> {
-                                    //_uiStateMedicineDetail.value = MedicineDetailUIState.ValidateSuccess
 
                                     _uiStateMedicineDetail.update{ currentState ->
                                         currentState.copy(

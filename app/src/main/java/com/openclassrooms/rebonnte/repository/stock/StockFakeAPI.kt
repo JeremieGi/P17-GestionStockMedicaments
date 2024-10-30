@@ -98,11 +98,13 @@ class StockFakeAPI : StockAPI {
 
         fun initFakeAisles() : MutableList<Aisle> {
             return mutableListOf(
-                Aisle("1","A1"),
+                Aisle("1",CTE_AISLE_NAME),
                 Aisle("2","A2"),
                 Aisle("3","A3"),
             )
         }
+
+        const val CTE_AISLE_NAME = "A1" // Utile pour les tests unitaires (tests d'unicité)
 
     }
 
