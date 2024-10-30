@@ -100,18 +100,18 @@ class StockFirebaseAPI : StockAPI {
 
     }
 
-    override fun addMedicine(medicine: Medicine): Flow<ResultCustom<String>> {
+    override fun addMedicine(medicine: Medicine): Flow<ResultCustom<Medicine>> {
         return insertOrUpdateMedicine(medicine)
     }
 
     override fun updateMedicine(
         updatedMedicine: Medicine
-    ): Flow<ResultCustom<String>> {
+    ): Flow<ResultCustom<Medicine>> {
         return insertOrUpdateMedicine(updatedMedicine)
     }
 
     // En Firebase set() insère ou met à jour
-    private fun insertOrUpdateMedicine(medicine: Medicine) : Flow<ResultCustom<String>> {
+    private fun insertOrUpdateMedicine(medicine: Medicine) : Flow<ResultCustom<Medicine>> {
 
         return callbackFlow {
 
@@ -123,7 +123,7 @@ class StockFirebaseAPI : StockAPI {
             medicineDocument.set(medicineDTO)
                 .addOnSuccessListener {
                     // Succès de l'ajout dans Firestore
-                    trySend(ResultCustom.Success(""))
+                    trySend(ResultCustom.Success(medicine))
                 }
                 .addOnFailureListener { firestoreException ->
                     // Gestion des erreurs lors de l'ajout dans Firestore

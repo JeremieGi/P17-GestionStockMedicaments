@@ -179,7 +179,7 @@ class MedicineDetailViewModel @Inject constructor (
 
                     viewModelScope.launch {
 
-                        val flowResult : Flow<ResultCustom<String>>
+                        val flowResult : Flow<ResultCustom<Medicine>>
                         if (_isAddMode){
                             flowResult = stockRepository.addMedicine(
                                 medicine = updatedMedicine,

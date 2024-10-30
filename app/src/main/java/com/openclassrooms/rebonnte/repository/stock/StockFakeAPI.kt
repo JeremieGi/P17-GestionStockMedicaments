@@ -26,7 +26,7 @@ class StockFakeAPI : StockAPI {
 
             val dates = initDates(3)
 
-            val users = UserFakeAPI.initFakeCurrentUser()
+            val users = UserFakeAPI.initFakeUsers()
 
 
             return mutableListOf(
@@ -143,7 +143,7 @@ class StockFakeAPI : StockAPI {
 
     override fun addMedicine(
         medicine: Medicine
-    ): Flow<ResultCustom<String>> {
+    ): Flow<ResultCustom<Medicine>> {
 
 
         val isAdded = _listMedicines.add(medicine)
@@ -154,7 +154,7 @@ class StockFakeAPI : StockAPI {
             //delay(1*1000)
 
             if (isAdded){
-                trySend(ResultCustom.Success(""))
+                trySend(ResultCustom.Success(medicine))
             }
             else{
                 trySend(ResultCustom.Failure("Impossible to add medicine"))
@@ -170,7 +170,7 @@ class StockFakeAPI : StockAPI {
 
     override fun updateMedicine(
         updatedMedicine: Medicine
-    ): Flow<ResultCustom<String>> {
+    ): Flow<ResultCustom<Medicine>> {
 
         val index = _listMedicines.indexOfFirst { it.id == updatedMedicine.id }
 
@@ -183,7 +183,7 @@ class StockFakeAPI : StockAPI {
 
                 _listMedicines[index] = updatedMedicine
 
-                trySend(ResultCustom.Success(""))
+                trySend(ResultCustom.Success(updatedMedicine))
             }
             else{
                 trySend(ResultCustom.Failure("No medicine find with ID = $updatedMedicine.id "))

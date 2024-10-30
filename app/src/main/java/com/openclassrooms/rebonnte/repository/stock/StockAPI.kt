@@ -14,11 +14,11 @@ interface StockAPI {
     // Ajout d'un médicament
     fun addMedicine(
         medicine: Medicine
-    ): Flow<ResultCustom<String>>
+    ): Flow<ResultCustom<Medicine>>
 
     fun updateMedicine(
         updatedMedicine: Medicine
-    ) : Flow<ResultCustom<String>>
+    ) : Flow<ResultCustom<Medicine>>
 
     // Chargement d'un médicament
     fun loadMedicineByID(idMedicine: String): Flow<ResultCustom<Medicine>>

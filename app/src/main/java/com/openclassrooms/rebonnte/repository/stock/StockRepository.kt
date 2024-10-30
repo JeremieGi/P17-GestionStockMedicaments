@@ -120,7 +120,7 @@ class StockRepository @Inject constructor(
     fun addMedicine(
         medicine : Medicine,
         author : User
-    ): Flow<ResultCustom<String>> = flow {
+    ): Flow<ResultCustom<Medicine>> = flow {
 
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {
@@ -138,7 +138,7 @@ class StockRepository @Inject constructor(
             // Ajout de l'historique dans le repository
             val newHistory = History(
                 author = author,
-                details = "Creation"
+                details =  injectedContext.getInjectedContext().getString(R.string.creation)
             )
             medicine.addHistory(newHistory)
 
@@ -154,7 +154,7 @@ class StockRepository @Inject constructor(
         oldMedicine : Medicine,
         updatedMedicine: Medicine,
         author : User
-    ) : Flow<ResultCustom<String>> = flow {
+    ) : Flow<ResultCustom<Medicine>> = flow {
 
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {

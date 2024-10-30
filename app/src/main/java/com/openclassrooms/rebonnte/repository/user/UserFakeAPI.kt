@@ -10,7 +10,7 @@ class UserFakeAPI : UserAPI {
     companion object {
 
         // J'utilise cette procédure pour les previews Compose
-        fun initFakeCurrentUser() : List<User> {
+        fun initFakeUsers() : List<User> {
             return listOf(
                 User(
                     id = "1",
@@ -32,7 +32,7 @@ class UserFakeAPI : UserAPI {
 
     }
 
-    private val usersFake = initFakeCurrentUser()
+    private val usersFake = initFakeUsers()
 
     override fun userLogged() : Boolean {
         return true

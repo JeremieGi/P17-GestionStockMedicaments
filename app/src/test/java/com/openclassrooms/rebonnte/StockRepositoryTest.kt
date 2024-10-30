@@ -2,23 +2,30 @@ package com.openclassrooms.rebonnte
 
 import android.content.Context
 import com.openclassrooms.rebonnte.model.Aisle
+import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
+import com.openclassrooms.rebonnte.model.User
 import com.openclassrooms.rebonnte.repository.InjectedContext
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockAPI
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import com.openclassrooms.rebonnte.repository.stock.StockRepository
+import com.openclassrooms.rebonnte.repository.user.UserFakeAPI
 import org.junit.Before
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.spyk
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class StockRepositoryTest {
+
+    // TODO Denis Question : Classe de test très longue : je peux la découper en plusieurs
 
     private lateinit var cutStockRepository : StockRepository // Class Under Test
 
@@ -255,5 +262,239 @@ class StockRepositoryTest {
         jobCollector.cancel()
         jobCut.cancel()
     }
+
+    /**
+     * Ajout d'une allée avec succès
+     */
+    @Test
+    fun addAisle_success() = runTest {
+
+        // definition des mocks
+
+        // Connexion Internet OK
+        coEvery {
+            mockInjectedContext.isInternetAvailable()
+        } returns true
+
+        // Configurer le comportement de context
+        coEvery {
+            mockInjectedContext.getInjectedContext()
+        } returns mockContext
+
+
+        val successValTest = "Test success"
+        coEvery {
+            mockAPI.addAisle(any())
+        } returns flowOf(ResultCustom.Success(successValTest))
+
+        // Créer le collecteur du flow du repository
+        val resultList = mutableListOf<ResultCustom<String>>()
+        val mockAisle = Aisle("idTest","nameTest")
+        val jobCut = launch {
+            cutStockRepository.addAisle(mockAisle).collect { result ->
+                resultList.add(result)
+            }
+        }
+
+        // Attend que toutes les couroutines en attente s'executent
+        jobCut.join()
+
+        // coVerify : s'assure que les fonctions des mocks ont été appelées
+        coVerify {
+            mockInjectedContext.isInternetAvailable()
+            mockAPI.addAisle(any())
+        }
+
+        // On attend les valeurs de mockAPI.loadAllEvents
+        assertEquals(2, resultList.size)
+
+        assertEquals(ResultCustom.Loading,resultList[0])
+
+        val expectedResult = ResultCustom.Success(successValTest)
+        assertEquals(expectedResult,resultList[1])
+
+        // Cancel the collection job
+        jobCut.cancel()
+
+    }
+
+    /**
+     * Ajout d'une allée  sans connexion Internet
+     */
+    @Test
+    fun addAisle_NoInternetConnexion() = runTest {
+
+        // definition des mocks
+
+        // Connexion Internet => erreur
+        coEvery {
+            mockInjectedContext.isInternetAvailable()
+        } returns false
+
+        // Configurer le comportement de context pour getString()
+        coEvery {
+            mockContext.getString(any())
+        } returns ""
+
+        // Configurer le comportement de context
+        coEvery {
+            mockInjectedContext.getInjectedContext()
+        } returns mockContext
+
+        // Créer le collecteur du flow du repository
+        val resultList = mutableListOf<ResultCustom<String>>()
+        val mockAisle = Aisle("idTest","nameTest")
+        val jobCut = launch {
+            cutStockRepository.addAisle(mockAisle).collect { result ->
+                resultList.add(result)
+            }
+        }
+
+        // Attend que toutes les couroutines en attente s'executent
+        jobCut.join()
+
+        // coVerify : s'assure que les fonctions des mocks ont été appelées
+        coVerify {
+            mockInjectedContext.isInternetAvailable()
+            mockContext.getString(any())
+            mockInjectedContext.getInjectedContext()
+        }
+
+        // On attend les valeurs de mockAPI.loadAllEvents
+        assertEquals(1, resultList.size)
+
+        assert(resultList[0] is ResultCustom.Failure)
+
+        // Cancel the collection job
+        jobCut.cancel()
+
+    }
+
+
+    /**
+     * Ajout d'un médicament avec succès
+     */
+    @Test
+    fun addMedicine_success() = runTest {
+
+        // definition des mocks
+
+        // Connexion Internet OK
+        coEvery {
+            mockInjectedContext.isInternetAvailable()
+        } returns true
+
+        // Configurer le comportement de context
+        coEvery {
+            mockInjectedContext.getInjectedContext()
+        } returns mockContext
+
+        // Configurer le comportement de injectedContext pour getString()
+        coEvery {
+            mockContext.getString(R.string.creation)
+        } returns "Creation"
+
+        // Mock partiel de Medicine -  mockAPI.addMedicine renverra la valeur reçue en paramètre
+        val medicineTest = Medicine(
+            id = "idTest",
+            name = "nameTest",
+            stock = 5,
+            oAisle = Aisle("idAisle","nameAisle"),
+            histories = emptyList<History>().toMutableList()
+        )
+        val spyMedicine = spyk(medicineTest, recordPrivateCalls = true) // Enregistre les appels pour vérification
+        coEvery {
+            mockAPI.addMedicine(spyMedicine)
+        } returns flowOf(ResultCustom.Success(spyMedicine))
+
+        // Test de la fonction addMedicine
+        val authorParam = User(id = "idTest", sName = "UserTest", sEmail = "")
+        val resultList = cutStockRepository.addMedicine(spyMedicine, authorParam).toList()
+
+        // coVerify : s'assure que les fonctions des mocks ont été appelées
+        coVerify {
+            mockInjectedContext.isInternetAvailable()
+            mockContext.getString(any())
+            mockAPI.addMedicine(any())
+            spyMedicine.addHistory(any())
+        }
+
+        // On attend les valeurs de mockAPI.loadAllEvents
+        assertEquals(2, resultList.size)
+
+        assertEquals(ResultCustom.Loading,resultList[0])
+
+        val resultSuccess = resultList[1]
+        if (resultSuccess is ResultCustom.Success){
+            val resultMedicineWithHistory = resultSuccess.value
+            assertEquals("Check history creation : ",1,resultMedicineWithHistory.histories.size)
+        }
+        else{
+            assert(false) { "expected type ResultCustom.Success" }
+        }
+
+    }
+
+    /**
+     * Ajout d'un medicament sans connexion Internet
+     */
+    @Test
+    fun addMedicine_NoInternetConnexion() = runTest {
+
+        // definition des mocks
+
+        // Connexion Internet => erreur
+        coEvery {
+            mockInjectedContext.isInternetAvailable()
+        } returns false
+
+        // Configurer le comportement de context pour getString()
+        coEvery {
+            mockContext.getString(any())
+        } returns ""
+
+        // Configurer le comportement de context
+        coEvery {
+            mockInjectedContext.getInjectedContext()
+        } returns mockContext
+
+        // Créer le collecteur du flow du repository
+        val resultList = mutableListOf<ResultCustom<Medicine>>()
+
+        val mockListMedicines  = StockFakeAPI.initFakeMedicines()
+        val mockMedicine = mockListMedicines[0]
+
+        val mockListUsers  = UserFakeAPI.initFakeUsers()
+        val mockUser = mockListUsers[0]
+
+        val jobCut = launch {
+            cutStockRepository.addMedicine(mockMedicine,mockUser).collect { result ->
+                resultList.add(result)
+            }
+        }
+
+        // Attend que toutes les couroutines en attente s'executent
+        jobCut.join()
+
+        // coVerify : s'assure que les fonctions des mocks ont été appelées
+        coVerify {
+            mockInjectedContext.isInternetAvailable()
+            mockContext.getString(any())
+            mockInjectedContext.getInjectedContext()
+        }
+
+        // On attend les valeurs de mockAPI.loadAllEvents
+        assertEquals("One value expected in the result flow",1, resultList.size)
+
+        assert(resultList[0] is ResultCustom.Failure)
+
+        // Cancel the collection job
+        jobCut.cancel()
+
+    }
+
+
+
+    // Je ne teste pas toutes les méthodes car certaines ne font que passe-plat comme deleteMedecineById par exemple
 
 }
