@@ -22,7 +22,12 @@ sealed class CurrentMedicineUIState {
     ) : CurrentMedicineUIState()
 
     data class LoadError(val sError: String) : CurrentMedicineUIState()
-    data class ValidateError(val sError: String) : CurrentMedicineUIState()
+
+    // Erreurs de validation
+    sealed class ValidateError : CurrentMedicineUIState()
+
+    data class ValidateErrorRepository(val sError: String) : ValidateError()
+    data object ValidateErrorUserUnlogged : ValidateError()
 
     data object ValidateSuccess : CurrentMedicineUIState() // upload or insert
 }

@@ -36,8 +36,9 @@
     <string name="date">Date:</string>
     <string name="details">Details:</string>
     <string name="delete_error">Delete error : %1$s</string>
-    <string name="medicine_successfull_deleted">Medicine successfull deleted</string>
+    <string name="medicine_successfull_deleted">Medicine successful deleted</string>
     <string name="this_aisle_already_exists">This aisle already exists</string>
     <string name="please_select_an_aisle">Please select an aisle</string>
     <string name="please_select_an_existing_aisle">Please select an existing aisle</string>
+    <string name="impossible_to_validate_a_medicine_without_login">Impossible to validate a medicine without login</string>
 </resources>

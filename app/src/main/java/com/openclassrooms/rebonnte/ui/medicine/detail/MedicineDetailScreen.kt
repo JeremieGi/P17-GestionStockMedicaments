@@ -146,8 +146,12 @@ fun MedicineDetailStateComposable(
                         sError = uiStateMedicineDetailP.currentStateMedicine.sError
                         onRetry = loadMedicineByIDP
                     }
-                    is CurrentMedicineUIState.ValidateError -> {
+                    is CurrentMedicineUIState.ValidateErrorRepository -> {
                         sError = uiStateMedicineDetailP.currentStateMedicine.sError
+                        onRetry = updateOrInsertMedicineP
+                    }
+                    is CurrentMedicineUIState.ValidateErrorUserUnlogged -> {
+                        sError = stringResource(R.string.impossible_to_validate_a_medicine_without_login)
                         onRetry = updateOrInsertMedicineP
                     }
                     else -> {
@@ -196,7 +200,7 @@ fun MedicineDetailSuccessComposable(
         item {
 
             // TODO Denis : Erreur ici pour faire un scroll car la lazyColumn plus bas est déjà scrollable => voir NestedScroll
-            // Finalement j'ai utilisé item qui permet de faire une entête de lazyColumn
+            // Finalement j'ai utilisé item qui permet de faire une entête de lazyColumn. NestedScroll me parait trop compliqué pour ce cas.
             // .verticalScroll(rememberScrollState())
             Column{
                 TextField(

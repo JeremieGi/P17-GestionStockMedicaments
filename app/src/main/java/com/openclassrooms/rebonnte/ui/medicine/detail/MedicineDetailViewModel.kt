@@ -165,7 +165,8 @@ class MedicineDetailViewModel @Inject constructor (
                     // Ce cas ne devrait jamais se produire
                     _uiStateMedicineDetail.update{ currentStateParam ->
                         currentStateParam.copy(
-                            currentStateMedicine = CurrentMedicineUIState.ValidateError("No user is logged in"), // TODO Denis : Autre méthode que d'injecter le context ici ?
+                            // TODO Denis : Question : Au lieu d'injecter le context dans le ViewModel je crée un état supplémentaire CurrentMedicineUIState.ValidateErrorUserunknown
+                            currentStateMedicine = CurrentMedicineUIState.ValidateErrorUserUnlogged,
                             formError = null,
                         )
                     }
@@ -211,7 +212,7 @@ class MedicineDetailViewModel @Inject constructor (
 
                                     _uiStateMedicineDetail.update{ currentState ->
                                         currentState.copy(
-                                            currentStateMedicine = CurrentMedicineUIState.ValidateError(sError),
+                                            currentStateMedicine = CurrentMedicineUIState.ValidateErrorRepository(sError),
                                             formError = null,
                                         )
                                     }
