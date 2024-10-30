@@ -91,4 +91,19 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     androidTestImplementation(libs.hilt.android.testing)
+
+    // Tests
+
+    testImplementation(libs.mockito.core)
+    //testImplementation(libs.mockito.inline)
+
+    androidTestImplementation(libs.hilt.android.testing)
+    //kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51.1")
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    // Test unitaire des viewModels
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotlinx.coroutines.core)
 }

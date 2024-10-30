@@ -18,6 +18,10 @@ ksp = "1.9.23-1.0.20"
 hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 
+mockitoCore = "5.12.0"
+mockk = "1.13.12"
+kotlinx-coroutines = "1.6.4"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -44,6 +48,12 @@ hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+#mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 
 
 [plugins]

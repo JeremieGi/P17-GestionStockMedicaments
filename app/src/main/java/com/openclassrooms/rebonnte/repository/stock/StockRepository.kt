@@ -99,7 +99,7 @@ class StockRepository @Inject constructor(
         // Si pas d'Internet
         if (!injectedContext.isInternetAvailable()) {
 
-            _flowMedicines.emit(
+            _flowAisles.emit(
                 ResultCustom.Failure(
                     injectedContext.getInjectedContext().getString(R.string.no_network)
                 )
