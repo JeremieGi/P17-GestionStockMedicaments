@@ -373,12 +373,24 @@ class MedicineDetailViewModel @Inject constructor (
         val currentState = _uiStateMedicineDetail.value
         if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
-            val updatedAisle =  currentState.currentStateMedicine.medicineValue.oAisle.copy(
-                name = sInputAisleP
-            )
+            val currentAisle = aisleFindByName(sInputAisleP)
+            val updatedAisle : Aisle
+            // Le nom saisi n'est pas un nom d'allée connu
+            if ( currentAisle == null ) {
+                updatedAisle =  currentState.currentStateMedicine.medicineValue.oAisle.copy(
+                    id = "",
+                    name = sInputAisleP
+                )
+            }
+            else{
+                updatedAisle =  currentState.currentStateMedicine.medicineValue.oAisle.copy(
+                    id = currentAisle.id,
+                    name = currentAisle.name
+                )
+            }
+
             val updatedMedicine =  currentState.currentStateMedicine.medicineValue.copy(oAisle = updatedAisle)
 
-            //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
 
             _uiStateMedicineDetail.update{ currentStateP ->
                 currentStateP.copy(
@@ -393,10 +405,9 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
-    private fun aisleNameNotExist(sAisleInputNameP : String) : Boolean {
+    private fun aisleFindByName(sAisleInputNameP : String) : Aisle? {
 
-        // any, qui retourne true si un élément correspondant au critère existe, et false sinon.
-        return ! _listExistingAisles.any { it.name == sAisleInputNameP }
+        return _listExistingAisles.find { it.name == sAisleInputNameP }
 
     }
 
@@ -437,7 +448,7 @@ class MedicineDetailViewModel @Inject constructor (
                 // en mode ajout uniquement
                 if (_isAddMode){
                     // Vérifier l'existence de l'allée
-                    if ( aisleNameNotExist(currentState.currentStateMedicine.medicineValue.oAisle.name) ) {
+                    if ( aisleFindByName(currentState.currentStateMedicine.medicineValue.oAisle.name) == null ) {
                         return FormErrorAddMedicine.AisleErrorNoExist
                     }
                 }

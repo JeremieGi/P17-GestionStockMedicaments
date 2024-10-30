@@ -41,7 +41,7 @@ class AisleDetailViewModel @Inject constructor (
                     // Echec
                     is ResultCustom.Failure -> {
                         // Propagation du message d'erreur
-
+                        // TODO JG => On fait quelque chose ici ?
                     }
 
                     // En chargement

@@ -8,6 +8,8 @@ data class FirebaseMedicineDTO (
 
     // TODO Denis : J'ai été obligé de mettre les propriétés en var + @get:PropertyName et  @set:PropertyName
 
+    // TODO Denis Question : Est ce utile de faire des tests unitaires sur les classes de DTO
+
     @get:PropertyName(RUB_ID)
     @set:PropertyName(RUB_ID)
     var id : String = "",
@@ -22,7 +24,7 @@ data class FirebaseMedicineDTO (
 
     @get:PropertyName("aisle")
     @set:PropertyName("aisle")
-    var aisle : FirebaseAisleDTO = FirebaseAisleDTO(),
+    var aisle : FirebaseAisleDTO = FirebaseAisleDTO(), // Je stocke aussi l'ID de l'allée (plus évolutif en cas de modification de nom d'allée dans les futures évolutions)
 
     @get:PropertyName("histories")
     @set:PropertyName("histories")

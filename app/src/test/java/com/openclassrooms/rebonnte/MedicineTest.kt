@@ -12,6 +12,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+// Seule classe Model testée car les autres n'ont pas de méthodes
+
 class MedicineTest {
 
     // Context mocké => Utilisation des ressources de chaine
