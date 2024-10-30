@@ -2,6 +2,7 @@ package com.openclassrooms.rebonnte
 
 import android.content.Context
 import com.openclassrooms.rebonnte.model.Aisle
+import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.InjectedContext
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockAPI
@@ -73,7 +74,6 @@ class StockRepositoryTest {
 
         // Attend que toutes les couroutines en attente s'executent
         jobCut.join()
-        jobCollector.join()
 
         // coVerify : s'assure que les fonctions des mocks ont été appelées
         coVerify {
@@ -126,6 +126,115 @@ class StockRepositoryTest {
         // Test réel de la fonction
         val jobCut = launch {
             cutStockRepository.loadAllAisles()
+        }
+
+        // Attend que toutes les couroutines en attente s'executent
+        jobCut.join()
+
+        // coVerify : s'assure que les fonctions des mocks ont été appelées
+        coVerify {
+            mockInjectedContext.isInternetAvailable()
+            mockInjectedContext.getInjectedContext()
+            mockContext.getString(any())
+        }
+
+        // Une valeur reçue en erreur
+        assertEquals(1, resultList.size)
+        assert(resultList[0] is ResultCustom.Failure)
+
+        // Cancel the collection job
+        jobCollector.cancel()
+        jobCut.cancel()
+    }
+
+
+    /**
+     * Chargement de tous les médicaments : Succès
+     */
+    @Test
+    fun loadAllMedicines_success()  = runTest {
+
+        // definition des mocks
+
+        // Connexion Internet OK
+        coEvery {
+            mockInjectedContext.isInternetAvailable()
+        } returns true
+
+        // Liste des médicaments
+        val mockListMedicines  = StockFakeAPI.initFakeMedicines()
+        coEvery {
+            mockAPI.loadAllMedicines(any(), any())
+        } returns flowOf(ResultCustom.Success(mockListMedicines))
+
+        // Créer le collecteur du flow du repository
+        val resultList = mutableListOf<ResultCustom<List<Medicine>>>()
+        val jobCollector = launch {
+            cutStockRepository.flowMedicines.collect { result ->
+                resultList.add(result)
+            }
+        }
+
+        // Test réel de la fonction
+        val jobCut = launch {
+            cutStockRepository.loadAllMedicines("",StockRepository.EnumSortedItem.NONE)
+        }
+
+        // Attend que toutes les couroutines en attente s'executent
+        jobCut.join()
+        //jobCollector.join()
+
+        // coVerify : s'assure que les fonctions des mocks ont été appelées
+        coVerify {
+            mockInjectedContext.isInternetAvailable()
+            mockAPI.loadAllMedicines("",StockRepository.EnumSortedItem.NONE)
+        }
+
+        // On attend les valeurs de mockAPI.loadAllEvents
+        assertEquals(1, resultList.size)
+
+        val expectedResult = ResultCustom.Success(mockListMedicines)
+        assertEquals(expectedResult,resultList[0])
+
+        // Cancel the collection job
+        jobCollector.cancel()
+        jobCut.cancel()
+    }
+
+    /**
+     * Chargement de tous les médicaments : Echec pas de connexion
+     */
+    @Test
+    fun loadAllMedicines_NoInternetConnexion()  = runTest {
+
+        // definition des mocks
+
+        // Pas de connexion Internet
+        coEvery {
+            mockInjectedContext.isInternetAvailable()
+        } returns false
+
+        // Configurer le comportement de injectedContext pour getInjectedContext()
+        coEvery {
+            mockInjectedContext.getInjectedContext()
+        } returns mockContext
+
+        // Configurer le comportement de injectedContext pour getString()
+        coEvery {
+            mockContext.getString(R.string.no_network)
+        } returns "No Network Connection"
+
+        // Créer le collecteur du flow du repository
+        val resultList = mutableListOf<ResultCustom<List<Medicine>>>()
+        val jobCollector = launch {
+            cutStockRepository.flowMedicines.collect { result ->
+                resultList.add(result)
+            }
+        }
+
+        // Test réel de la fonction
+        val jobCut = launch {
+            cutStockRepository.loadAllMedicines("",StockRepository.EnumSortedItem.NONE)
         }
 
         // Attend que toutes les couroutines en attente s'executent
