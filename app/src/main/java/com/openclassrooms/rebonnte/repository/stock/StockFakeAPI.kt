@@ -104,7 +104,8 @@ class StockFakeAPI : StockAPI {
             )
         }
 
-        const val CTE_AISLE_NAME = "A1" // Utile pour les tests unitaires (tests d'unicité)
+        // Utile pour les tests unitaires
+        const val CTE_AISLE_NAME = "A1" // tests d'unicité
 
     }
 

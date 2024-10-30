@@ -4,6 +4,7 @@ import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import com.openclassrooms.rebonnte.repository.stock.StockRepository
+import com.openclassrooms.rebonnte.ui.aisle.detail.AisleDetailUIState
 import com.openclassrooms.rebonnte.ui.aisle.detail.AisleDetailViewModel
 import com.openclassrooms.rebonnte.ui.aisle.detail.CurrentAisleUIState
 import com.openclassrooms.rebonnte.ui.aisle.detail.FormErrorAddAisle
@@ -17,6 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert
@@ -41,8 +43,11 @@ class AisleDetailViewModelTest {
         cutViewModel = AisleDetailViewModel(mockStockRepository)
     }
 
+
+    // ---------- Mode d'ajout d'une allée ----------
+
     @Test
-    fun add_success() = runTest {
+    fun addMode_AddSuccess() = runTest {
 
         initAddTestMode()
 
@@ -85,7 +90,7 @@ class AisleDetailViewModelTest {
     }
 
     @Test
-    fun add_error_AisleAlreadyExist() = runTest {
+    fun addMode_error_AisleAlreadyExist() = runTest {
 
         initAddTestMode()
 
@@ -109,7 +114,7 @@ class AisleDetailViewModelTest {
     }
 
     @Test
-    fun add_error_AisleNameEmpty() = runTest {
+    fun addMode_error_AisleNameEmpty() = runTest {
 
         initAddTestMode()
 
@@ -166,5 +171,103 @@ class AisleDetailViewModelTest {
 
     }
 
+    // ---------- Mode d'affichage simple ----------
+
+    @Test
+    fun detailMode_loadSuccess() = runTest {
+
+        // Préparer des données fictives
+        val listAisles = StockFakeAPI.initFakeAisles()
+        val aislesA1 = listAisles[0]
+
+        // Simuler le succès dans le repository
+        coEvery { mockStockRepository.loadAisleByID(any()) } returns flowOf(ResultCustom.Success(aislesA1))
+
+        // Créer le collecteur du flow du repository
+        val emittedStates = mutableListOf<AisleDetailUIState>() // Liste pour capturer les résultats émis
+        val jobCollector = launch {
+            cutViewModel.uiStateAisleDetail.collect { result ->
+                emittedStates.add(result)
+            }
+        }
+
+        // Appel de la fonction pour charger l'allée par ID
+        val jobCut = launch {
+            cutViewModel.loadAisleByID("idAisle")
+        }
+
+        // Attente de la fin de la collecte
+        jobCut.join()
+
+        // Assertions pour vérifier que l'état de l'UI est mis à jour pour le succès
+        assertEquals(2, emittedStates.size)
+
+        // IsLoading est l'état initial du Ui State
+        val expectedLoadResult = AisleDetailUIState(
+            currentStateAisle = CurrentAisleUIState.IsLoading,
+            formError = null
+        )
+        assertEquals(expectedLoadResult,emittedStates[0])
+
+        // Ensuite le succès Mocké
+        val expectedSuccessResult = AisleDetailUIState(
+            currentStateAisle = CurrentAisleUIState.LoadSuccess(aislesA1),
+            formError = null
+        )
+        assertEquals(expectedSuccessResult,emittedStates[1])
+
+
+        // Annuler l'observation
+        jobCollector.cancel()
+
+    }
+
+    @Test
+    fun detailMode_loadError() = runTest {
+
+        // Préparer des données fictives
+        val sErrorMessage = "Error test message"
+
+        // Simuler l'échec dans le repository
+        coEvery { mockStockRepository.loadAisleByID(any()) } returns flowOf(ResultCustom.Failure(sErrorMessage))
+
+        // Créer le collecteur du flow du repository
+        val emittedStates = mutableListOf<AisleDetailUIState>() // Liste pour capturer les résultats émis
+        val jobCollector = launch {
+            cutViewModel.uiStateAisleDetail.collect { result ->
+                emittedStates.add(result)
+            }
+        }
+
+        // Appel de la fonction pour charger l'allée par ID
+        val jobCut = launch {
+            cutViewModel.loadAisleByID("idAisle")
+        }
+
+        // Attente de la fin de la collecte
+        jobCut.join()
+
+        // Assertions pour vérifier que l'état de l'UI est mis à jour
+        assertEquals(2, emittedStates.size)
+
+        // IsLoading est l'état initial du Ui State
+        val expectedLoadResult = AisleDetailUIState(
+            currentStateAisle = CurrentAisleUIState.IsLoading,
+            formError = null
+        )
+        assertEquals(expectedLoadResult,emittedStates[0])
+
+        // Ensuite l'échec Mocké
+        val expectedSuccessResult = AisleDetailUIState(
+            currentStateAisle = CurrentAisleUIState.LoadError(sErrorMessage),
+            formError = null
+        )
+        assertEquals(expectedSuccessResult,emittedStates[1])
+
+
+        // Annuler l'observation
+        jobCollector.cancel()
+
+    }
 }
 
