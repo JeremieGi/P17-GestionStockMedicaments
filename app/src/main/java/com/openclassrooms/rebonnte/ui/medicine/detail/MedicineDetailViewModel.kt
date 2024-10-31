@@ -29,9 +29,6 @@ class MedicineDetailViewModel @Inject constructor (
 
     private lateinit var _oldMedicine : Medicine
 
-    // Liste chargée une fois (pour autocompletion lors de la saisie des allées)
-    private var _listExistingAisles : List<Aisle> = emptyList()
-
 
     fun loadMedicineByID(idMedicineP: String) {
 
@@ -306,6 +303,7 @@ class MedicineDetailViewModel @Inject constructor (
                             currentStateP.copy(
                                 currentStateMedicine = CurrentMedicineUIState.LoadError(resultFlow.errorMessage?:""),
                                 formError = null,
+                                listAisles = null
                             )
                         }
                     }
@@ -318,7 +316,11 @@ class MedicineDetailViewModel @Inject constructor (
 
                     // Succès
                     is ResultCustom.Success -> {
-                        _listExistingAisles = resultFlow.value
+                        _uiStateMedicineDetail.update{ currentStateP ->
+                            currentStateP.copy(
+                                listAisles = resultFlow.value
+                            )
+                        }
                     }
 
                 }
@@ -398,7 +400,8 @@ class MedicineDetailViewModel @Inject constructor (
 
     private fun aisleFindByName(sAisleInputNameP : String) : Aisle? {
 
-        return _listExistingAisles.find { it.name == sAisleInputNameP }
+        val listExistingAisles = _uiStateMedicineDetail.value.listAisles
+        return listExistingAisles?.find { it.name == sAisleInputNameP }
 
     }
 
@@ -433,8 +436,6 @@ class MedicineDetailViewModel @Inject constructor (
                 return FormErrorAddMedicine.AisleErrorEmpty
             }
             else{
-
-                // TODO JG => AutocompleteTextView non dispo en compose (Voir meilleure solution) => faire un spinner
 
                 // en mode ajout uniquement
                 if (_isAddMode){

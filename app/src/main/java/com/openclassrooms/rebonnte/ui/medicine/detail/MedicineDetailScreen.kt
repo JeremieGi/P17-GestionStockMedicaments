@@ -16,24 +16,34 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.R
+import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
@@ -99,7 +109,7 @@ fun MedicineDetailStateComposable(
     onMedicineUpdated: () -> Unit,
     bAddModeP : Boolean,
     onInputNameChangedP : (String) -> Unit,
-    onInputAisleChangedP : (String) -> Unit,
+    onInputAisleChangedP : (String) -> Unit
 ) {
 
 
@@ -126,6 +136,7 @@ fun MedicineDetailStateComposable(
                     bAddModeP = bAddModeP,
                     onInputNameChangedP = onInputNameChangedP,
                     onInputAisleChangedP = onInputAisleChangedP,
+                    listAisleP = uiStateMedicineDetailP.listAisles
                 )
 
             }
@@ -178,6 +189,7 @@ fun MedicineDetailStateComposable(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicineDetailSuccessComposable(
     modifier: Modifier,
@@ -189,6 +201,7 @@ fun MedicineDetailSuccessComposable(
     bAddModeP : Boolean,
     onInputNameChangedP : (String) -> Unit,
     onInputAisleChangedP : (String) -> Unit,
+    listAisleP : List<Aisle>?,
 ) {
 
 
@@ -202,7 +215,7 @@ fun MedicineDetailSuccessComposable(
             // j'ai utilisé item qui permet de faire une entête de lazyColumn. NestedScroll me parait trop compliqué pour ce cas.
             // .verticalScroll(rememberScrollState()) // pas besoin
             Column{
-                TextField(
+                OutlinedTextField(
                     value = medicineP.name,
                     isError = (formErrorP is FormErrorAddMedicine.NameError),
                     onValueChange = {
@@ -212,6 +225,7 @@ fun MedicineDetailSuccessComposable(
                     enabled = bAddModeP,
                     modifier = Modifier.fillMaxWidth()
                 )
+                // TODO JG : Utiliser les paramètres de OutlinedTextField
                 if (formErrorP is FormErrorAddMedicine.NameError) {
                     Text(
                         text = stringResource(id = R.string.mandatoryname),
@@ -220,21 +234,64 @@ fun MedicineDetailSuccessComposable(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
+                // TODO JG : en faire un composant indépendant
 
-                TextField(
-                    value = medicineP.oAisle.name,
-                    isError = (
-                            formErrorP is FormErrorAddMedicine.AisleErrorEmpty
-                                    ||
-                                    formErrorP is FormErrorAddMedicine.AisleErrorNoExist
-                            ),
-                    onValueChange = {
-                        onInputAisleChangedP(it)
-                    },
-                    label = { Text(stringResource(R.string.aisle)) },
-                    enabled = bAddModeP,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                // État pour contrôler l'ouverture du menu déroulant
+                var expanded by remember { mutableStateOf(false) }
+
+                // Initialisation du FocusRequester
+                val focusRequester = remember { FocusRequester() }
+
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
+                ) {
+
+
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                            .focusRequester(focusRequester) // Associe le FocusRequester ici
+                        ,
+                        value = medicineP.oAisle.name,
+                        isError = (
+                                formErrorP is FormErrorAddMedicine.AisleErrorEmpty
+                                        ||
+                                        formErrorP is FormErrorAddMedicine.AisleErrorNoExist
+                                ),
+                        onValueChange = {
+                            onInputAisleChangedP(it)
+                        },
+                        label = { Text(stringResource(R.string.aisle)) },
+                        enabled = bAddModeP,
+                        //readOnly = true, // TODO JG : tester à false
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        },
+                    )
+
+
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        listAisleP?.forEach { aisle ->
+                            DropdownMenuItem(
+                                text = { Text(aisle.name) },
+                                onClick = {
+                                    onInputAisleChangedP(aisle.name) // Met à jour l'option sélectionnée
+                                    expanded = false // Ferme le menu
+                                }
+                            )
+                        }
+                    }
+
+                }
+
+
                 if (formErrorP is FormErrorAddMedicine.AisleErrorEmpty) {
                     Text(
                         text = stringResource(R.string.please_select_an_aisle),
@@ -247,6 +304,8 @@ fun MedicineDetailSuccessComposable(
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
+
+
 
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -268,7 +327,7 @@ fun MedicineDetailSuccessComposable(
                             contentDescription = stringResource(R.string.minus_one)
                         )
                     }
-                    TextField(
+                    OutlinedTextField(
                         value = medicineP.stock.toString(),
                         isError = (formErrorP is FormErrorAddMedicine.StockError),
                         onValueChange = {}, // Paramètre obligatoire mais champ grisé => onValueChange jamais exécuté
@@ -407,6 +466,7 @@ fun MedicineDetailStateComposableSuccessPreview() {
         formError = null
     )
 
+
     RebonnteTheme {
 
         MedicineDetailStateComposable(
@@ -418,7 +478,7 @@ fun MedicineDetailStateComposableSuccessPreview() {
             onMedicineUpdated = {},
             bAddModeP = false,
             onInputNameChangedP= {},
-            onInputAisleChangedP= {},
+            onInputAisleChangedP= {}
         )
 
     }
@@ -435,7 +495,8 @@ fun MedicineDetailStateComposableAdd() {
     val fakeMedicine = listFakeMedicines[2]
     val uiStateSuccess = MedicineDetailUIState(
         currentStateMedicine = CurrentMedicineUIState.LoadSuccess(fakeMedicine),
-        formError = null
+        formError = null,
+        listAisles = StockFakeAPI.initFakeAisles()
     )
 
     RebonnteTheme {
@@ -449,7 +510,7 @@ fun MedicineDetailStateComposableAdd() {
             onMedicineUpdated = {},
             bAddModeP = true,
             onInputNameChangedP= {},
-            onInputAisleChangedP= {},
+            onInputAisleChangedP= {}
         )
 
     }
@@ -481,7 +542,7 @@ fun MedicineDetailStateComposableAddWithErrorForm() {
             onMedicineUpdated = {},
             bAddModeP = true,
             onInputNameChangedP= {},
-            onInputAisleChangedP= {},
+            onInputAisleChangedP= {}
         )
 
     }
@@ -511,7 +572,7 @@ fun MedicineDetailStateComposableLoadingPreview() {
             onMedicineUpdated = {},
             bAddModeP = false,
             onInputNameChangedP= {},
-            onInputAisleChangedP= {},
+            onInputAisleChangedP= {}
         )
 
     }
@@ -538,7 +599,7 @@ fun MedicineDetailStateComposableErrorPreview() {
             onMedicineUpdated = {},
             bAddModeP = false,
             onInputNameChangedP= {},
-            onInputAisleChangedP= {},
+            onInputAisleChangedP= {}
         )
     }
 }

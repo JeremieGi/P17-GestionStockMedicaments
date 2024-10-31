@@ -1,5 +1,6 @@
 package com.openclassrooms.rebonnte.ui.medicine.detail
 
+import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.Medicine
 
 /**
@@ -9,7 +10,9 @@ data class MedicineDetailUIState (
     // Valeur en mémoire du médicament affiché
     val currentStateMedicine : CurrentMedicineUIState = CurrentMedicineUIState.IsLoading,
     // Erreurs de formulaire
-    val formError: FormErrorAddMedicine? = null
+    val formError: FormErrorAddMedicine? = null,
+    // List of aisles
+    val listAisles : List<Aisle>?=null  // Peut-être nulle le temps d'être chargée au lancement
 )
 
 
