@@ -10,7 +10,6 @@
 
     <style name="Theme.Rebonnte.ActionBar" parent="android:Theme.Material.Light.DarkActionBar"/>
 
-
     <!-- TODO JG : ne pas utiliser Firebase UI mais juste le SDK Firebase (signInWithEmailAndPassword et signInWithEmailAndPassword) -->
 
     <style name="FirebaseLoginTheme" parent="FirebaseUI">

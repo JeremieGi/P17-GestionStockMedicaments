@@ -85,8 +85,7 @@ class StockFirebaseAPI : StockAPI {
 
         when (eSortItemP){
             StockRepository.EnumSortedItem.NONE -> {
-                // Pas de tri
-                // TODO Denis => Pas de tri => ne fait rien : On peut annuler un tri ?
+                // Pas de tri => pas de orderBy (remet un ordre indéfini) => pas très utile mais ce sont les spécifications
             }
             StockRepository.EnumSortedItem.NAME -> {
                 resultMedicines = resultMedicines.orderBy(FirebaseMedicineDTO.RUB_NAME)

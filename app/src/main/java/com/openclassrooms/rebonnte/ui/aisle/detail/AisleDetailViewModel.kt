@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.repository.ResultCustom
 import com.openclassrooms.rebonnte.repository.stock.StockRepository
-import com.openclassrooms.rebonnte.ui.aisle.list.AisleListUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,13 +40,12 @@ class AisleDetailViewModel @Inject constructor (
                     // Echec
                     is ResultCustom.Failure -> {
                         // Propagation du message d'erreur
-                        // TODO JG => On fait quelque chose ici ?
+                        // TODO JG => Afficher l'erreur
                     }
 
                     // En chargement
                     is ResultCustom.Loading -> {
-                        // Propagation du chargement
-
+                        // Pas de propagation du chargement
                     }
 
                     // Succès

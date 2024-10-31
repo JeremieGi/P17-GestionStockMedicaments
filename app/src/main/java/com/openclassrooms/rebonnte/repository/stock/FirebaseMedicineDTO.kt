@@ -1,14 +1,13 @@
 package com.openclassrooms.rebonnte.repository.stock
 
 import com.google.firebase.firestore.PropertyName
-import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.model.Medicine
 
 data class FirebaseMedicineDTO (
 
-    // TODO Denis : J'ai été obligé de mettre les propriétés en var + @get:PropertyName et  @set:PropertyName
+    // J'ai été obligé de mettre les propriétés en var + @get:PropertyName et  @set:PropertyName
 
-    // TODO Denis Question : Est ce utile de faire des tests unitaires sur les classes de DTO
+    // TODO JG : faire des tests unitaires sur les classes de DTO
 
     @get:PropertyName(RUB_ID)
     @set:PropertyName(RUB_ID)

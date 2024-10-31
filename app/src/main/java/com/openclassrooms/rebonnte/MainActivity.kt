@@ -9,7 +9,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -48,13 +48,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    //private lateinit var myBroadcastReceiver: MyBroadcastReceiver
+    private lateinit var myBroadcastReceiver: MyBroadcastReceiver
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         mainActivity = this
+
+        //startBroadcastReceiver()
 
         setContent {
             // On appelle le NavController
@@ -67,11 +69,11 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        //startBroadcastReceiver()
     }
 
-    // TODO Openclassrooms + JG prio 1 : A supprimer ou à libérer (car peut faire une fuite mémoire) => Mail à Openclassrooms car fuite non visible
-/*
+    // TODO Openclassrooms + JG prio 1 : A supprimer ou à libérer (car peut faire une fuite mémoire)
+    //  => Mail à Openclassrooms car fuite non visible
+
     private fun startBroadcastReceiver() {
         myBroadcastReceiver = MyBroadcastReceiver()
         val filter = IntentFilter().apply {
@@ -88,20 +90,20 @@ class MainActivity : ComponentActivity() {
             startMyBroadcast()
         }, 200)
     }
-*/
-//    private fun startMyBroadcast() {
-//        val intent = Intent("com.rebonnte.ACTION_UPDATE")
-//        sendBroadcast(intent)
-//        startBroadcastReceiver()
-//    }
-//
-//
-//    class MyBroadcastReceiver : BroadcastReceiver() {
-//        override fun onReceive(context: Context?, intent: Intent?) {
-//            Toast.makeText(mainActivity, "Update reçu", Toast.LENGTH_SHORT).show()
-//            //Log.v("DBG","Update reçu")
-//        }
-//    }
+
+    private fun startMyBroadcast() {
+        val intent = Intent("com.rebonnte.ACTION_UPDATE")
+        sendBroadcast(intent)
+        startBroadcastReceiver()
+    }
+
+
+    class MyBroadcastReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            //Toast.makeText(mainActivity, "Update reçu", Toast.LENGTH_SHORT).show()
+            Log.v("DBG","Update reçu")
+        }
+    }
 
     companion object {
         lateinit var mainActivity: MainActivity

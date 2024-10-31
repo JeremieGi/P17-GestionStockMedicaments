@@ -25,8 +25,6 @@ import org.junit.Test
 
 class StockRepositoryTest {
 
-    // TODO Denis Question : Classe de test très longue : je peux la découper en plusieurs
-
     private lateinit var cutStockRepository : StockRepository // Class Under Test
 
     // Paramètres du repository

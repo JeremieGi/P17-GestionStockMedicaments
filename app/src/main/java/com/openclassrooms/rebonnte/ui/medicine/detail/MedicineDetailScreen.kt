@@ -199,9 +199,8 @@ fun MedicineDetailSuccessComposable(
 
         item {
 
-            // TODO Denis : Erreur ici pour faire un scroll car la lazyColumn plus bas est déjà scrollable => voir NestedScroll
-            // Finalement j'ai utilisé item qui permet de faire une entête de lazyColumn. NestedScroll me parait trop compliqué pour ce cas.
-            // .verticalScroll(rememberScrollState())
+            // j'ai utilisé item qui permet de faire une entête de lazyColumn. NestedScroll me parait trop compliqué pour ce cas.
+            // .verticalScroll(rememberScrollState()) // pas besoin
             Column{
                 TextField(
                     value = medicineP.name,

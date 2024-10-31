@@ -159,7 +159,6 @@ class MedicineDetailViewModel @Inject constructor (
                     // Ce cas ne devrait jamais se produire
                     _uiStateMedicineDetail.update{ currentStateParam ->
                         currentStateParam.copy(
-                            // TODO Denis : Question : Au lieu d'injecter le context dans le ViewModel je crée un état supplémentaire CurrentMedicineUIState.ValidateErrorUserunknown
                             currentStateMedicine = CurrentMedicineUIState.ValidateErrorUserUnlogged,
                             formError = null,
                         )
@@ -298,20 +297,19 @@ class MedicineDetailViewModel @Inject constructor (
 
             stockRepository.flowAisles.collect { resultFlow ->
 
-                // TODO Denis : Revue : Chargement de la liste des allées lors de l'ajout d'une nouvelle allée
 
                 // En fonction du résultat
                 when (resultFlow) {
 
                     // Echec
                     is ResultCustom.Failure -> {
-                        // Propagation du message d'erreur
+                        // TODO JG : Propagation du message d'erreur
 
                     }
 
                     // En chargement
                     is ResultCustom.Loading -> {
-                        // Propagation du chargement
+                        // Pas de propagation du chargement
 
                     }
 
@@ -434,7 +432,7 @@ class MedicineDetailViewModel @Inject constructor (
             }
             else{
 
-                // TODO Denis JG prio 3 => AutocompleteTextView non dispo en compose (Voir meilleure solution)
+                // TODO JG => AutocompleteTextView non dispo en compose (Voir meilleure solution) => faire un spinner
 
                 // en mode ajout uniquement
                 if (_isAddMode){
