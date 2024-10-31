@@ -189,7 +189,6 @@ fun MedicineDetailStateComposable(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicineDetailSuccessComposable(
     modifier: Modifier,
@@ -233,74 +232,16 @@ fun MedicineDetailSuccessComposable(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // TODO JG : en faire un composant indépendant
+                // TODO JG : Reste un mini-bug : Le clic sur Validate enlève l'erreur
+                // TODO JG : Tester la rotation
+                AisleSelectorComposable(
+                    medicineP = medicineP,
+                    formErrorP = formErrorP,
+                    bAddModeP = bAddModeP,
+                    onInputAisleChangedP = onInputAisleChangedP,
+                    listAisleP = listAisleP
+                )
 
-                // État pour contrôler l'ouverture du menu déroulant
-                var expanded by remember { mutableStateOf(false) }
-
-                // Initialisation du FocusRequester
-                val focusRequester = remember { FocusRequester() }
-
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = {
-                        expanded = !expanded
-                    }
-                ) {
-
-
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .menuAnchor()
-                            .focusRequester(focusRequester) // Associe le FocusRequester ici
-                        ,
-                        value = medicineP.oAisle.name,
-                        isError = (
-                                formErrorP is FormErrorAddMedicine.AisleErrorEmpty
-                                        ||
-                                        formErrorP is FormErrorAddMedicine.AisleErrorNoExist
-                                ),
-                        onValueChange = {
-                            onInputAisleChangedP(it)
-                        },
-                        label = { Text(stringResource(R.string.aisle)) },
-                        enabled = bAddModeP,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                        },
-
-                    )
-
-                    // Ce composant affiche une pop-up avec la liste des allées
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        listAisleP?.forEach { aisle ->
-                            DropdownMenuItem(
-                                text = { Text(aisle.name) },
-                                onClick = {
-                                    onInputAisleChangedP(aisle.name) // Met à jour l'option sélectionnée
-                                    expanded = false // Ferme le menu
-                                }
-                            )
-                        }
-                    }
-
-                }
-                if (formErrorP is FormErrorAddMedicine.AisleErrorEmpty) {
-                    Text(
-                        text = stringResource(R.string.please_select_an_aisle),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-                if (formErrorP is FormErrorAddMedicine.AisleErrorNoExist) {
-                    Text(
-                        text = stringResource(R.string.please_select_an_existing_aisle),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -385,6 +326,85 @@ fun MedicineDetailSuccessComposable(
         }
     }
 
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AisleSelectorComposable(
+    medicineP: Medicine,
+    formErrorP : FormErrorAddMedicine?,
+    bAddModeP : Boolean,
+    onInputAisleChangedP : (String) -> Unit,
+    listAisleP : List<Aisle>?,
+) {
+
+    // État pour contrôler l'ouverture du menu déroulant
+    var expanded by remember { mutableStateOf(false) }
+
+    // Initialisation du FocusRequester
+    val focusRequester = remember { FocusRequester() }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = {
+            expanded = !expanded
+        }
+    ) {
+
+
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+                .focusRequester(focusRequester) // Associe le FocusRequester ici
+            ,
+            value = medicineP.oAisle.name,
+            isError = (
+                    formErrorP is FormErrorAddMedicine.AisleErrorEmpty
+                            ||
+                            formErrorP is FormErrorAddMedicine.AisleErrorNoExist
+                    ),
+            onValueChange = {
+                onInputAisleChangedP(it)
+            },
+            label = { Text(stringResource(R.string.aisle)) },
+            enabled = bAddModeP,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+
+            )
+
+        // Ce composant affiche une pop-up avec la liste des allées
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            listAisleP?.forEach { aisle ->
+                DropdownMenuItem(
+                    text = { Text(aisle.name) },
+                    onClick = {
+                        onInputAisleChangedP(aisle.name) // Met à jour l'option sélectionnée
+                        expanded = false // Ferme le menu
+                    }
+                )
+            }
+        }
+
+    }
+    if (formErrorP is FormErrorAddMedicine.AisleErrorEmpty) {
+        Text(
+            text = stringResource(R.string.please_select_an_aisle),
+            color = MaterialTheme.colorScheme.error,
+        )
+    }
+    if (formErrorP is FormErrorAddMedicine.AisleErrorNoExist) {
+        Text(
+            text = stringResource(R.string.please_select_an_existing_aisle),
+            color = MaterialTheme.colorScheme.error,
+        )
+    }
 
 }
 
