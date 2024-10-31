@@ -40,7 +40,12 @@ class AisleDetailViewModel @Inject constructor (
                     // Echec
                     is ResultCustom.Failure -> {
                         // Propagation du message d'erreur
-                        // TODO JG => Afficher l'erreur
+                        _uiStateAisleDetail.update{ currentState ->
+                            currentState.copy(
+                                currentStateAisle = CurrentAisleUIState.LoadError(resultFlow.errorMessage),
+                                formError = null,
+                            )
+                        }
                     }
 
                     // En chargement

@@ -297,14 +297,17 @@ class MedicineDetailViewModel @Inject constructor (
 
             stockRepository.flowAisles.collect { resultFlow ->
 
-
                 // En fonction du résultat
                 when (resultFlow) {
 
                     // Echec
                     is ResultCustom.Failure -> {
-                        // TODO JG : Propagation du message d'erreur
-
+                        _uiStateMedicineDetail.update{ currentStateP ->
+                            currentStateP.copy(
+                                currentStateMedicine = CurrentMedicineUIState.LoadError(resultFlow.errorMessage?:""),
+                                formError = null,
+                            )
+                        }
                     }
 
                     // En chargement
@@ -341,7 +344,6 @@ class MedicineDetailViewModel @Inject constructor (
         if (currentState.currentStateMedicine is CurrentMedicineUIState.LoadSuccess) {
 
             val updatedMedicine = currentState.currentStateMedicine.medicineValue.copy(name = sInputNameP)
-            //_uiStateMedicineDetail.value = MedicineDetailUIState.LoadSuccess(updatedMedicine)
 
             _uiStateMedicineDetail.update{ currentStateP ->
                 currentStateP.copy(

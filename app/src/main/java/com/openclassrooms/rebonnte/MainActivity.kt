@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
 
         mainActivity = this
 
+        // TODO Openclassrooms + JG prio 1 => Mail à Openclassrooms car fuite non visible par contre çà fait un bug
         //startBroadcastReceiver()
 
         setContent {
@@ -71,8 +72,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    // TODO Openclassrooms + JG prio 1 : A supprimer ou à libérer (car peut faire une fuite mémoire)
-    //  => Mail à Openclassrooms car fuite non visible
+
 
     private fun startBroadcastReceiver() {
         myBroadcastReceiver = MyBroadcastReceiver()
