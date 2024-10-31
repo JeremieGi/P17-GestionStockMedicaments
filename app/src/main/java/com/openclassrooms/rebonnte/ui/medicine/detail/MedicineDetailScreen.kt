@@ -225,7 +225,6 @@ fun MedicineDetailSuccessComposable(
                     enabled = bAddModeP,
                     modifier = Modifier.fillMaxWidth()
                 )
-                // TODO JG : Utiliser les paramètres de OutlinedTextField
                 if (formErrorP is FormErrorAddMedicine.NameError) {
                     Text(
                         text = stringResource(id = R.string.mandatoryname),
@@ -267,13 +266,13 @@ fun MedicineDetailSuccessComposable(
                         },
                         label = { Text(stringResource(R.string.aisle)) },
                         enabled = bAddModeP,
-                        //readOnly = true, // TODO JG : tester à false
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
+
                     )
 
-
+                    // Ce composant affiche une pop-up avec la liste des allées
                     ExposedDropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
@@ -290,8 +289,6 @@ fun MedicineDetailSuccessComposable(
                     }
 
                 }
-
-
                 if (formErrorP is FormErrorAddMedicine.AisleErrorEmpty) {
                     Text(
                         text = stringResource(R.string.please_select_an_aisle),
@@ -304,9 +301,6 @@ fun MedicineDetailSuccessComposable(
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
-
-
-
 
                 Spacer(modifier = Modifier.height(8.dp))
 
