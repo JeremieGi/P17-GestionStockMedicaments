@@ -278,7 +278,10 @@ fun MedicineListStateComposable(
             FloatingActionButton(onClick = {
                 startDetailActivity(context, launcher, id=MedicineDetailActivity.PARAM_MEDICINE_ADD) // ID vide = mode ajout
             }) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add))
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_medicine)
+                )
             }
         }
     )

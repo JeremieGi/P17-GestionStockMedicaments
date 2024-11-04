@@ -218,14 +218,16 @@ fun MedicineDetailSuccessComposable(
             // .verticalScroll(rememberScrollState()) // pas besoin
             Column{
                 OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(TestTags.MEDICINE_DETAIL_TEXT_FIELD_NAME),
                     value = medicineP.name,
                     isError = (formErrorP is FormErrorAddMedicine.NameError),
                     onValueChange = {
                         onInputNameChangedP(it)
                     },
                     label = { Text(stringResource(R.string.name)) },
-                    enabled = bAddModeP,
-                    modifier = Modifier.fillMaxWidth()
+                    enabled = bAddModeP
                 )
                 if (formErrorP is FormErrorAddMedicine.NameError) {
                     Text(
@@ -359,6 +361,7 @@ fun AisleSelectorComposable(
 
         OutlinedTextField(
             modifier = Modifier
+                .testTag(TestTags.MEDICINE_DETAIL_TEXT_FIELD_AISLE)
                 .fillMaxWidth()
                 .menuAnchor()
                 .focusRequester(focusRequester) // Associe le FocusRequester ici

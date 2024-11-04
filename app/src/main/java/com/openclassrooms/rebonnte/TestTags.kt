@@ -13,6 +13,9 @@ object TestTags { // Singleton
 
     const val AISLE_DETAIL_TEXT_FIELD_NAME = "tagTextFieldName"
 
-    const val MEDICINE_DETAIL_TEXT_FIELD_STOCK = "tagTextFieldStock"
+    const val MEDICINE_DETAIL_TEXT_FIELD_STOCK = "tagMedicineTextFieldStock"
+    const val MEDICINE_DETAIL_TEXT_FIELD_NAME = "tagMedicineTextFieldName"
+    const val MEDICINE_DETAIL_TEXT_FIELD_AISLE = "tagMedicineTextFieldAisle"
+
 
 }
