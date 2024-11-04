@@ -16,11 +16,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.openclassrooms.rebonnte.R
+import com.openclassrooms.rebonnte.TestTags
 import com.openclassrooms.rebonnte.model.Aisle
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.ErrorComposable
@@ -161,6 +163,9 @@ fun AisleDetailSuccessComposable(
 
 
         TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(TestTags.AISLE_DETAIL_TEXT_FIELD_NAME),
             value = aisleP.name,
             isError = (
                     formErrorP is FormErrorAddAisle.NameErrorEmpty
@@ -172,7 +177,7 @@ fun AisleDetailSuccessComposable(
             },
             label = { Text(stringResource(R.string.name)) },
             enabled = bAddModeP,
-            modifier = Modifier.fillMaxWidth()
+
         )
         if (formErrorP is FormErrorAddAisle.NameErrorEmpty) {
             Text(
@@ -212,7 +217,7 @@ fun AisleDetailSuccessComposable(
 
 }
 
-@Preview("Aisle Item Success")
+@Preview("Aisle Detail Mode Success")
 @Composable
 fun AisleDetailStateComposableSuccessPreview() {
 
@@ -228,6 +233,32 @@ fun AisleDetailStateComposableSuccessPreview() {
             uiStateAisleDetailP = uiStateSuccess,
             loadAisleByIDP = {},
             bAddModeP = false,
+            onInputNameChangedP = {},
+            insertAisleP = {},
+            onAisleInsertedP = {}
+        )
+
+    }
+
+
+}
+
+@Preview("Aisle Add Mode")
+@Composable
+fun AisleDetailStateComposableAddModePreview() {
+
+
+    val listFakeAlsse = StockFakeAPI.initFakeAisles()
+    val uiStateSuccess = AisleDetailUIState(
+        currentStateAisle = CurrentAisleUIState.LoadSuccess(listFakeAlsse[0])
+    )
+
+    RebonnteTheme {
+
+        AisleDetailStateComposable(
+            uiStateAisleDetailP = uiStateSuccess,
+            loadAisleByIDP = {},
+            bAddModeP = true,
             onInputNameChangedP = {},
             insertAisleP = {},
             onAisleInsertedP = {}

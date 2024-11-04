@@ -1,10 +1,14 @@
 package com.openclassrooms.rebonnte
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -60,6 +64,43 @@ class AisleDetailTest {
 
     @Test
     fun ailes_add() = runTest {
+
+        UtilTestCommon.openAisleList(composeTestRule)
+
+        val sAddButtonName = composeTestRule.activity.getString(R.string.add_an_aisle)
+        composeTestRule.onNodeWithContentDescription(sAddButtonName)
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule.awaitIdle()
+
+        // Pour être sûr qu'on est bien sur la fenêtre de détails
+        val sLabelName = composeTestRule.activity.getString(R.string.name)
+        composeTestRule.onNodeWithText(sLabelName)
+            .assertIsDisplayed()
+
+        // Saisie d'un nom
+        val sNameValue = "NewAisleTest"
+        composeTestRule.onNodeWithTag(TestTags.AISLE_DETAIL_TEXT_FIELD_NAME)
+            .assertIsDisplayed()
+            .performTextInput(sNameValue)
+
+        // Le bouton validate
+        val sValidateButtonLabel = composeTestRule.activity.getString(R.string.validate)
+        composeTestRule.onNodeWithText(sValidateButtonLabel)
+            .assertIsDisplayed()    // doit-être afficher
+            .assertIsEnabled()      // activé
+            .performClick()         // Simulation du clic
+
+        composeTestRule.awaitIdle()
+
+        // Retour à la liste des allées
+        val sTitleAisleList = composeTestRule.activity.getString(R.string.aisles)
+        composeTestRule.onNodeWithText(sTitleAisleList).assertIsDisplayed()
+
+        // Vérification de l'ajout de l'allée
+        composeTestRule.onNodeWithText(sNameValue).assertIsDisplayed()
+
 
     }
 }

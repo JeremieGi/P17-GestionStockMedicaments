@@ -48,4 +48,5 @@
     <string name="new_aisle">New aisle: %1$s</string>
     <string name="select_an_aisle">Select an aisle</string>
     <string name="sort_medicines">Sort medicines</string>
+    <string name="add_an_aisle">Add an aisle</string>
 </resources>

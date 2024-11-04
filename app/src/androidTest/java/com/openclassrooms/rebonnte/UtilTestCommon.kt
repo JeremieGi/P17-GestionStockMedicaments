@@ -10,7 +10,9 @@ import kotlinx.coroutines.test.runTest
 
 object UtilTestCommon {
 
-
+    /**
+     * Ouvre l'écran de liste des allées
+     */
     fun openAisleList(composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>) = runTest {
 
         composeTestRule.awaitIdle()

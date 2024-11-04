@@ -11,4 +11,6 @@ object TestTags { // Singleton
 
     const val MEDICINE_ID_PREFIX = "tagMedicineId_"
 
+    const val AISLE_DETAIL_TEXT_FIELD_NAME = "tagTextFieldName"
+
 }

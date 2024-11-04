@@ -152,10 +152,15 @@ fun AisleListStateComposable(
         },
         floatingActionButton = {
             val context = LocalContext.current
-            FloatingActionButton(onClick = {
-                startAisleDetailActivity(context, launcherP , AisleDetailActivity.PARAM_AISLE_ADD)
-            }) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+            FloatingActionButton(
+                onClick = {
+                    startAisleDetailActivity(context, launcherP , AisleDetailActivity.PARAM_AISLE_ADD)
+                },
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_an_aisle)
+                )
             }
         }
     )
