@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
@@ -24,13 +25,16 @@ class AisleListTest {
     @get:Rule(order = 2)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
+    private val _fakeListAisles = StockFakeAPI.initFakeAisles()
+
     @Before
     fun init() {
         hiltRule.inject()
+
+
     }
 
-    @Test
-    fun navigation_bottom_bar() = runTest {
+    private fun openAisleList() = runTest {
 
         composeTestRule.awaitIdle()
 
@@ -50,7 +54,17 @@ class AisleListTest {
         val sTitleAisleList = composeTestRule.activity.getString(R.string.aisles)
         composeTestRule.onNodeWithText(sTitleAisleList).assertIsDisplayed()
 
+    }
 
+    @Test
+    fun ailesDisplay() = runTest {
+
+        openAisleList()
+
+        // Affichage des 3 allées
+        _fakeListAisles.forEach {
+            composeTestRule.onNodeWithText(it.name).assertIsDisplayed()
+        }
 
 
     }
