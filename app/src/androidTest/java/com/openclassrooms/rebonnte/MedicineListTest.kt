@@ -19,6 +19,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/**
+ * Test de l'affichage de la liste de médicaments
+ */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class MedicineListTest {

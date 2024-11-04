@@ -20,6 +20,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/**
+ * Test de la fenêtre de détail et d'ajout d'une allée
+ */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class AisleDetailTest {

@@ -1,8 +1,8 @@
 package com.openclassrooms.rebonnte
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -16,11 +16,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Test de la fenêtre listant les allées
+ * Test de l'ajout d'un médicament
  */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
-class AisleListTest {
+class MedicineDetailInsertTest {
 
     @get:Rule(order = 1)
     var hiltRule = HiltAndroidRule(this)
@@ -28,26 +28,13 @@ class AisleListTest {
     @get:Rule(order = 2)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val _fakeListAisles = StockFakeAPI.initFakeAisles()
+    private val _fakeListMedicines = StockFakeAPI.initFakeMedicines()
 
     @Before
     fun init() {
         hiltRule.inject()
     }
 
-
-    @Test
-    fun ailesDisplay() = runTest {
-
-        UtilTestCommon.openAisleList(composeTestRule)
-
-        // Affichage des 3 allées
-        _fakeListAisles.forEach {
-            composeTestRule.onNodeWithText(it.name).assertIsDisplayed()
-        }
-
-
-    }
 
 
 }

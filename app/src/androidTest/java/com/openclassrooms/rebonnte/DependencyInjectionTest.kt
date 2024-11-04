@@ -1,6 +1,5 @@
 package com.openclassrooms.rebonnte
 
-
 import android.content.Context
 import com.openclassrooms.rebonnte.di.AppModule
 import com.openclassrooms.rebonnte.repository.InjectedContext
@@ -15,6 +14,9 @@ import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 
+/**
+ * Injection de dépendance dans le cadres des tests instrumentés
+ */
 @Module
 @TestInstallIn(
     components = [SingletonComponent::class],
