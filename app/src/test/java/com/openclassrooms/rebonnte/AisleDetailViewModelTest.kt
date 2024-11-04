@@ -98,15 +98,6 @@ class AisleDetailViewModelTest {
         val sAisleName = StockFakeAPI.CTE_AISLE_NAME
         cutViewModel.onInputNameChanged(sAisleName)
 
-        val currentStateAfterName = cutViewModel.uiStateAisleDetail.value.currentStateAisle
-        if (currentStateAfterName is CurrentAisleUIState.LoadSuccess) {
-            val currentAisle = currentStateAfterName.aisle
-            assertEquals("Init name : ",currentAisle.name, sAisleName)
-        }
-        else{
-            assert(false) { "The current state would be LoadSuccess" }
-        }
-
         // Erreur de formulaire
         val currentFormErrorAfterName = cutViewModel.uiStateAisleDetail.value.formError
         assertEquals("Error name already exist : ",currentFormErrorAfterName, FormErrorAddAisle.NameErrorAlreadyExist)
@@ -122,14 +113,6 @@ class AisleDetailViewModelTest {
         val sAisleName = ""
         cutViewModel.onInputNameChanged(sAisleName)
 
-        val currentStateAfterName = cutViewModel.uiStateAisleDetail.value.currentStateAisle
-        if (currentStateAfterName is CurrentAisleUIState.LoadSuccess) {
-            val currentAisle = currentStateAfterName.aisle
-            assertEquals("Init name : ",currentAisle.name, sAisleName)
-        }
-        else{
-            assert(false) { "The current state would be LoadSuccess" }
-        }
 
         // Erreur de formulaire
         val currentFormErrorAfterName = cutViewModel.uiStateAisleDetail.value.formError

@@ -7,6 +7,8 @@ import com.openclassrooms.rebonnte.repository.stock.StockRepository
 import com.openclassrooms.rebonnte.repository.user.UserFakeAPI
 import com.openclassrooms.rebonnte.repository.user.UserRepository
 import com.openclassrooms.rebonnte.ui.medicine.detail.CurrentMedicineUIState
+import com.openclassrooms.rebonnte.ui.medicine.detail.FormErrorAddMedicine
+import com.openclassrooms.rebonnte.ui.medicine.detail.MedicineDetailUIState
 import com.openclassrooms.rebonnte.ui.medicine.detail.MedicineDetailViewModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -18,6 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert
@@ -158,5 +161,191 @@ class MedicineDetailViewModelTest {
         assertEquals(expectedState, cutViewModel.uiStateMedicineDetail.value.currentStateMedicine)
 
     }
+
+    @Test
+    fun addMode_error_MedicineNameEmpty() = runTest {
+
+        initAddTestMode()
+
+        // Simulation de saisie du nom vide
+        val sMedicineName = ""
+        cutViewModel.onInputNameChanged(sMedicineName)
+
+
+        // Erreur de formulaire
+        val currentFormErrorAfterName = cutViewModel.uiStateMedicineDetail.value.formError
+        assertEquals("Error no name : ",currentFormErrorAfterName, FormErrorAddMedicine.NameError)
+
+    }
+
+    @Test
+    fun addMode_error_AisleDoesntExist() = runTest {
+
+        initAddTestMode()
+
+        // Simulation de saisie du nom vide
+        val sMedicineName = "MedicineNameTest"
+        cutViewModel.onInputNameChanged(sMedicineName)
+
+        // Simulation de saisie d'une allée inexistante
+        val sAisleName = "unknowAisle"
+        cutViewModel.onInputAisleChanged(sAisleName)
+
+
+        // Erreur de formulaire
+        val currentFormErrorAisleDoesntExist = cutViewModel.uiStateMedicineDetail.value.formError
+        assertEquals("Unknow aisle detection : ",FormErrorAddMedicine.AisleErrorNoExist,currentFormErrorAisleDoesntExist)
+
+    }
+
+    @Test
+    fun addMode_error_AisleEmpty() = runTest {
+
+        initAddTestMode()
+
+        // Simulation de saisie du nom vide
+        val sMedicineName = "MedicineNameTest"
+        cutViewModel.onInputNameChanged(sMedicineName)
+
+        // Pas de saisie d'une allée
+        val sAisleName = ""
+        cutViewModel.onInputAisleChanged(sAisleName)
+
+
+        // Erreur de formulaire
+        val currentFormError = cutViewModel.uiStateMedicineDetail.value.formError
+        assertEquals("Unknow aisle detection : ",FormErrorAddMedicine.AisleErrorEmpty,currentFormError)
+
+    }
+
+
+    @Test
+    fun addMode_error_Stock0() = runTest {
+
+        initAddTestMode()
+
+        // Simulation de saisie du nom vide
+        val sMedicineName = "MedicineNameTest"
+        cutViewModel.onInputNameChanged(sMedicineName)
+
+        // Simulation de saisie de l'allée (existante)
+        val aisleNameInput = _listAisles[0]
+        cutViewModel.onInputAisleChanged(aisleNameInput.name)
+
+        // Pas de saisie de stock
+
+        // Erreur de formulaire
+        val currentFormError = cutViewModel.uiStateMedicineDetail.value.formError
+        assertEquals("Unknow aisle detection : ",FormErrorAddMedicine.StockError,currentFormError)
+
+    }
+
+
+
+    // ---------- Mode d'affichage simple ----------
+
+    @Test
+    fun detailMode_loadSuccess() = runTest {
+
+        // Préparer des données fictives
+        val medicine1 = _listMedicines[0]
+
+        // Simuler le succès dans le repository
+        coEvery { mockStockRepository.loadMedicineByID(any()) } returns flowOf(ResultCustom.Success(medicine1))
+
+        // Créer le collecteur du flow du repository
+        val emittedStates = mutableListOf<MedicineDetailUIState>() // Liste pour capturer les résultats émis
+        val jobCollector = launch {
+            cutViewModel.uiStateMedicineDetail.collect { result ->
+                emittedStates.add(result)
+            }
+        }
+
+        // Appel de la fonction pour charger le médicament par ID
+        val jobCut = launch {
+            cutViewModel.loadMedicineByID("idMedicine")
+        }
+
+        // Attente de la fin de la collecte
+        jobCut.join()
+
+        // Assertions pour vérifier que l'état de l'UI est mis à jour pour le succès
+        assertEquals(2, emittedStates.size)
+
+        // IsLoading est l'état initial du Ui State
+        val expectedLoadResult = MedicineDetailUIState(
+            currentStateMedicine = CurrentMedicineUIState.IsLoading,
+            formError = null,
+            listAisles = null
+        )
+        assertEquals(expectedLoadResult,emittedStates[0])
+
+        // Ensuite le succès Mocké
+        val expectedSuccessResult = MedicineDetailUIState(
+            currentStateMedicine = CurrentMedicineUIState.LoadSuccess(medicine1),
+            formError = null,
+            listAisles = null
+        )
+        assertEquals(expectedSuccessResult,emittedStates[1])
+
+
+        // Annuler l'observation
+        jobCollector.cancel()
+
+    }
+
+    @Test
+    fun detailMode_loadError() = runTest {
+
+        // Préparer des données fictives
+        val sError = "TestError"
+
+        // Simuler le succès dans le repository
+        coEvery { mockStockRepository.loadMedicineByID(any()) } returns flowOf(ResultCustom.Failure(sError))
+
+        // Créer le collecteur du flow du repository
+        val emittedStates = mutableListOf<MedicineDetailUIState>() // Liste pour capturer les résultats émis
+        val jobCollector = launch {
+            cutViewModel.uiStateMedicineDetail.collect { result ->
+                emittedStates.add(result)
+            }
+        }
+
+        // Appel de la fonction pour charger le médicament par ID
+        val jobCut = launch {
+            cutViewModel.loadMedicineByID("idMedicine")
+        }
+
+        // Attente de la fin de la collecte
+        jobCut.join()
+
+        // Assertions pour vérifier que l'état de l'UI est mis à jour pour le succès
+        assertEquals(2, emittedStates.size)
+
+        // IsLoading est l'état initial du Ui State
+        val expectedLoadResult = MedicineDetailUIState(
+            currentStateMedicine = CurrentMedicineUIState.IsLoading,
+            formError = null,
+            listAisles = null
+        )
+        assertEquals(expectedLoadResult,emittedStates[0])
+
+        // Ensuite le succès Mocké
+        val expectedSuccessResult = MedicineDetailUIState(
+            currentStateMedicine = CurrentMedicineUIState.LoadError(sError),
+            formError = null,
+            listAisles = null
+        )
+        assertEquals(expectedSuccessResult,emittedStates[1])
+
+
+        // Annuler l'observation
+        jobCollector.cancel()
+
+    }
+
+
+
+
 
 }
