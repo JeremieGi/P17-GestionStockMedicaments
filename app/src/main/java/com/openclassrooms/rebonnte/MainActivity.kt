@@ -137,8 +137,8 @@ fun NavGraph(
         composable(Screen.MedicinesList.route) {
 
             MedicineListScreen(
-                onBackClickP = {
-                    navController.navigateUp()
+                navigateLaunchScreenP = {
+                    navController.navigate(Screen.Launch.route)
                 },
                 onClickBottomAisleP = {
                     navController.navigate(Screen.AisleList.route){
@@ -160,8 +160,8 @@ fun NavGraph(
 
         composable(route = Screen.AisleList.route) {
             AisleListScreen(
-                onBackClickP = {
-                    navController.navigateUp()
+                navigateLaunchScreenP = {
+                    navController.navigate(Screen.Launch.route)
                 },
                 onClickMedicineOnBottomBarP = {
                     navController.navigate(Screen.MedicinesList.route){

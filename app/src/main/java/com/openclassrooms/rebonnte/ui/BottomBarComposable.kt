@@ -40,7 +40,7 @@ fun BottomBarComposable(
     onClickMedicinesP  : () -> Unit,
     onClickAislesP : () -> Unit,
     onClickLogoutP : (Context) -> Task<Void>,
-    onBackClickP : () -> Unit
+    navigateLaunchScreenP : () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -101,7 +101,7 @@ fun BottomBarComposable(
                                     .makeText(context, context.getString(R.string.deconnexion_ok), Toast.LENGTH_SHORT)
                                     .show()
 
-                                onBackClickP()
+                                navigateLaunchScreenP()
 
                             }
                             .addOnFailureListener { exception ->
@@ -150,7 +150,7 @@ fun BottomBarComposablePreview() {
             onClickMedicinesP = { },
             onClickAislesP = { },
             onClickLogoutP = mockContext,
-            onBackClickP = { }
+            navigateLaunchScreenP = { }
         )
     }
 

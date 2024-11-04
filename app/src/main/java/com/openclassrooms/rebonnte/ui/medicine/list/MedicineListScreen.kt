@@ -77,7 +77,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 fun MedicineListScreen(
     viewModel: MedicineListViewModel = hiltViewModel(),
     onClickBottomAisleP: () -> Unit,
-    onBackClickP: () -> Unit
+    navigateLaunchScreenP : () -> Unit
 ) {
 
     val uiStateMedicines by viewModel.uiStateMedicines.collectAsState()
@@ -105,7 +105,7 @@ fun MedicineListScreen(
         launcher = launcher,
         onItemSwiped = viewModel::deleteMedicineById,
         onClickLogoutOnBottomBarP = viewModel::logout,
-        onBackClickP = onBackClickP,
+        navigateLaunchScreenP = navigateLaunchScreenP,
     )
 
 
@@ -125,7 +125,7 @@ fun MedicineListStateComposable(
     launcher: ActivityResultLauncher<Intent>?,
     onItemSwiped: (id : String) -> Unit,
     onClickLogoutOnBottomBarP : (Context) -> Task<Void>,
-    onBackClickP: () -> Unit
+    navigateLaunchScreenP: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -207,7 +207,7 @@ fun MedicineListStateComposable(
                 onClickMedicinesP = { /*L'icone sera grisée*/ },
                 onClickAislesP = onClickBottomAisleP,
                 onClickLogoutP = onClickLogoutOnBottomBarP,
-                onBackClickP = onBackClickP
+                navigateLaunchScreenP = navigateLaunchScreenP
             )
         },
         content = { innerPadding ->
@@ -514,7 +514,7 @@ fun MedicineListComposableSuccessPreview() {
             launcher = null,
             onItemSwiped = {},
             onClickLogoutOnBottomBarP = mockContext,
-            onBackClickP = {},
+            navigateLaunchScreenP = {},
         )
     }
 }
@@ -540,7 +540,7 @@ fun MedicineListComposableLoadingPreview() {
             launcher = null,
             onItemSwiped = {},
             onClickLogoutOnBottomBarP = mockContext,
-            onBackClickP = {},
+            navigateLaunchScreenP = {},
         )
     }
 }
@@ -568,7 +568,7 @@ fun MedicineListComposableErrorPreview() {
             launcher = null,
             onItemSwiped = {},
             onClickLogoutOnBottomBarP = mockContext,
-            onBackClickP = {},
+            navigateLaunchScreenP = {},
         )
     }
 }
@@ -595,7 +595,7 @@ fun MedicineListComposableDeleteErrorPreview() {
             launcher = null,
             onItemSwiped = {},
             onClickLogoutOnBottomBarP = mockContext,
-            onBackClickP = {},
+            navigateLaunchScreenP = {},
         )
     }
 }

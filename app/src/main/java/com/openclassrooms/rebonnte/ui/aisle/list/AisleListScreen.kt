@@ -50,7 +50,7 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 fun AisleListScreen(
     viewModel: AisleListViewModel = hiltViewModel(),
     onClickMedicineOnBottomBarP : () -> Unit,
-    onBackClickP: () -> Unit
+    navigateLaunchScreenP: () -> Unit
 ) {
 
     val uiStateList by viewModel.uiStateListAile.collectAsState()
@@ -72,7 +72,7 @@ fun AisleListScreen(
         loadAllAilesP = viewModel::loadAllAisle,
         onClickMedicineOnBottomBarP = onClickMedicineOnBottomBarP,
         onClickLogoutOnBottomBarP = viewModel::logout,
-        onBackClickP = onBackClickP,
+        navigateLaunchScreenP = navigateLaunchScreenP,
         launcherP = launcher
     )
 
@@ -87,7 +87,7 @@ fun AisleListStateComposable(
     loadAllAilesP : () -> Unit,
     onClickMedicineOnBottomBarP : () -> Unit,
     onClickLogoutOnBottomBarP : (Context) -> Task<Void>,
-    onBackClickP: () -> Unit,
+    navigateLaunchScreenP: () -> Unit,
     launcherP : ActivityResultLauncher<Intent>?,
 ) {
 
@@ -105,7 +105,7 @@ fun AisleListStateComposable(
                 onClickMedicinesP = onClickMedicineOnBottomBarP,
                 onClickAislesP = { /* Bouton non clickable */ },
                 onClickLogoutP = onClickLogoutOnBottomBarP,
-                onBackClickP = onBackClickP
+                navigateLaunchScreenP = navigateLaunchScreenP
             )
         },
         content = { innerPadding ->
@@ -252,7 +252,7 @@ fun AisleListComposableSuccessPreview() {
             loadAllAilesP = {},
             onClickMedicineOnBottomBarP = {},
             onClickLogoutOnBottomBarP = mockContext,
-            onBackClickP = {},
+            navigateLaunchScreenP = {},
             launcherP = null
 
         )
@@ -274,7 +274,7 @@ fun AisleListComposableLoadingPreview() {
             loadAllAilesP = {},
             onClickMedicineOnBottomBarP = {},
             onClickLogoutOnBottomBarP = mockContext,
-            onBackClickP = {},
+            navigateLaunchScreenP = {},
             launcherP = null
         )
     }
@@ -296,7 +296,7 @@ fun AisleListComposableErrorPreview() {
             loadAllAilesP = {},
             onClickMedicineOnBottomBarP = {},
             onClickLogoutOnBottomBarP = mockContext,
-            onBackClickP = {},
+            navigateLaunchScreenP = {},
             launcherP = null
         )
     }
