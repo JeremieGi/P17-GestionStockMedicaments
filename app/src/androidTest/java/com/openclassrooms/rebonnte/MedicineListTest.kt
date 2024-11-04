@@ -113,8 +113,8 @@ class MedicineListTest {
         val sSortByNone = composeTestRule.activity.getString(R.string.sort_by_none)
         clickOnSortMenu(sSortByNone)
 
-        val expectedEventListWithoutSort = _fakeListMedicines
-        assertLazyColumn(expectedEventListWithoutSort)
+        val expectedMedicineListWithoutSort = _fakeListMedicines
+        assertLazyColumn(expectedMedicineListWithoutSort)
 
     }
 
@@ -136,8 +136,8 @@ class MedicineListTest {
         val sSortByNone = composeTestRule.activity.getString(R.string.sort_by_none)
         clickOnSortMenu(sSortByNone)
 
-        val expectedEventListWithoutSort = _fakeListMedicines
-        assertLazyColumn(expectedEventListWithoutSort)
+        val expectedMedicineListWithoutSort = _fakeListMedicines
+        assertLazyColumn(expectedMedicineListWithoutSort)
 
     }
 

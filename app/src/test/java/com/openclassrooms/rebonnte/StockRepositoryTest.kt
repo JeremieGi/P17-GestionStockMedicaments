@@ -90,7 +90,7 @@ class StockRepositoryTest {
             mockAPI.loadAllAisles()
         }
 
-        // On attend les valeurs de mockAPI.loadAllEvents
+        // On attend les valeurs du flow
         assertEquals(1, resultList.size)
 
         val expectedResult = ResultCustom.Success(mockListAisles)
@@ -199,7 +199,7 @@ class StockRepositoryTest {
             mockAPI.loadAllMedicines("",StockRepository.EnumSortedItem.NONE)
         }
 
-        // On attend les valeurs de mockAPI.loadAllEvents
+        // On attend les valeurs du flow
         assertEquals(1, resultList.size)
 
         val expectedResult = ResultCustom.Success(mockListMedicines)
@@ -307,7 +307,7 @@ class StockRepositoryTest {
             mockAPI.addAisle(any())
         }
 
-        // On attend les valeurs de mockAPI.loadAllEvents
+        // On attend les valeurs du flow
         assertEquals(2, resultList.size)
 
         assertEquals(ResultCustom.Loading,resultList[0])
@@ -362,7 +362,7 @@ class StockRepositoryTest {
             mockInjectedContext.getContext()
         }
 
-        // On attend les valeurs de mockAPI.loadAllEvents
+        // On attend les valeurs du flow
         assertEquals(1, resultList.size)
 
         assert(resultList[0] is ResultCustom.Failure)
@@ -421,7 +421,7 @@ class StockRepositoryTest {
             spyMedicine.addHistory(any())
         }
 
-        // On attend les valeurs de mockAPI.loadAllEvents
+        // On attend les valeurs du flow
         assertEquals(2, resultList.size)
 
         assertEquals(ResultCustom.Loading,resultList[0])

@@ -39,14 +39,14 @@ class StockFirebaseAPI : StockAPI {
         eSortItemP: StockRepository.EnumSortedItem
     ): Flow<ResultCustom<List<Medicine>>> {
 
-        val queryEvents = requestListMedicines(eSortItemP)
+        val queryMedicines = requestListMedicines(eSortItemP)
 
         // Cette méthode crée un Flow qui est basé sur des callbacks, ce qui est idéal pour intégrer des API asynchrones comme Firestore.
         return callbackFlow {
 
             trySend(ResultCustom.Loading)
 
-            queryEvents.get()
+            queryMedicines.get()
                 .addOnSuccessListener { documents ->
 
                     val medicinesDTOList = documents.map { document ->
@@ -143,11 +143,11 @@ class StockFirebaseAPI : StockAPI {
 
     override fun loadMedicineByID(idMedicine: String): Flow<ResultCustom<Medicine>> {
 
-        val queryEventByID = requestMedicineByID(idMedicine)
+        val queryMedicineByID = requestMedicineByID(idMedicine)
 
         return callbackFlow {
 
-            queryEventByID.get()
+            queryMedicineByID.get()
                 .addOnSuccessListener { querySnapshot: QuerySnapshot ->
 
                     if (!querySnapshot.isEmpty) {
