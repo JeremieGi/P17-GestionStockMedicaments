@@ -7,8 +7,6 @@ data class FirebaseMedicineDTO (
 
     // J'ai été obligé de mettre les propriétés en var + @get:PropertyName et  @set:PropertyName
 
-    // TODO JG : faire des tests unitaires sur les classes de DTO
-
     @get:PropertyName(RUB_ID)
     @set:PropertyName(RUB_ID)
     var id : String = "",

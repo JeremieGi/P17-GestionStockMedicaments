@@ -246,7 +246,7 @@ class MedicineDetailViewModel @Inject constructor (
                 // Affichage des erreurs
                 _uiStateMedicineDetail.update{ currentStateP ->
                     currentStateP.copy(
-                        formError = null
+                        formError = formError
                     )
                 }
             }

@@ -32,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -232,8 +233,6 @@ fun MedicineDetailSuccessComposable(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // TODO JG : Reste un mini-bug : Le clic sur Validate enlève l'erreur
-                // TODO JG : Tester la rotation
                 AisleSelectorComposable(
                     medicineP = medicineP,
                     formErrorP = formErrorP,
@@ -340,7 +339,7 @@ fun AisleSelectorComposable(
 ) {
 
     // État pour contrôler l'ouverture du menu déroulant
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     // Initialisation du FocusRequester
     val focusRequester = remember { FocusRequester() }
