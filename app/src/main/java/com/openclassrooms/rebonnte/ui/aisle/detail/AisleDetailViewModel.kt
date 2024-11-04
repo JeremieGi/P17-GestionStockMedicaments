@@ -288,6 +288,13 @@ class AisleDetailViewModel @Inject constructor (
                 }
 
             }
+            else{
+                _uiStateAisleDetail.update{ currentState ->
+                    currentState.copy(
+                        formError = formError,
+                    )
+                }
+            }
 
 
         }

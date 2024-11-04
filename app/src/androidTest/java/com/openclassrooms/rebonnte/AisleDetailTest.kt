@@ -2,6 +2,7 @@ package com.openclassrooms.rebonnte
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -63,7 +64,7 @@ class AisleDetailTest {
     }
 
     @Test
-    fun ailes_add() = runTest {
+    fun ailes_addSuccess() = runTest {
 
         UtilTestCommon.openAisleList(composeTestRule)
 
@@ -100,6 +101,45 @@ class AisleDetailTest {
 
         // Vérification de l'ajout de l'allée
         composeTestRule.onNodeWithText(sNameValue).assertIsDisplayed()
+
+    }
+
+    @Test
+    fun ailes_addErrorNoName() = runTest {
+
+        UtilTestCommon.openAisleList(composeTestRule)
+
+        val sAddButtonName = composeTestRule.activity.getString(R.string.add_an_aisle)
+        composeTestRule.onNodeWithContentDescription(sAddButtonName)
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule.awaitIdle()
+
+        // Pour être sûr qu'on est bien sur la fenêtre de détails
+        val sLabelName = composeTestRule.activity.getString(R.string.name)
+        composeTestRule.onNodeWithText(sLabelName)
+            .assertIsDisplayed()
+
+        // Saisie d'un nom vide
+        composeTestRule.onNodeWithTag(TestTags.AISLE_DETAIL_TEXT_FIELD_NAME)
+            .assertIsDisplayed()
+            .performTextInput("")
+
+        composeTestRule.awaitIdle()
+
+        // Le bouton validate
+        val sValidateButtonLabel = composeTestRule.activity.getString(R.string.validate)
+        composeTestRule.onNodeWithText(sValidateButtonLabel)
+            .assertIsDisplayed()    // doit-être afficher
+            .performClick()         // Simulation du clic => ne fait rien
+
+        composeTestRule.awaitIdle()
+
+        // Affichage de l'erreur
+        val sError = composeTestRule.activity.getString(R.string.mandatoryname)
+        composeTestRule.onNodeWithText(sError)
+            .assertIsDisplayed()
 
 
     }
