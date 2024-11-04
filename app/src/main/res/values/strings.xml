@@ -5,6 +5,7 @@
     <string name="try_again">Try again</string>
     <string name="unknown_error">Unknow error</string>
     <string name="aisle">Aisle</string>
+    <string name="aisles">Aisles</string>
     <string name="back">Back</string>
     <string name="validate">Validate</string>
     <string name="no_network">No network</string>

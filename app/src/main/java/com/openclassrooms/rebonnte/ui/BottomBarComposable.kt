@@ -19,12 +19,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.rebonnte.R
+import com.openclassrooms.rebonnte.TestTags
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 
 
@@ -46,6 +49,7 @@ fun BottomBarComposable(
 
     NavigationBar {
         NavigationBarItem(
+            modifier = Modifier.testTag(TestTags.BOTTOM_BAR_ICON_AISLE),
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
             label = { Text(stringResource(R.string.aisle)) },
             selected = sActiveScreenP==Screen.CTE_AISLE_LIST_SCREEN,
@@ -54,7 +58,7 @@ fun BottomBarComposable(
             }
         )
         NavigationBarItem(
-            //icon = { Icon(Icons.Default.List, contentDescription = null) },
+            modifier = Modifier.testTag(TestTags.BOTTOM_BAR_ICON_MEDICINE),
             icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
             label = { Text(stringResource(R.string.medicine)) },
             selected = sActiveScreenP==Screen.CTE_MEDICINE_LIST_SCREEN,

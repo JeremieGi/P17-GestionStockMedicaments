@@ -95,7 +95,7 @@ fun AisleListStateComposable(
         topBar = {
             Column(verticalArrangement = Arrangement.spacedBy((-1).dp)) {
                 TopAppBar(
-                    title = { Text(text = stringResource(R.string.aisle))  },
+                    title = { Text(text = stringResource(R.string.aisles))  },
                 )
             }
         },
