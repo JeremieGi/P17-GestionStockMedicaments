@@ -138,4 +138,6 @@ class MedicineListTest {
 
     }
 
+    // TODO JG : Test de suppression avec swipe
+
 }
