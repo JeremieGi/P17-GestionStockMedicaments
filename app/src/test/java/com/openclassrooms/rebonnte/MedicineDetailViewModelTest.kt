@@ -188,13 +188,13 @@ class MedicineDetailViewModelTest {
         cutViewModel.onInputNameChanged(sMedicineName)
 
         // Simulation de saisie d'une allée inexistante
-        val sAisleName = "unknowAisle"
+        val sAisleName = "unknownAisle"
         cutViewModel.onInputAisleChanged(sAisleName)
 
 
         // Erreur de formulaire
         val currentFormErrorAisleDoesntExist = cutViewModel.uiStateMedicineDetail.value.formError
-        assertEquals("Unknow aisle detection : ",FormErrorAddMedicine.AisleErrorNoExist,currentFormErrorAisleDoesntExist)
+        assertEquals("Unknown aisle detection : ",FormErrorAddMedicine.AisleErrorNoExist,currentFormErrorAisleDoesntExist)
 
     }
 
@@ -214,7 +214,7 @@ class MedicineDetailViewModelTest {
 
         // Erreur de formulaire
         val currentFormError = cutViewModel.uiStateMedicineDetail.value.formError
-        assertEquals("Unknow aisle detection : ",FormErrorAddMedicine.AisleErrorEmpty,currentFormError)
+        assertEquals("Unknown aisle detection : ",FormErrorAddMedicine.AisleErrorEmpty,currentFormError)
 
     }
 
@@ -236,7 +236,7 @@ class MedicineDetailViewModelTest {
 
         // Erreur de formulaire
         val currentFormError = cutViewModel.uiStateMedicineDetail.value.formError
-        assertEquals("Unknow aisle detection : ",FormErrorAddMedicine.StockError,currentFormError)
+        assertEquals("Unknown aisle detection : ",FormErrorAddMedicine.StockError,currentFormError)
 
     }
 
@@ -345,7 +345,70 @@ class MedicineDetailViewModelTest {
     }
 
 
+    @Test
+    fun detailMode_blockingNegativeStock() = runTest {
 
+        // Préparer des données fictives
+        val medicine1 = _listMedicines[0]
+
+        // Simuler le succès dans le repository
+        coEvery { mockStockRepository.loadMedicineByID(any()) } returns flowOf(ResultCustom.Success(medicine1))
+
+        // Créer le collecteur du flow du repository
+        val emittedStates = mutableListOf<MedicineDetailUIState>() // Liste pour capturer les résultats émis
+        val jobCollector = launch {
+            cutViewModel.uiStateMedicineDetail.collect { result ->
+                emittedStates.add(result)
+            }
+        }
+
+        // Appel de la fonction pour charger le médicament par ID
+        val jobCut = launch {
+            cutViewModel.loadMedicineByID("idMedicine")
+        }
+
+        // Attente de la fin de la collecte
+        jobCut.join()
+
+        // Assertions pour vérifier que l'état de l'UI est mis à jour pour le succès
+        assertEquals(2, emittedStates.size)
+
+        // IsLoading est l'état initial du Ui State
+        val expectedLoadResult = MedicineDetailUIState(
+            currentStateMedicine = CurrentMedicineUIState.IsLoading,
+            formError = null,
+            listAisles = null
+        )
+        assertEquals(expectedLoadResult,emittedStates[0])
+
+        // Ensuite le succès Mocké
+        val expectedSuccessResult = MedicineDetailUIState(
+            currentStateMedicine = CurrentMedicineUIState.LoadSuccess(medicine1),
+            formError = null,
+            listAisles = null
+        )
+        assertEquals(expectedSuccessResult,emittedStates[1])
+
+
+        // Annuler l'observation
+        jobCollector.cancel()
+
+        // On décrementé le stock pour arriver à un stock en téhorie négatif mais bloqué à 0
+        for (i in 0..medicine1.stock+10) {
+            cutViewModel.decrementStock()
+        }
+
+        // Le stock reste à 0
+        val currentStateIncrementStock = cutViewModel.uiStateMedicineDetail.value.currentStateMedicine
+        if (currentStateIncrementStock is CurrentMedicineUIState.LoadSuccess) {
+            val currentStock = currentStateIncrementStock.medicineValue.stock
+            assertEquals("Stock stay 0 : ",0,currentStock)
+
+        }
+        else{
+            assert(false) { "The current state would be LoadSuccess" }
+        }
+    }
 
 
 }
