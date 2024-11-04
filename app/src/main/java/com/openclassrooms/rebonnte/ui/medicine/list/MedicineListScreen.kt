@@ -33,7 +33,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -52,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -60,8 +60,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.rebonnte.EmbeddedSearchBar
-import com.openclassrooms.rebonnte.MainActivity.Companion.mainActivity
 import com.openclassrooms.rebonnte.R
+import com.openclassrooms.rebonnte.TestTags
 import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import com.openclassrooms.rebonnte.ui.BottomBarComposable
@@ -150,7 +150,10 @@ fun MedicineListStateComposable(
                         ) {
                             Box {
                                 IconButton(onClick = { expanded = true }) {
-                                    Icon(Icons.Default.MoreVert, contentDescription = null)
+                                    Icon(
+                                        Icons.Default.MoreVert,
+                                        contentDescription = stringResource(R.string.sort_medicines)
+                                    )
                                 }
                                 DropdownMenu(
                                     expanded = expanded,
@@ -271,7 +274,7 @@ fun MedicineListStateComposable(
 
         },
         floatingActionButton = {
-            val context = LocalContext.current
+
             FloatingActionButton(onClick = {
                 startDetailActivity(context, launcher, id=MedicineDetailActivity.PARAM_MEDICINE_ADD) // ID vide = mode ajout
             }) {
@@ -336,6 +339,7 @@ fun MedicineItem(
 
     Row(
         modifier = Modifier
+            .testTag("${TestTags.MEDICINE_ID_PREFIX}${medicineP.id}") // Permet d'identifier une ligne dans le test instrumenté
             .fillMaxWidth()
             .clickable { onClick() }
             .padding(16.dp),

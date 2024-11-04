@@ -67,6 +67,17 @@ class StockFakeAPI : StockAPI {
                         History(users[1],dates[2],"Details 6"),
                         History(users[1],dates[2],"Details 7"),
                     )
+                ),
+
+                // Pour la pertinence des tests sur les tris
+                Medicine(
+                    id = "4",
+                    name = "Medicine 12",
+                    stock = 0,
+                    oAisle = aisles[2],
+                    histories =  mutableListOf( // Pour tester le scroll
+                        History(users[0],dates[0],"Details 1"),
+                    )
                 )
             )
         }

@@ -30,8 +30,6 @@ class AisleListTest {
     @Before
     fun init() {
         hiltRule.inject()
-
-
     }
 
     private fun openAisleList() = runTest {

@@ -9,6 +9,6 @@ object TestTags { // Singleton
     const val BOTTOM_BAR_ICON_AISLE = "tagBottomBarAisle"
     const val BOTTOM_BAR_ICON_MEDICINE = "tagBottomBarMedicine"
 
-    const val AISLE_ID_PREFIX = "AisleId_"
+    const val MEDICINE_ID_PREFIX = "tagMedicineId_"
 
 }
