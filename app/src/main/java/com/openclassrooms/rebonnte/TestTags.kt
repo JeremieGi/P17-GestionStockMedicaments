@@ -1,7 +1,7 @@
 package com.openclassrooms.rebonnte
 
 /**
- * Contient le nom des tags (factorisation)
+ * Contient le nom des tags (factorisation entre les écrans et les tests instrumentés)
  */
 
 object TestTags { // Singleton
@@ -12,5 +12,7 @@ object TestTags { // Singleton
     const val MEDICINE_ID_PREFIX = "tagMedicineId_"
 
     const val AISLE_DETAIL_TEXT_FIELD_NAME = "tagTextFieldName"
+
+    const val MEDICINE_DETAIL_TEXT_FIELD_STOCK = "tagTextFieldStock"
 
 }
