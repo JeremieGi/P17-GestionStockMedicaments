@@ -4,6 +4,8 @@ package com.openclassrooms.rebonnte.ui
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
@@ -47,7 +49,10 @@ fun BottomBarComposable(
 
     var showDialog by remember { mutableStateOf(false) } // État pour afficher ou non l'AlertDialog
 
-    NavigationBar {
+    NavigationBar(
+        modifier = Modifier
+            .navigationBarsPadding(), // Ajoute un padding en fonction de la barre de navigation système,
+    ) {
         NavigationBarItem(
             modifier = Modifier.testTag(TestTags.BOTTOM_BAR_ICON_AISLE),
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
