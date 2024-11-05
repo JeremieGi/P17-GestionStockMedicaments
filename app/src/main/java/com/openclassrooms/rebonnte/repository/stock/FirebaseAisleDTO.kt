@@ -12,8 +12,8 @@ data class FirebaseAisleDTO (
     @set:PropertyName(RUB_AISLE_ID)
     var id : String = "",
 
-    @get:PropertyName("name")
-    @set:PropertyName("name")
+    @get:PropertyName(RUB_AISLE_NAME)
+    @set:PropertyName(RUB_AISLE_NAME)
     var name : String = ""
 
 ){
@@ -33,6 +33,7 @@ data class FirebaseAisleDTO (
     // Pour ne pas maintenir ces noms de champs avec les @property du DTO
     companion object {
         const val RUB_AISLE_ID = "id"
+        const val RUB_AISLE_NAME = "name"
     }
 }
 

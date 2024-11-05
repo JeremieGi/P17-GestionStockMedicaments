@@ -211,7 +211,7 @@ class StockFirebaseAPI : StockAPI {
 
         return callbackFlow {
 
-            getAislesCollection().get()
+            getAislesCollection().orderBy(FirebaseAisleDTO.RUB_AISLE_NAME).get()
                 .addOnSuccessListener { documents ->
 
                     val aisles = documents.map { documentSnapshot ->

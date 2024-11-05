@@ -1,6 +1,7 @@
 package com.openclassrooms.rebonnte.ui.medicine.detail
 
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -226,7 +228,10 @@ fun MedicineDetailSuccessComposable(
                         onInputNameChangedP(it)
                     },
                     label = { Text(stringResource(R.string.name)) },
-                    enabled = bAddModeP
+                    enabled = bAddModeP,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledLabelColor  = MaterialTheme.colorScheme.onSurface
+                    )
                 )
                 if (formErrorP is FormErrorAddMedicine.NameError) {
                     Text(
@@ -273,6 +278,9 @@ fun MedicineDetailSuccessComposable(
                         onValueChange = {}, // Paramètre obligatoire mais champ grisé => onValueChange jamais exécuté
                         label = { Text(stringResource(R.string.stock)) },
                         enabled = false,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            disabledLabelColor  = MaterialTheme.colorScheme.onSurface
+                        )
 
                     )
                     // Incrémenter le stock
@@ -372,8 +380,10 @@ fun AisleSelectorComposable(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
-
+            colors = OutlinedTextFieldDefaults.colors(
+                disabledLabelColor  = MaterialTheme.colorScheme.onSurface
             )
+        )
 
         // Ce composant affiche une pop-up avec la liste des allées
         ExposedDropdownMenu(
@@ -492,6 +502,41 @@ fun MedicineDetailStateComposableSuccessPreview() {
 
 
 }
+
+
+@Preview(
+    name = "Medicine Detail Success - Mode Details - Dark Mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+fun MedicineDetailStateComposableSuccessDarkPreview() {
+
+
+    val listFakeMedicines = StockFakeAPI.initFakeMedicines()
+    val uiStateSuccess = MedicineDetailUIState(
+        currentStateMedicine = CurrentMedicineUIState.LoadSuccess(listFakeMedicines[0]),
+        formError = null
+    )
+
+    RebonnteTheme {
+
+        MedicineDetailStateComposable(
+            uiStateMedicineDetailP = uiStateSuccess,
+            loadMedicineByIDP = {},
+            decrementStockP = {},
+            incrementStockP = {},
+            updateOrInsertMedicineP = {},
+            onMedicineUpdated = {},
+            bAddModeP = false,
+            onInputNameChangedP= {},
+            onInputAisleChangedP= {}
+        )
+
+    }
+
+
+}
+
 
 @Preview("Medicine Detail Success - Mode Add")
 @Composable

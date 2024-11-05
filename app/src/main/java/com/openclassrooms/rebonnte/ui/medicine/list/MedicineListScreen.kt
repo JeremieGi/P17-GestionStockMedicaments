@@ -356,7 +356,7 @@ fun EmbeddedSearchBar(
                     Text(
                         text = stringResource(R.string.search),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                 }
                 innerTextField()
