@@ -31,7 +31,7 @@
 </div>	
 
 <div style="display: flex; justify-content: space-between;">
-	<img src="screenshots/Screenshot_ListMedicineLightLandscape.png" alt="Mode paysage" width="300"/>
+	<img src="screenshots/Screenshot_ListMedicineLightLandscape.png" alt="Mode paysage" width="500"/>
 </div>	
 
 	
