@@ -21,7 +21,6 @@ class AppModule {
     @Singleton
     fun provideStockAPI(): StockAPI {
         return StockFirebaseAPI()
-
         //return StockFakeAPI()
     }
 

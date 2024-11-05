@@ -22,6 +22,7 @@ class MedicineListViewModel @Inject constructor(
     private var _uiStateMedicines = MutableStateFlow<MedicineListUIState>(MedicineListUIState.IsLoading)
     val uiStateMedicines: StateFlow<MedicineListUIState> get() = _uiStateMedicines
 
+    // Filtre et tri en cours
     private var _sNameFilter = ""
     private var _enumItemSort = StockRepository.EnumSortedItem.NONE
 
@@ -29,6 +30,9 @@ class MedicineListViewModel @Inject constructor(
         observeFlow()
     }
 
+    /**
+     * Observation du flow de medicament du repository
+     */
     private fun observeFlow() {
 
         viewModelScope.launch {
@@ -65,32 +69,50 @@ class MedicineListViewModel @Inject constructor(
 
     }
 
+    /**
+     * Chargement de tous les médicaments
+     */
     fun loadAllMedicines() {
         viewModelScope.launch {
             stockRepository.loadAllMedicines(_sNameFilter,_enumItemSort)
         }
     }
 
+    /**
+     * Filtrer par nom
+     */
     fun filterByName(sFilterNameP : String) {
         _sNameFilter = sFilterNameP
         loadAllMedicines()
     }
 
+    /**
+     * Annuler les filtres
+     */
     fun sortByNone() {
         _enumItemSort = StockRepository.EnumSortedItem.NONE
         loadAllMedicines()
     }
 
+    /**
+     * Trier par nom
+     */
     fun sortByName() {
         _enumItemSort = StockRepository.EnumSortedItem.NAME
         loadAllMedicines()
     }
 
+    /**
+     * Trier par stock
+     */
     fun sortByStock() {
         _enumItemSort = StockRepository.EnumSortedItem.STOCK
         loadAllMedicines()
     }
 
+    /**
+     * Suppression d'un médicament
+     */
     fun deleteMedicineById(sID: String) {
         viewModelScope.launch {
             stockRepository.deleteMedecineById(sID).collect{ resultFlow ->
@@ -128,6 +150,9 @@ class MedicineListViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Déconnecte l'utilisateur courant
+     */
     fun logout(context : Context) : Task<Void> {
         return userRepository.logout(context)
     }

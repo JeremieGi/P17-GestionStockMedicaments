@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import java.util.Calendar
 import java.util.Date
 
+/**
+ * API utilisée pour renvoyer les données lors des tests instrumentés ou dans les previews Compose
+ */
 class StockFakeAPI : StockAPI {
 
     private val _listMedicines : MutableList<Medicine> = initFakeMedicines()
@@ -19,7 +22,9 @@ class StockFakeAPI : StockAPI {
 
     companion object {
 
-        // J'utilise cette procédure statique pour les previews Compose et les tests
+        /**
+         * Procédure statique pour les previews Compose et les tests
+         */
         fun initFakeMedicines() : MutableList<Medicine> {
 
             val aisles = initFakeAisles()
@@ -82,7 +87,9 @@ class StockFakeAPI : StockAPI {
             )
         }
 
-        // Génère des dates
+        /**
+         * Génère des dates
+         */
         private fun initDates(nNbDatesP : Int): List<Date> {
 
             val resultDates = MutableList(nNbDatesP) { Date() }

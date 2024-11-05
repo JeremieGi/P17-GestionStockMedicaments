@@ -15,7 +15,7 @@ import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 
 /**
- * Injection de dépendance dans le cadres des tests instrumentés
+ * Injection de dépendance dans le cadre des tests instrumentés
  */
 @Module
 @TestInstallIn(

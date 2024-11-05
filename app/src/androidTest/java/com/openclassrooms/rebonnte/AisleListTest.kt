@@ -36,6 +36,9 @@ class AisleListTest {
     }
 
 
+    /**
+     * Affichage basiques des allées
+     */
     @Test
     fun ailesDisplay() = runTest {
 

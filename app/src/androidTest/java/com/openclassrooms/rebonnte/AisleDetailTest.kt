@@ -41,6 +41,9 @@ class AisleDetailTest {
         hiltRule.inject()
     }
 
+    /**
+     * Clic sur une allée et test de l'ouverture de la fenêtre de détail
+     */
     @Test
     fun ailes_click_detail() = runTest {
 
@@ -66,6 +69,9 @@ class AisleDetailTest {
 
     }
 
+    /**
+     * Test d'ajout d'une allée
+     */
     @Test
     fun ailes_addSuccess() = runTest {
 
@@ -78,7 +84,7 @@ class AisleDetailTest {
 
         composeTestRule.awaitIdle()
 
-        // Pour être sûr qu'on est bien sur la fenêtre de détails
+        // Pour être sûr qu'on est bien sur la fenêtre d'ajout
         val sLabelName = composeTestRule.activity.getString(R.string.name)
         composeTestRule.onNodeWithText(sLabelName)
             .assertIsDisplayed()
@@ -107,6 +113,9 @@ class AisleDetailTest {
 
     }
 
+    /**
+     * Test du champ obligatoire "Name"
+     */
     @Test
     fun ailes_addErrorNoName() = runTest {
 

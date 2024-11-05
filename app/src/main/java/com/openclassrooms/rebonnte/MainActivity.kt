@@ -50,7 +50,6 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var myBroadcastReceiver: MyBroadcastReceiver
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -120,20 +119,19 @@ fun NavGraph(
         startDestination = Screen.Launch.route   // Point d'entrée de l'application
     ) {
 
-        // Fenêtre de lancement (Login ou directement liste des évènènements)
+        // Fenêtre de lancement (Login ou directement liste des médicaments)
         composable(route = Screen.Launch.route) {
 
             LaunchScreen(
                 navigatebyMedicineListScreenP = {
-                    // Il faut lancer l'écran principal via navigate pour pourvoir revenir à LaunchScreen lors du logout
-                    navController.navigate(Screen.MedicinesList.route)
+                   navController.navigate(Screen.MedicinesList.route)
                 }
             )
 
         }
 
 
-        // Liste des médicaments
+        // Liste des médicaments (fenêtre d'accueil)
         composable(Screen.MedicinesList.route) {
 
             MedicineListScreen(
@@ -157,7 +155,6 @@ fun NavGraph(
 //        // Fenêtre d'un médicament (Pas besoin de route pour cet écran => une activité dédiée sera ouverte)
 //        composable(Screen.MedicineDetail.route) { backStackEntry -> // BackStackEntry ici permet de récupérer les paramètres
 
-
         composable(route = Screen.AisleList.route) {
             AisleListScreen(
                 navigateLaunchScreenP = {
@@ -179,7 +176,7 @@ fun NavGraph(
 }
 
 // T004c - Charger les données aux bons moments => chaque viewModel est appelé quand il est necessaire
-// loading. Nous recommandons donc de l’implémenter..
+// Vieux code refactorisé
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
 //fun MyApp() {
@@ -194,83 +191,3 @@ fun NavGraph(
 //    }
 //}
 
-
-@Composable
-fun EmbeddedSearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    isSearchActive: Boolean,
-    onActiveChanged: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var searchQuery by rememberSaveable { mutableStateOf(query) }
-    val activeChanged: (Boolean) -> Unit = { active ->
-        searchQuery = ""
-        onQueryChange("")
-        onActiveChanged(active)
-    }
-
-    val shape: Shape = RoundedCornerShape(16.dp)
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .padding(horizontal = 16.dp)
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceContainer)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (isSearchActive) {
-            IconButton(onClick = { activeChanged(false) }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        } else {
-            Icon(
-                imageVector = Icons.Rounded.Search,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        BasicTextField(
-            value = searchQuery,
-            onValueChange = { query ->
-                searchQuery = query
-                onQueryChange(query)
-            },
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp),
-            singleLine = true,
-            decorationBox = { innerTextField ->
-                if (searchQuery.isEmpty()) {
-                    Text(
-                        text = stringResource(R.string.search),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
-                innerTextField()
-            }
-        )
-
-        if (isSearchActive && searchQuery.isNotEmpty()) {
-            IconButton(onClick = {
-                searchQuery = ""
-                onQueryChange("")
-            }) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-    }
-}

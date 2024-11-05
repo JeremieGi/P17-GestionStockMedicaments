@@ -3,6 +3,9 @@ package com.openclassrooms.rebonnte.repository.stock
 import com.google.firebase.firestore.PropertyName
 import com.openclassrooms.rebonnte.model.Medicine
 
+/**
+ * Classe DTO pour stockage des médicaments dans firestore Database
+ */
 data class FirebaseMedicineDTO (
 
     // J'ai été obligé de mettre les propriétés en var + @get:PropertyName et  @set:PropertyName
@@ -53,7 +56,7 @@ data class FirebaseMedicineDTO (
         )
     }
 
-    // Pour ne pas maintenir ces noms de champs avec les @property du DTO + dans tri dans l'API
+    // Pour garder en phase ces noms de champs avec les @property du DTO + dans tri dans l'API
     companion object {
         const val RUB_ID = "id"
         const val RUB_NAME = "name"

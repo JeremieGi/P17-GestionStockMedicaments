@@ -3,19 +3,27 @@ package com.openclassrooms.rebonnte.model
 import android.content.Context
 import com.openclassrooms.rebonnte.R
 
+/**
+ * Classe métier pour un médicament
+ */
 data class Medicine(
     val id : String,
     val name: String,
     val stock: Int,
-    val oAisle: Aisle,
-    val histories: MutableList<History>
+    val oAisle: Aisle,                  // Allée
+    val histories: MutableList<History> // Historique
 ) {
 
+    /**
+     * Ajout d'un historique de modification
+     */
     fun addHistory(newHistory: History) {
         this.histories.add(0, newHistory)
     }
 
-    // Renvoie le détail de la différence entre les 2 objets
+    /**
+     * Renvoie la différence entre les 2 objets
+     */
     fun sDiff(updatedMedicine: Medicine, context : Context): String {
 
         var sDiffResult = ""
@@ -34,4 +42,5 @@ data class Medicine(
 
         return sDiffResult
     }
+
 }

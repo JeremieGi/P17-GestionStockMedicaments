@@ -15,6 +15,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/**
+ * Test de navigation via la bottom bar
+ */
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class NavigationBottomBarTest {

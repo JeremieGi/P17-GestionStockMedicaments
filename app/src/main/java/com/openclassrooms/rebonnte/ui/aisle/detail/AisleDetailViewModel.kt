@@ -27,7 +27,9 @@ class AisleDetailViewModel @Inject constructor (
     // Liste chargée une fois
     private var _listExistingAisles : List<Aisle> = emptyList()
 
-
+    /**
+     * Permet de récupérer la liste des allées (pour véfication de la non-existence dans le formulaire)
+     */
     private fun observeFlowAllAisles() {
 
         viewModelScope.launch {
@@ -65,12 +67,18 @@ class AisleDetailViewModel @Inject constructor (
         }
     }
 
+    /**
+     * Lance le chargement de toutes les allées
+     */
     private fun loadAllAisle() {
         viewModelScope.launch {
             stockRepository.loadAllAisles()
         }
     }
 
+    /**
+     * Chargement d'une allée par son ID
+     */
     fun loadAisleByID (idAisle : String) {
 
         viewModelScope.launch {
@@ -125,12 +133,15 @@ class AisleDetailViewModel @Inject constructor (
 
     }
 
+    /**
+     * Initialisation du viewModel en mode ajout
+     */
     fun initNewAisle() {
 
-        _isAddMode = true
+        _isAddMode = true   // Mode Ajout activé
 
         val newAisle = Aisle(
-            id = UUID.randomUUID().toString(),
+            id = UUID.randomUUID().toString(), // Génération d'un ID
             name = ""
         )
 
@@ -146,10 +157,16 @@ class AisleDetailViewModel @Inject constructor (
         loadAllAisle()
     }
 
+    /**
+     * Retourne le mode Ajout ou Détail
+     */
     fun bAddMode(): Boolean {
         return _isAddMode
     }
 
+    /**
+     * Méthode appelée à chaque modification du nom dans le formulaire de saisie
+     */
     fun onInputNameChanged(sInputNameP: String) {
 
         val currentState = _uiStateAisleDetail.value
@@ -170,7 +187,9 @@ class AisleDetailViewModel @Inject constructor (
 
     }
 
-    // Vérifie les erreurs du formulaire en cours de saisie
+    /**
+     * Vérifie les erreurs du formulaire en cours de saisie
+     */
     private fun checkFormError() {
 
         // Mise à jour des erreurs
@@ -185,6 +204,9 @@ class AisleDetailViewModel @Inject constructor (
 
     }
 
+    /**
+     * Renvoie Vrai si l'allée saisie existe déjà
+     */
     private fun aisleNameExist(sAisleInputNameP : String) : Boolean {
 
         // any, qui retourne true si un élément correspondant au critère existe, et false sinon.
@@ -192,7 +214,9 @@ class AisleDetailViewModel @Inject constructor (
 
     }
 
-    // Renvoie les erreurs de formulaire (champs obligatoires)
+    /**
+     * Renvoie les erreurs de formulaire (champs obligatoires)
+     */
     private fun getFormError (): FormErrorAddAisle? {
 
         val currentState = _uiStateAisleDetail.value
@@ -216,6 +240,9 @@ class AisleDetailViewModel @Inject constructor (
 
     }
 
+    /**
+     * Ajoute une allée si les donénes saisies sont correctes
+     */
     fun addAisle() {
 
         val currentState = _uiStateAisleDetail.value

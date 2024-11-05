@@ -5,6 +5,9 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.openclassrooms.rebonnte.model.User
 
+/**
+ * API utilisée pour renvoyer les données lors des tests instrumentés ou dans les previews Compose
+ */
 class UserFakeAPI : UserAPI {
 
     companion object {
@@ -41,7 +44,6 @@ class UserFakeAPI : UserAPI {
     override fun getCurrentUser(): User {
         return usersFake[0]
     }
-
 
     override fun logout(context: Context): Task<Void> {
         // On ne fait rien dans la Fake API => car ce code n'est pas utile

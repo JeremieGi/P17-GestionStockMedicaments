@@ -3,6 +3,9 @@ package com.openclassrooms.rebonnte.repository.stock
 import com.google.firebase.firestore.PropertyName
 import com.openclassrooms.rebonnte.model.Aisle
 
+/**
+ * Classe DTO pour stockage des allées dans firestore Database
+ */
 data class FirebaseAisleDTO (
 
     @get:PropertyName(RUB_AISLE_ID)

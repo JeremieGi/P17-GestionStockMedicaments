@@ -11,8 +11,10 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
+/**
+ * API utilisée en prod pour accès aux données dans Firebase
+ */
 class StockFirebaseAPI : StockAPI {
-
 
     companion object {
 

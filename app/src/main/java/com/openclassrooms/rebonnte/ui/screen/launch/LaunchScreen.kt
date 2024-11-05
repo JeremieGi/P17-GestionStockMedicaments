@@ -24,7 +24,10 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.ui.ErrorComposable
 
-
+/**
+ * Ecran de lancement qui permet d'afficher la fenêtre d'authentification si aucun utilisateur n'est connecté,
+ * ou d'accéder directement à l'application sinon
+ */
 @Composable
 fun LaunchScreen(
     viewModel: LaunchViewModel = hiltViewModel(),

@@ -133,8 +133,7 @@ fun BottomBarComposable(
 
 }
 
-// Le thème n'est pas appliqué....
-// A l'exécution, si la fenêtre de login est annulée => style pas appliqué non plus
+
 @Preview(showBackground = true)
 @Composable
 fun BottomBarComposablePreview() {

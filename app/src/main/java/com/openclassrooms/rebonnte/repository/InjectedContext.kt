@@ -19,8 +19,6 @@ class InjectedContext (
 
         val connectivityManager = _context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
         val network = connectivityManager.activeNetwork ?: return false
         val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
         return when {
@@ -29,12 +27,6 @@ class InjectedContext (
             networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
             else -> false
         }
-
-//        } else {
-//                API 23 alors que version minimale de l'appli = 24
-//            val networkInfo = connectivityManager.activeNetworkInfo
-//            return networkInfo != null && networkInfo.isConnected
-//        }
 
     }
 

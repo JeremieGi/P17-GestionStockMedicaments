@@ -43,6 +43,9 @@ class MedicineListTest {
         hiltRule.inject()
     }
 
+    /**
+     * Affichage basique
+     */
     @Test
     fun medicinesDisplay() = runTest {
 
@@ -90,7 +93,9 @@ class MedicineListTest {
 
     }
 
-
+    /**
+     * Permet de cliquer sur l'icone du menu puis sur l'item (DropdownMenuItem) souhaité
+     */
     private fun clickOnSortMenu(sDropdownMenuItem : String) = runTest {
 
         val sDropdownMenuIcon = composeTestRule.activity.getString(R.string.sort_medicines)
@@ -173,7 +178,7 @@ class MedicineListTest {
         // Récupérez la taille de l'élément
         val width = node.size.width.toFloat()
 
-        // Swipe sur quaisment la totalité de la largeur
+        // Swipe sur quasiment la totalité de la largeur
         composeTestRule.onNodeWithTag(tagItem)
             .performTouchInput {
 

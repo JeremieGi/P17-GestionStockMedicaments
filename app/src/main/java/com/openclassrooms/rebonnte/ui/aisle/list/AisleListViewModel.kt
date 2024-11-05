@@ -26,6 +26,9 @@ class AisleListViewModel  @Inject constructor(
         observeFlow()
     }
 
+    /**
+     * Observe le flow du repository dédié aux allées
+     */
     private fun observeFlow() {
 
         viewModelScope.launch {
@@ -61,12 +64,18 @@ class AisleListViewModel  @Inject constructor(
         }
     }
 
+    /**
+     * Lance le chargement de toutes les allées
+     */
     fun loadAllAisle() {
         viewModelScope.launch {
             stockRepository.loadAllAisles()
         }
     }
 
+    /**
+     * Déconnecte l'utilisateur courant
+     */
     fun logout(context : Context) : Task<Void> {
         return userRepository.logout(context)
     }

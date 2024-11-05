@@ -1,5 +1,8 @@
 package com.openclassrooms.rebonnte.ui
 
+/**
+ * Classe permettant de stocker les routes des différents écrans pour les passer en paramètre à navigate()
+ */
 sealed class Screen(
     val route: String
 ) {
@@ -10,20 +13,11 @@ sealed class Screen(
 
 //    // Pas besoin de route pour cet écran => une activité dédiée sera ouverte
 //    data object MedicineDetail : Screen("medicineDetail/{$CTE_PARAM_ID_MEDECINE}"){
-//        // Configurer la Route avec des Arguments
-//        fun createRoute(medecineId: String) = "medecineDetail/$medecineId"
-//    }
-
-    // Pas besoin de route pour cet écran => une activité dédiée sera ouverte
-//    data object MedicineAdd : Screen("medicineAdd")
 
     data object AisleList : Screen(CTE_AISLE_LIST_SCREEN)
 
 //    // Pas besoin de route pour cet écran => une activité dédiée sera ouverte
 //    data object AisleDetail : Screen("aisleDetail/{$CTE_PARAM_ID_AISLE}"){
-//        // Configurer la Route avec des Arguments
-//        fun createRoute(aisleId: String) = "aisleDetail/$aisleId"
-//    }
 
     companion object {
 

@@ -1,7 +1,7 @@
 package com.openclassrooms.rebonnte
 
 /**
- * Contient le nom des tags (factorisation entre les écrans et les tests instrumentés)
+ * Contient le nom des tags (centralisation des noms de tags entre les écrans et les tests instrumentés)
  */
 
 object TestTags { // Singleton

@@ -5,7 +5,9 @@ import com.openclassrooms.rebonnte.model.History
 import com.openclassrooms.rebonnte.model.User
 import java.util.Date
 
-
+/**
+ * Classe DTO pour stockage de l'historique dans firestore Database
+ */
 data class FirebaseHistoryDTO (
 
     @get:PropertyName("emailauthor")

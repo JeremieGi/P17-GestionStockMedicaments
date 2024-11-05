@@ -17,6 +17,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Repository permettant la gestion des allées et des médicaments
+ */
 @Singleton
 class StockRepository @Inject constructor(
     private val stockApi: StockAPI,
@@ -42,6 +45,9 @@ class StockRepository @Inject constructor(
         NONE, NAME, STOCK
     }
 
+    /**
+     * Chargement de tous les médicaments
+     */
     suspend fun loadAllMedicines(sFilterNameP : String, eSortItemP : EnumSortedItem){
 
         withContext(Dispatchers.IO) {
@@ -68,6 +74,9 @@ class StockRepository @Inject constructor(
 
     }
 
+    /**
+     * Chargement d'un médicament
+     */
     fun loadMedicineByID(idMedicine: String): Flow<ResultCustom<Medicine>> = flow  {
 
         // Si pas d'Internet
@@ -93,7 +102,9 @@ class StockRepository @Inject constructor(
 
     }.flowOn(Dispatchers.IO)
 
-
+    /**
+     * Chargement de toutes les allées
+     */
     suspend fun loadAllAisles(){
 
         // Si pas d'Internet
@@ -116,7 +127,9 @@ class StockRepository @Inject constructor(
 
     }
 
-    // Ajoute un médicament
+    /**
+     * Ajoute un médicament (et un historique avec le créateur)
+     */
     fun addMedicine(
         medicine : Medicine,
         author : User
@@ -150,6 +163,9 @@ class StockRepository @Inject constructor(
 
     }.flowOn(Dispatchers.IO)  // Exécuter sur un thread d'entrée/sortie (IO)
 
+    /**
+     * Mise à jour d'un médicament avec ajout de la modification dans l'historique
+     */
     fun updateMedicine(
         oldMedicine : Medicine,
         updatedMedicine: Medicine,
@@ -184,6 +200,9 @@ class StockRepository @Inject constructor(
 
     }
 
+    /**
+     * Chargement d'une allée
+     */
     fun loadAisleByID(idAisle: String): Flow<ResultCustom<Aisle>> = flow  {
 
         // Si pas d'Internet
@@ -207,6 +226,9 @@ class StockRepository @Inject constructor(
 
     }.flowOn(Dispatchers.IO)
 
+    /**
+     * Suppression d'un médicament
+     */
     fun deleteMedecineById(sIDMedicineP : String) : Flow<ResultCustom<String>> = flow {
 
         // Si pas d'Internet
@@ -230,6 +252,9 @@ class StockRepository @Inject constructor(
 
     }
 
+    /**
+     * Ajout d'une allée
+     */
     fun addAisle(aisle: Aisle): Flow<ResultCustom<String>> = flow {
 
         // Si pas d'Internet

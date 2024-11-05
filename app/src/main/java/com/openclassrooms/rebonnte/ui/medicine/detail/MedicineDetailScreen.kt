@@ -56,8 +56,9 @@ import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-// Cet écran fait l'affichage de détails d'un médicament et aussi son ajout
-
+/**
+ * Cet écran fait l'affichage de détails d'un médicament, la mise à jour du stock et l'ajout
+ */
 @Composable
 fun MedicineDetailScreen(
     idMedicineP : String,
@@ -116,7 +117,6 @@ fun MedicineDetailStateComposable(
 ) {
 
 
-
     Scaffold { contentPadding ->
 
         when (uiStateMedicineDetailP.currentStateMedicine) {
@@ -144,7 +144,7 @@ fun MedicineDetailStateComposable(
 
             }
 
-
+            // Ajout ou mise à jour avec succès
             is CurrentMedicineUIState.ValidateSuccess -> {
                 onMedicineUpdated() // Retour à la liste avec notification de la modification
             }
@@ -173,7 +173,6 @@ fun MedicineDetailStateComposable(
                         onRetry = {}
                     }
                 }
-
 
                 ErrorComposable(
                     modifier=Modifier
@@ -311,14 +310,7 @@ fun MedicineDetailSuccessComposable(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(text = stringResource(R.string.history), style = MaterialTheme.typography.titleLarge)
-//
-//                    Spacer(modifier = Modifier.height(8.dp))
-//
-//                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-//                        items(medicineP.histories) { history ->
-//                            HistoryItem(history = history)
-//                        }
-//                    }
+
                 }
 
 
@@ -417,9 +409,6 @@ fun AisleSelectorComposable(
 
 
 // T011a - Affichage de l’historique - Améliorer l’UI
-//bas de la liste. Intégrer l’historique dans le contenu scrollable de la fiche détail
-//d’un magasin serait appréciable."
-// => C'est déjà fait même si esthétiquement pas top => que faut-il faire exactement ?s
 @Composable
 fun HistoryItem(history: History) {
 
@@ -429,8 +418,6 @@ fun HistoryItem(history: History) {
             .padding(vertical = 4.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-
-        // T011a - Affichage de l’historique - Améliorer l’UI
 
         Column(modifier = Modifier.padding(5.dp)) {
 
@@ -486,7 +473,6 @@ fun MedicineDetailStateComposableSuccessPreview() {
         currentStateMedicine = CurrentMedicineUIState.LoadSuccess(listFakeMedicines[0]),
         formError = null
     )
-
 
     RebonnteTheme {
 

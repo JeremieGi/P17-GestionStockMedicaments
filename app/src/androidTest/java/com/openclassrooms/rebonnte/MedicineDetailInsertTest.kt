@@ -40,6 +40,9 @@ class MedicineDetailInsertTest {
         hiltRule.inject()
     }
 
+    /**
+     * Ajout d'un médicament
+     */
     @Test
     fun medicines_addSuccess() = runTest {
 
@@ -91,6 +94,9 @@ class MedicineDetailInsertTest {
     }
 
 
+    /**
+     * Teste les blocages de formulaires (champs obligatoires, allée non existante)
+     */
     @Test
     fun checkFormError() = runTest(timeout = 60.seconds) {
 

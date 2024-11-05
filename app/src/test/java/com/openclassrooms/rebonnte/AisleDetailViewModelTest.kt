@@ -26,13 +26,16 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+/**
+ * Test du viewModel de la fenêtre de détail d'une allée
+ */
 class AisleDetailViewModelTest {
 
     // Utilisation de MockK pour le mock du repository
     @MockK
     lateinit var mockStockRepository: StockRepository
 
-    // ViewModel que nous allons tester
+    // ViewModel testé
     private lateinit var cutViewModel: AisleDetailViewModel
 
     @ExperimentalCoroutinesApi
@@ -46,6 +49,9 @@ class AisleDetailViewModelTest {
 
     // ---------- Mode d'ajout d'une allée ----------
 
+    /**
+     * Ajout d'une allée avec succès
+     */
     @Test
     fun addMode_AddSuccess() = runTest {
 
@@ -89,6 +95,9 @@ class AisleDetailViewModelTest {
 
     }
 
+    /**
+     * Erreur lors de l'ajout si une allée de même nom existe déjà
+     */
     @Test
     fun addMode_error_AisleAlreadyExist() = runTest {
 
@@ -104,6 +113,9 @@ class AisleDetailViewModelTest {
 
     }
 
+    /**
+     * Erreur lors de l'ajout si aucun nom d'allée n'est saisi
+     */
     @Test
     fun addMode_error_AisleNameEmpty() = runTest {
 
@@ -120,7 +132,9 @@ class AisleDetailViewModelTest {
 
     }
 
-
+    /**
+     * Initialise le viewModel en mode Ajout
+     */
     private fun initAddTestMode(){
 
         // Préparer des données fictives
@@ -156,6 +170,9 @@ class AisleDetailViewModelTest {
 
     // ---------- Mode d'affichage simple ----------
 
+    /**
+     * Chargement avec succès d'une allée
+     */
     @Test
     fun detailMode_loadSuccess() = runTest {
 

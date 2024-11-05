@@ -23,6 +23,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+/**
+ * Test unitaire du StockRepository
+ */
 class StockRepositoryTest {
 
     private lateinit var cutStockRepository : StockRepository // Class Under Test

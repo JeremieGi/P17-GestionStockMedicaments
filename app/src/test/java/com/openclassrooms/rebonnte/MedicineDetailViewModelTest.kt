@@ -28,18 +28,21 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+/**
+ * Test unitaire du viewModel de l'écran de détails d'un médicament
+ */
 class MedicineDetailViewModelTest {
 
-    // Utilisation de MockK pour le mock du repository
+    // Utilisation de MockK pour les mocks des repositories
     @MockK
     lateinit var mockStockRepository: StockRepository
     @MockK
     lateinit var mockUserRepository: UserRepository
 
-    // ViewModel que nous allons tester
+    // ViewModel testé
     private lateinit var cutViewModel: MedicineDetailViewModel
 
-    // Préparer des données fictives
+    // Données fictives
     private val _listAisles = StockFakeAPI.initFakeAisles()
     private val _listMedicines = StockFakeAPI.initFakeMedicines()
     private val _listUsers = UserFakeAPI.initFakeUsers()
@@ -52,9 +55,10 @@ class MedicineDetailViewModelTest {
         cutViewModel = MedicineDetailViewModel(mockStockRepository,mockUserRepository)
     }
 
+    /**
+     * Initialise le viewModel en mode ajout
+     */
     private fun initAddTestMode(){
-
-
 
         // Créer un MutableSharedFlow pour simuler le flow dans le test
         val aislesFlow = MutableSharedFlow<ResultCustom<List<Aisle>>>()
@@ -89,8 +93,11 @@ class MedicineDetailViewModelTest {
 
     }
 
-    // ---------- Mode d'ajout d'une allée ----------
+    // ---------- Mode d'ajout d'un médicament ----------
 
+    /**
+     * Ajout d'un médicament avec succès
+     */
     @Test
     fun addMode_AddSuccess() = runTest {
 
@@ -139,15 +146,11 @@ class MedicineDetailViewModelTest {
         }
 
 
-        // Appeler la méthode add - Ici il y a un appel au repository
-
         // Simuler un succès lors de l'ajout
-
         coEvery { mockStockRepository.addMedicine(any(),any()) } returns flowOf(ResultCustom.Success(_listMedicines[0]))
         coEvery { mockUserRepository.getCurrentUser() } returns _listUsers[0]
 
-
-        // Appeler la méthode à tester
+        // méthode à tester
         cutViewModel.updateOrInsertMedicine()
 
         // coVerify : s'assure que les fonctions des mocks ont été appelées
@@ -162,6 +165,9 @@ class MedicineDetailViewModelTest {
 
     }
 
+    /**
+     * Nom du médicament obligatoire
+     */
     @Test
     fun addMode_error_MedicineNameEmpty() = runTest {
 
@@ -178,6 +184,9 @@ class MedicineDetailViewModelTest {
 
     }
 
+    /**
+     * Erreur si l'allée saisie n'existe pas
+     */
     @Test
     fun addMode_error_AisleDoesntExist() = runTest {
 
@@ -198,6 +207,9 @@ class MedicineDetailViewModelTest {
 
     }
 
+    /**
+     * Erreur si aucune allée saisie
+     */
     @Test
     fun addMode_error_AisleEmpty() = runTest {
 
@@ -218,7 +230,9 @@ class MedicineDetailViewModelTest {
 
     }
 
-
+    /**
+     * Erreur lors de l'ajout d'un médicament avec stock à 0
+     */
     @Test
     fun addMode_error_Stock0() = runTest {
 
@@ -244,6 +258,9 @@ class MedicineDetailViewModelTest {
 
     // ---------- Mode d'affichage simple ----------
 
+    /**
+     * Chargement avec succès d'un médicament
+     */
     @Test
     fun detailMode_loadSuccess() = runTest {
 
@@ -294,6 +311,9 @@ class MedicineDetailViewModelTest {
 
     }
 
+    /**
+     * Chargement avec erreur d'un médicament
+     */
     @Test
     fun detailMode_loadError() = runTest {
 
@@ -344,7 +364,9 @@ class MedicineDetailViewModelTest {
 
     }
 
-
+    /**
+     * Impossible de saisir un stock négatif lors d'une mise à jour de stock
+     */
     @Test
     fun detailMode_blockingNegativeStock() = runTest {
 

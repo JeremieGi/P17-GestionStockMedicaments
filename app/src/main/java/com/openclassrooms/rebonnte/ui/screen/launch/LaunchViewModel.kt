@@ -11,10 +11,16 @@ class LaunchViewModel @Inject constructor (
     private val userRepository: UserRepository
 ): ViewModel() {
 
+    /**
+     * Renvoie Vrai si un utilisateur est loggué, faux sinon
+     */
     fun userLogged() : Boolean {
         return userRepository.userLogged()
     }
 
+    /**
+     * Donne l'utilisateur courant
+     */
     fun getCurrentUser() : User? {
         return userRepository.getCurrentUser()
     }

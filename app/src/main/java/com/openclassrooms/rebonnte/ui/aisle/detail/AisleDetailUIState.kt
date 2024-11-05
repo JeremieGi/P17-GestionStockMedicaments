@@ -7,7 +7,7 @@ import com.openclassrooms.rebonnte.model.Aisle
  * UI State principal
  */
 data class AisleDetailUIState (
-    // Valeur en mémoire affiché
+    // Etat de l'allée en cours de saisie
     val currentStateAisle : CurrentAisleUIState = CurrentAisleUIState.IsLoading,
     // Erreurs de formulaire
     val formError: FormErrorAddAisle? = null
@@ -25,8 +25,8 @@ sealed class CurrentAisleUIState {
     data class ValidateError(val sError: String) : CurrentAisleUIState()
 
     data object ValidateSuccess : CurrentAisleUIState() // upload or insert
-}
 
+}
 
 
 /**

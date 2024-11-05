@@ -40,6 +40,9 @@ class MedicineDetailUpdateTest {
         hiltRule.inject()
     }
 
+    /**
+     * Affichage de la fenêtre de détail d'un médicament
+     */
     @Test
     fun medicines_click_detail() = runTest {
 
@@ -74,6 +77,9 @@ class MedicineDetailUpdateTest {
 
     }
 
+    /**
+     * Mise à jour du stock
+     */
     @Test
     fun updateStock() = runTest(timeout = 60.seconds) {// Augmentation du time-out par défaut qui est 10s
 

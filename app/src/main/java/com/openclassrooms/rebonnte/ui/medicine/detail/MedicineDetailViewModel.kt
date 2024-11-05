@@ -29,7 +29,9 @@ class MedicineDetailViewModel @Inject constructor (
 
     private lateinit var _oldMedicine : Medicine
 
-
+    /**
+     * Chargement du médicament par ID
+     */
     fun loadMedicineByID(idMedicineP: String) {
 
         viewModelScope.launch {
@@ -86,6 +88,9 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
+    /**
+     * Incrémentation du stock
+     */
     fun incrementStock(){
 
         val currentState = _uiStateMedicineDetail.value
@@ -110,6 +115,9 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
+    /**
+     * Décrémentation du stock
+     */
     fun decrementStock(){
 
         val currentState = _uiStateMedicineDetail.value
@@ -137,6 +145,9 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
+    /**
+     * Mise à jour ou ajout du médicament
+     */
     fun updateOrInsertMedicine() {
 
         val currentState = _uiStateMedicineDetail.value
@@ -259,7 +270,10 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
-    // Initialise un nouveau médicament
+
+    /**
+     * Initialise un nouveau médicament
+     */
     fun initNewMedicine() {
 
         _isAddMode = true
@@ -287,7 +301,9 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
-
+    /**
+     * Observe le flow du repository dédié aux allées
+     */
     private fun observeFlowAllAisles() {
 
         viewModelScope.launch {
@@ -330,16 +346,25 @@ class MedicineDetailViewModel @Inject constructor (
         }
     }
 
+    /**
+     * Lance le chargement de toutes les allées
+     */
     private fun loadAllAisle() {
         viewModelScope.launch {
             stockRepository.loadAllAisles()
         }
     }
 
+    /**
+     * Mode ajout (sinon mode mise à jour)
+     */
     fun bAddMode(): Boolean {
         return _isAddMode
     }
 
+    /**
+     * Méthode appelée à chaque modification du nom dans le formulaire de saisie
+     */
     fun onInputNameChanged(sInputNameP: String) {
 
         val currentState = _uiStateMedicineDetail.value
@@ -360,7 +385,9 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
-
+    /**
+     * Méthode appelée à chaque modification de l'allée dans le formulaire de saisie
+     */
     fun onInputAisleChanged(sInputAisleP: String) {
 
         val currentState = _uiStateMedicineDetail.value
@@ -398,6 +425,9 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
+    /**
+     * Recherche une allée par son nom. Null si pas trouvé.
+     */
     private fun aisleFindByName(sAisleInputNameP : String) : Aisle? {
 
         val listExistingAisles = _uiStateMedicineDetail.value.listAisles
@@ -406,7 +436,9 @@ class MedicineDetailViewModel @Inject constructor (
     }
 
 
-    // Vérifie les erreurs du formulaire en cours de saisie
+    /**
+     * Vérifie les erreurs du formulaire en cours de saisie
+     */
     private fun checkFormError() {
 
         // Mise à jour des erreurs
@@ -421,8 +453,10 @@ class MedicineDetailViewModel @Inject constructor (
 
     }
 
-    // T012 - Ajout de stock - Contrôle de saisie
-    // Renvoie les erreurs de formulaire (champs obligatoires)
+    /**
+     * T012 - Ajout de stock - Contrôle de saisie
+     * Renvoie les erreurs de formulaire (champs obligatoires)
+     */
     private fun getFormError (): FormErrorAddMedicine? {
 
         val currentState = _uiStateMedicineDetail.value
@@ -461,8 +495,6 @@ class MedicineDetailViewModel @Inject constructor (
             return null
 
         }
-
-
 
         return null
 

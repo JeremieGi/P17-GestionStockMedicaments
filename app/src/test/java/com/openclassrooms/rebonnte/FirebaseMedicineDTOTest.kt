@@ -7,10 +7,16 @@ import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+/**
+ * Tests des classes DTO
+ */
 class FirebaseDTOTest {
 
-    // Ce etst assure 100% de couvertures des 3 classes de DTO
+    // Ce test assure 100% de couvertures des 3 classes de DTO
 
+    /**
+     * Transformation DTO vers Model
+     */
     @Test
     fun toModel(){
 
@@ -39,6 +45,9 @@ class FirebaseDTOTest {
 
     }
 
+    /**
+     * Transformation Model vers DTO
+     */
     @Test
     fun testConstructor(){
 

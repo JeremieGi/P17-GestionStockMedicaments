@@ -14,6 +14,9 @@ import org.junit.Test
 
 // Seule classe Model testée car les autres n'ont pas de méthodes
 
+/**
+ * Test de la classe métier : Medicine
+ */
 class MedicineTest {
 
     // Context mocké => Utilisation des ressources de chaine
@@ -33,6 +36,9 @@ class MedicineTest {
         context = mockk()
     }
 
+    /**
+     * Ajout d'un élément dans l'historique
+     */
     @Test
     fun addHistoryTest() {
 
@@ -53,6 +59,9 @@ class MedicineTest {
         assertEquals("check value of new history",newHistory, cutMedicine.histories[0])
     }
 
+    /**
+     * Mise à jour du nom du médicament
+     */
     @Test
     fun `sDiff with different name`() {
 
@@ -66,8 +75,6 @@ class MedicineTest {
             "New name: $medicineName" // Valeur qui sera renvoyée par context.getString(R.string.new_name, any()) lors du test
         }
 
-//        every { context.getString(R.string., any()) } answers { "New aisle: ${it.invocation.args[1]}" }
-
         // Changement du nom
         val updatedMedicine = _originalMedicine.copy(name = "Ibuprofen")
 
@@ -78,7 +85,9 @@ class MedicineTest {
         assertEquals("New name: Ibuprofen", result)
     }
 
-
+    /**
+     * Mise à jour du stock du médicament
+     */
     @Test
     fun `sDiff with different stock`() {
 
@@ -99,6 +108,9 @@ class MedicineTest {
         assertEquals("New stock: 100", result)
     }
 
+    /**
+     * Mise à jour de l'allée d'un médicament
+     */
     @Test
     fun `sDiff with different aisle`() {
 
@@ -116,7 +128,9 @@ class MedicineTest {
         assertEquals("New aisle: Aisle B", result)
     }
 
-
+    /**
+     * Mise à jour sans différence
+     */
     @Test
     fun `sDiff with no difference`() {
 

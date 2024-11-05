@@ -1,21 +1,11 @@
 package com.openclassrooms.rebonnte.model
 
+/**
+ * Classe métier correspondant à un utilisateur
+ */
 data class User (
-
-    /**
-     * Unique identifier for the User.
-     */
     val id: String,
-
-    /**
-     * User's name.
-     */
     val sName: String,
-
-
-    /**
-     * User's email.
-     */
     val sEmail: String
 
 )

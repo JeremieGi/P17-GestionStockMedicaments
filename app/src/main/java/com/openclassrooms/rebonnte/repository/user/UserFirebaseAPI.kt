@@ -7,7 +7,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.openclassrooms.rebonnte.model.User
 
-
+/**
+ * API utilisée en prod pour gérer l'accès aux utilisateurs
+ */
 class UserFirebaseAPI : UserAPI {
 
     // Utilisation du contexte utilisateur de Firebase
@@ -19,7 +21,6 @@ class UserFirebaseAPI : UserAPI {
         return getCurrentFirebaseUser() != null
     }
 
-    // ID de l'utilisateur courant
     override fun getCurrentUser(): User? {
         val firebaseUser =  getCurrentFirebaseUser()
         if (firebaseUser!=null){
@@ -33,7 +34,6 @@ class UserFirebaseAPI : UserAPI {
             return null
         }
     }
-
 
     override fun logout(context: Context): Task<Void> {
         return AuthUI.getInstance().signOut(context)
