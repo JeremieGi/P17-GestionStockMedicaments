@@ -34,7 +34,7 @@ class FirebaseDTOTest {
 
 
         assertEquals(cutDTO.id,medicineModel.id)
-        assertEquals(cutDTO.name,medicineModel.name,)
+        assertEquals(cutDTO.name,medicineModel.name)
         assertEquals(cutDTO.stock,medicineModel.stock)
         assertEquals(cutDTO.aisle.id,medicineModel.oAisle.id)
         assertEquals(cutDTO.aisle.name,medicineModel.oAisle.name)

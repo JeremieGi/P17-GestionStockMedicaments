@@ -6,7 +6,6 @@
     <string name="unknown_error">Unknow error</string>
     <string name="aisle">Aisle</string>
     <string name="aisles">Aisles</string>
-    <string name="back">Back</string>
     <string name="validate">Validate</string>
     <string name="no_network">No network</string>
     <string name="medicine">Medicine</string>
@@ -46,7 +45,6 @@
     <string name="new_name">New name: %1$s</string>
     <string name="new_stock">New stock: %1$s</string>
     <string name="new_aisle">New aisle: %1$s</string>
-    <string name="select_an_aisle">Select an aisle</string>
     <string name="sort_medicines">Sort medicines</string>
     <string name="add_an_aisle">Add an aisle</string>
 </resources>
