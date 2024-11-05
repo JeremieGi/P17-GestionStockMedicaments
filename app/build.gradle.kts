@@ -1,9 +1,19 @@
+import com.android.build.gradle.BaseExtension
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     id("com.google.gms.google-services")
+    id("jacoco")
+}
+
+tasks.withType<Test> {
+    extensions.configure(JacocoTaskExtension::class) {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
 }
 
 android {
@@ -32,6 +42,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -51,6 +65,39 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
+
+val androidExtension = extensions.getByType<BaseExtension>()
+val jacocoTestReport by tasks.registering(JacocoReport::class) {
+    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports"
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    //val debugTree = fileTree("${buildDir}/tmp/kotlin-classes/debug") => DEPRECATED
+    val debugTree = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug"))
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+
+    classDirectories.setFrom(debugTree)
+    sourceDirectories.setFrom(files(mainSrc))
+//    executionData.setFrom(fileTree(buildDir) { => DEPRECATED
+//        include("**/*.exec", "**/*.ec")
+//    })
+
+    // exclusion des classes Hilt du rapport de couverture => marche pas
+    val fileFilter = mutableSetOf(
+        "**dagger**",
+        "**hilt**"
+    )
+
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("**/*.exec", "**/*.ec")
+        exclude(fileFilter)
+    })
 }
 
 dependencies {
