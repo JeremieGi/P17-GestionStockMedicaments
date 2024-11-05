@@ -20,12 +20,14 @@
             android:name=".ui.medicine.detail.MedicineDetailActivity"
             android:theme="@style/Theme.Rebonnte.ActionBar"
             android:parentActivityName=".MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            />
         <activity
             android:name=".ui.aisle.detail.AisleDetailActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.Rebonnte.ActionBar"
-            android:exported="false" />
+            android:exported="false"
+            />
         <activity
             android:name=".MainActivity"
             android:exported="true"
