@@ -47,4 +47,5 @@
     <string name="new_aisle">New aisle: %1$s</string>
     <string name="sort_medicines">Sort medicines</string>
     <string name="add_an_aisle">Add an aisle</string>
+    <string name="deleteParam">Delete %1$s</string>
 </resources>

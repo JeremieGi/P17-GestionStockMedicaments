@@ -64,6 +64,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -160,9 +163,11 @@ fun MedicineListStateComposable(
                                 .padding(horizontal = 8.dp, vertical = 4.dp)
                         ) {
                             Box {
-                                IconButton(onClick = { expanded = true }) {
+                                IconButton(
+                                    onClick = { expanded = true }
+                                ) {
                                     Icon(
-                                        Icons.Default.MoreVert,
+                                        imageVector = Icons.Default.MoreVert,
                                         contentDescription = stringResource(R.string.sort_medicines)
                                     )
                                 }
@@ -413,7 +418,8 @@ fun MedicineListComposable(
                     medicineP = medicine,
                     onClick = {
                         startDetailActivity(context, launcher, medicine.id)
-                    }
+                    },
+                    onItemSwiped = onItemSwiped
                 )
 
             }
@@ -426,12 +432,33 @@ fun MedicineListComposable(
 @Composable
 fun MedicineItem(
     medicineP: Medicine,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onItemSwiped: (id : String) -> Unit,
 ) {
+
+    val context = LocalContext.current
 
     // Utilisation de la Card dédié aux tests instrumentés
     Card(
-        modifier = Modifier.testTag("${TestTags.MEDICINE_ID_PREFIX}${medicineP.id}"), // Dans le test instru, je n'arrive pas à lister les noeuds dont le tags commence par TestTags.MEDICINE_ID_PREFIX (mais çà me permet de sélectionner un élement par son ID)
+        modifier = Modifier
+            .testTag("${TestTags.MEDICINE_ID_PREFIX}${medicineP.id}") // Dans le test instru, je n'arrive pas à lister les noeuds dont le tags commence par TestTags.MEDICINE_ID_PREFIX (mais çà me permet de sélectionner un élement par son ID)
+            .semantics {
+                // Ajout d'une action personnalisée pour la suppression (car il est impossible de swiper avec Talkback activé)
+                // Pour y accéder :
+                //  - il faut se positionner sur la carte
+                //  - clic rapide avec 3 doigts : affiche le menu talkBack -> choisir Actions
+                //  - on voit apparaître l'action personnalisée
+                //  - le clic sur l'action déclenche le code ci-dessous
+                customActions = listOf(
+                    CustomAccessibilityAction(
+                        label = context.getString(R.string.deleteParam, medicineP.name)
+                    ) {
+                        // Appel de la fonction pour supprimer l'élément
+                        onItemSwiped(medicineP.id)
+                        true
+                    }
+                )
+            },
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent // Définit la couleur de fond comme transparente
         )
