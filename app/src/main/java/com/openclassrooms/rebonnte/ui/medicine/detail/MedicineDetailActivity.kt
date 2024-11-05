@@ -1,6 +1,7 @@
 package com.openclassrooms.rebonnte.ui.medicine.detail
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.openclassrooms.rebonnte.ui.Screen
@@ -34,6 +35,19 @@ class MedicineDetailActivity : ComponentActivity() {
                     }
                 )
             }
+        }
+    }
+
+    // Lors du clic sur le bouton back de l'action bar (permet un retour géré correctement voir AisleDetailActivity pour plus d'explication)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when (item.itemId) {
+            android.R.id.home -> { // Id de la flèche de retour
+                //onBackPressed() // Gérer le clic sur la flèche de retour
+                onBackPressedDispatcher.onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

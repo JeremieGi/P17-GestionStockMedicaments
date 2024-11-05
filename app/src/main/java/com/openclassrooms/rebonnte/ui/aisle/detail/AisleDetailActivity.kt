@@ -24,12 +24,6 @@ class AisleDetailActivity : ComponentActivity() {
 
         val id = intent.getStringExtra(Screen.CTE_PARAM_ID_AISLE) ?: "Unknown"
 
-        // Déclarez le callback pour le bouton de retour
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finish() // Ferme l'activité
-            }
-        })
 
         setContent {
             RebonnteTheme {
@@ -47,23 +41,34 @@ class AisleDetailActivity : ComponentActivity() {
         }
     }
 
+    // TODO Denis : A montrer problème de navigation
+
+    // Inconvénient de la cohabilitation navigation Compose et Activity
+    // Ancien bug de navigation
+    // MainActivity => LaunchScreen => MedicineListScreen => AisleListScreen
+    // Bouton ADD
+    // Ouvre AisleDetailActivity
+    // Si je fais back
+    // MainActivity.oncreate est relancé, on revient sur MedicineListScreen (alors que je voudrais AisleListScreen)
+
     // Pas besoin ca marche déjà lors du clic sur le bouton Back système
 //    override fun onBackPressed() {
-//        setResult(RESULT_BACK, intent)  // Indique que l'utilisateur a cliqué sur Back
 //        super.onBackPressed()           // Appelle la méthode parente pour terminer l'activité
 //    }
 
-//    // Lors du clic sur le bouton back de l'action bar
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//
-//        return when (item.itemId) {
-//            android.R.id.home -> { // Id de la flèche de retour
-//                onBackPressed() // Gérer le clic sur la flèche de retour
-//                true
-//            }
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
+    // En surchargeant cette méthode, çà corrige le problème
+    // Lors du clic sur le bouton back de l'action bar
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when (item.itemId) {
+            android.R.id.home -> { // Id de la flèche de retour
+                //onBackPressed() // Gérer le clic sur la flèche de retour
+                onBackPressedDispatcher.onBackPressed() // TODO Denis : Question sur le deprecated de onBackPressedDispatcher
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
 }
 

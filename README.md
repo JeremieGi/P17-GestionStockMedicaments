@@ -25,6 +25,14 @@
 - UI : portrait, paysage, téléphone et tablette, mode clair et sombre
 
 ## Impressions d'écran
+<div style="display: flex; justify-content: space-between;">
+	<img src="screenshots/Screenshot_ListMedicineLight.png" alt="Liste des médicaments en mode clair" width="300"/>
+	<img src="screenshots/Screenshot_ListMedicineDark.png" alt="Liste des médicaments en mode sombre" width="300"/>
+</div>	
+
+<div style="display: flex; justify-content: space-between;">
+	<img src="screenshots/Screenshot_ListMedicineLightLandscape.png" alt="Mode paysage" width="300"/>
+</div>	
 
 	
 

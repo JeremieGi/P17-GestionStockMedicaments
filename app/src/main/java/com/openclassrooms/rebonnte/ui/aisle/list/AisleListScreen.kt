@@ -215,23 +215,13 @@ private fun startAisleDetailActivity(
     id: String
 ) {
 
-    // TODO Denis : Voir bug de navigation entre Compose et Activity
-    // MainActivity => LaunchScreen => MedicineListScreen => AisleListScreen
-    // Boutoon ADD
-    // Ouvre AisleDetailActivity
-    // Si je fais back
-    // MainActivity.oncreate est relancé, on revient sur MedicineListScreen (alors que je voudrais AisleListScreen)
-
     // launcher peut-être nullable juste pour les previews Compose
     launcher?.let {
         val intent = Intent(context, AisleDetailActivity::class.java).apply {
             putExtra(Screen.CTE_PARAM_ID_AISLE, id)
-            //flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         it.launch(intent)
     }
-
-
 
 }
 
