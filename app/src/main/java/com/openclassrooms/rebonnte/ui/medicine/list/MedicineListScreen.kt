@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -340,21 +341,35 @@ fun MedicineItem(
     onClick: () -> Unit
 ) {
 
-    Row(
-        modifier = Modifier
-            .testTag("${TestTags.MEDICINE_ID_PREFIX}${medicineP.id}") // Permet d'identifier une ligne dans le test instrumenté
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Text(text = medicineP.name, style = MaterialTheme.typography.bodyLarge)
-            Text(text = "${stringResource(R.string.stock)}: ${medicineP.stock}", style = MaterialTheme.typography.bodyMedium)
+    Card(
+        modifier = Modifier.testTag("${TestTags.MEDICINE_ID_PREFIX}${medicineP.id}") // Dans le test instru, je n'arrive pas à lister les noeuds dont le tags commence par TestTags.MEDICINE_ID_PREFIX
+    ){
+
+        Row(
+            modifier = Modifier
+                .testTag(TestTags.MEDICINE_ITEM) // Permet de lister les items dans le test instrumenté
+                .fillMaxWidth()
+                .clickable { onClick() }
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column {
+                Text(
+                    text = medicineP.name,
+                    style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = "${stringResource(R.string.stock)}: ${medicineP.stock}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Arrow")
         }
 
-        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Arrow")
     }
+
+
 
 }
 

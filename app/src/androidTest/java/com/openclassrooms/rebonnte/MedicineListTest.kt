@@ -1,13 +1,17 @@
 package com.openclassrooms.rebonnte
 
+
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeLeft
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.openclassrooms.rebonnte.model.Medicine
 import com.openclassrooms.rebonnte.repository.stock.StockFakeAPI
@@ -52,12 +56,14 @@ class MedicineListTest {
 
 
     /**
-     * Fonction qui permet de vérifier le contenu exact d'un LasyColumn
+     * Fonction qui permet de vérifier le contenu exact d'un LazyColumn
      */
     private fun assertLazyColumn(expectedMedicineListP: List<Medicine>) {
 
         // Récupérer tous les nœuds avec le testTag
-        val nodes = composeTestRule.onAllNodesWithTag(TestTags.MEDICINE_ID_PREFIX).fetchSemanticsNodes()
+        val nodes = composeTestRule.onAllNodesWithTag(TestTags.MEDICINE_ITEM).fetchSemanticsNodes()
+
+        var nSize = 0
 
         // Parcours de chaque noeud
         nodes.forEachIndexed { index, node ->
@@ -72,6 +78,14 @@ class MedicineListTest {
             assert(sSemanticText.contains(expectedName)) {
                 "This medicine would be $expectedName and it's $sSemanticText"
             }
+
+            nSize++
+
+        }
+
+
+        assert(nSize==expectedMedicineListP.size) {
+            "Expected size = ${expectedMedicineListP.size} and real size = $nSize"
         }
 
     }
@@ -109,7 +123,7 @@ class MedicineListTest {
         val expectedMedicineList = _fakeListMedicines.sortedBy { it.name }
         assertLazyColumn(expectedMedicineList)
 
-        // Re-Clique sur le bouton d'annualtion de tri
+        // Re-Clique sur le bouton d'annulation de tri
         val sSortByNone = composeTestRule.activity.getString(R.string.sort_by_none)
         clickOnSortMenu(sSortByNone)
 
@@ -132,7 +146,7 @@ class MedicineListTest {
         val expectedMedicineList = _fakeListMedicines.sortedBy { it.stock }
         assertLazyColumn(expectedMedicineList)
 
-        // Re-Clique sur le bouton d'annualtion de tri
+        // Re-Clique sur le bouton d'annulation de tri
         val sSortByNone = composeTestRule.activity.getString(R.string.sort_by_none)
         clickOnSortMenu(sSortByNone)
 
@@ -141,6 +155,52 @@ class MedicineListTest {
 
     }
 
-    // TODO JG : Test de suppression avec swipe
+    /**
+     * Suppression d'un médicament par swipe (de droite à gauche)
+     */
+    @Test
+    fun deleteMedicineBySwipe() = runTest {
+
+        composeTestRule.awaitIdle()
+
+        val medicineDeleted = _fakeListMedicines[0]
+
+        val tagItem = "${TestTags.MEDICINE_ID_PREFIX}${medicineDeleted.id}"
+
+        // Récupérez le nœud avec le tag
+        val node = composeTestRule.onNodeWithTag(tagItem).fetchSemanticsNode()
+
+        // Récupérez la taille de l'élément
+        val width = node.size.width.toFloat()
+
+        // Swipe sur quaisment la totalité de la largeur
+        composeTestRule.onNodeWithTag(tagItem)
+            .performTouchInput {
+
+                swipeLeft(
+                    startX = width * 0.9f, // Presque à droite
+                    endX = width * 0.1f,    // Presque à gauche
+                    durationMillis = 300 // Durée du swipe, ajustable
+                )
+            }
+
+        composeTestRule.awaitIdle()
+
+        // La fenêtre de confirmation s'ouvre
+
+        // Confirmation de la suppression
+        val sDeleteButton = composeTestRule.activity.getString(R.string.delete)
+        composeTestRule.onNodeWithText(sDeleteButton)
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule.awaitIdle()
+
+        // Vérification de la suppression
+        val expectedMedicineList = _fakeListMedicines.filter{ it.id != medicineDeleted.id}
+        assertLazyColumn(expectedMedicineList)
+
+
+    }
 
 }
