@@ -48,9 +48,20 @@ jobs:
           distribution: 'adopt'
 
       # Télécharge le fichier google-services.json (présent dans les secrets GitHub Action)
-      - name: Load Google Service file
+      - name: Create google-services.json
         run:
           echo "${{ secrets.KEY_GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > app/google-services.json
+
+      - name: google-services.json - Check file exist
+        run: |
+          # Vérifie l'existence du fichier et affiche son contenu pour confirmation
+          if [ -f app/google-services.json ]; then
+            echo "google-services.json file has been successfully created."
+            cat app/google-services.json  # Optionnel : afficher le contenu pour vérifier
+          else
+            echo "Error: google-services.json file was not created." >&2
+            exit 1
+          fi
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
