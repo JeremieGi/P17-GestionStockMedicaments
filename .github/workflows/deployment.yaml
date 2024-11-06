@@ -6,6 +6,9 @@ on:
     tags:
       - 'v*'  # Déclenchement lors de la création d'un tag commençant par 'v' (ex: v1.0.0)
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
