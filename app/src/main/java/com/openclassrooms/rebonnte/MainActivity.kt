@@ -2,14 +2,7 @@ package com.openclassrooms.rebonnte
 
 
 import androidx.compose.runtime.Composable
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
@@ -26,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var myBroadcastReceiver: MyBroadcastReceiver
+    //private lateinit var myBroadcastReceiver: MyBroadcastReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +43,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
-
+/*
     private fun startBroadcastReceiver() {
         myBroadcastReceiver = MyBroadcastReceiver()
         val filter = IntentFilter().apply {
@@ -81,7 +74,7 @@ class MainActivity : ComponentActivity() {
             Log.v("DBG","Update reçu")
         }
     }
-
+*/
     companion object {
         lateinit var mainActivity: MainActivity
     }

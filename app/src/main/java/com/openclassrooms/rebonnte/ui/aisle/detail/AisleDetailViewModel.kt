@@ -316,8 +316,8 @@ class AisleDetailViewModel @Inject constructor (
 
             }
             else{
-                _uiStateAisleDetail.update{ currentState ->
-                    currentState.copy(
+                _uiStateAisleDetail.update{ currentStateP ->
+                    currentStateP.copy(
                         formError = formError,
                     )
                 }

@@ -22,6 +22,9 @@ jobs:
 
     #env:
       # Déclaration des variables d'environnement inutile ici (on ne signe pas l'APK)
+      # il n'est pas obligatoire de signer l'application pour lancer un build et exécuter des tests dans un pipeline d'intégration continue (CI).
+      # La signature de l'APK n'est requise que pour les déploiements ou la distribution, comme lors de la diffusion de l'application sur Firebase App Distribution.
+
       # Secrets : Déclarer dans GitHub -> mon repo -> Settings -> secrets and variables -> Action -> Repository secrets
       # json Firebase => pas besoin de variable d'environnement, il faut juste créer le fichier sur l'environnement CI (Voir étape plus bas)
       # KEY_GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.KEY_GOOGLE_SERVICES_JSON_BASE64 }}
