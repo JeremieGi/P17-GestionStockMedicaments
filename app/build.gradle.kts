@@ -1,4 +1,6 @@
 import com.android.build.gradle.BaseExtension
+import java.util.Base64
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -16,9 +18,58 @@ tasks.withType<Test> {
     }
 }
 
+// Fichier properties permettant de signer l'application dans le cadre du CD
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+// Si le fichier keystore existe (= build en local)
+if (keystorePropertiesFile.exists()) {
+    // Chargement du fichier keystore.properties (non présent sur gitHub)
+    keystoreProperties.load(keystorePropertiesFile.inputStream())
+}
+else{
+    // Build depuis GitHub Action
+    // Charger depuis les secrets GitHub (Déclarer dans GitHub -> mon repo -> Settings -> Actions secrets and variables)
+    // Le .yaml crée les variables d'environnement KEYSTORE_PASSWORD / KEY_ALIAS /....
+
+    keystoreProperties["storePassword"] = System.getenv("KEYSTORE_PASSWORD")
+    keystoreProperties["keyAlias"] = System.getenv("KEY_ALIAS")
+    keystoreProperties["keyPassword"] = System.getenv("KEY_PASSWORD")
+
+    // le storeFile est stocké dans les secrets mais encodé en base 64, il faut donc le décoder
+    val encodedbase64content = System.getenv("KEYSTORE_BASE64")
+    val decodedKeystore = Base64.getDecoder().decode(encodedbase64content)
+    val keystoreFileTemp = layout.buildDirectory.dir("temp_keystore.jks").get().asFile
+
+    // pour que le répertoire parent existe (sinon erreur "No such file or directory")
+    keystoreFileTemp.parentFile?.mkdirs()
+
+    // Créer un fichier temporaire pour stocker le keystore décodé
+    keystoreFileTemp.writeBytes(decodedKeystore)
+
+    // Je fais çà dans le gradle car j'ai besoin du chemin du fichier ici (sinon j'aurai pu le faire uniquement dans le yaml comme google-services.json)
+    keystoreProperties["storeFile"] = keystoreFileTemp.absolutePath
+
+}
+
+// Le fichier google-services.json est exclu de Git
+// Son contenu est dans un secret GitHub KEY_GOOGLE_SERVICES_JSON_BASE64 (encodé en Base64)
+// Il faut donc recréer ce fichier en environnement GitHub
+// Vu que je n'ai pas besoin de son contenu dans l'appli,
+// Sa création est faite directement dans le .yaml
+
+
 android {
     namespace = "com.openclassrooms.rebonnte"
     compileSdk = 34
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+            storePassword = keystoreProperties.getProperty("storePassword")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword =  keystoreProperties.getProperty("keyPassword")
+        }
+    }
 
     defaultConfig {
         applicationId = "com.openclassrooms.rebonnte"
