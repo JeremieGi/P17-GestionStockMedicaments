@@ -20,12 +20,10 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    env:
-      # Déclaration des variables d'environnement
-
-      # Secrets pour la signature : Déclarer dans GitHub -> mon repo -> Settings -> secrets and variables -> Action -> Repository secrets
-
-      # json Firebase => pas besoin de variable d'environnement, il faut juste créer le fichier sur l'environnement CI
+    #env:
+      # Déclaration des variables d'environnement inutile ici (on ne signe pas l'APK)
+      # Secrets : Déclarer dans GitHub -> mon repo -> Settings -> secrets and variables -> Action -> Repository secrets
+      # json Firebase => pas besoin de variable d'environnement, il faut juste créer le fichier sur l'environnement CI (Voir étape plus bas)
       # KEY_GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.KEY_GOOGLE_SERVICES_JSON_BASE64 }}
 
 
