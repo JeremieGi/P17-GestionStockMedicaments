@@ -1,0 +1,60 @@
+# Build + Génération APK et déploiement dans Firebase
+name: Continuous Deployment - APK to Firebase
+
+on:
+  push:
+    tags:
+      - 'v*'  # Déclenchement lors de la création d'un tag commençant par 'v' (ex: v1.0.0)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+
+      # Secrets pour la signature : Déclarer dans GitHub -> mon repo -> Settings -> Actions secrets and variables
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      # API Map google
+      MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+
+      # Pour envoi des données vers Sonar Cloud
+      TOKEN_SONAR_CLOUD: ${{ secrets.TOKEN_SONAR_CLOUD }}
+
+    steps:
+      # Clone le depot
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Installe Java 11 (requis pour Android et SonarQube).
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      # Télécharge le fichier google-services.json (présent dans les secrets GitHub Action)
+      - name: Load Google Service file
+        run: echo "${{ secrets.KEY_GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > app/google-services.json
+
+      # Accorde les permissions d'exécution à gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Compile le projet et signe l'APK
+      - name: Build the project and sign APK
+        run: ./gradlew assembleRelease -PstoreFile=$HOME/keystore.jks -PstorePassword=${{ secrets.KEYSTORE_PASSWORD }} -PkeyAlias=${{ secrets.KEY_ALIAS }} -PkeyPassword=${{ secrets.KEY_PASSWORD }}
+
+      # Télécharge sur Firebase App Distribution https://github.com/marketplace/actions/firebase-app-distribution
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.5.1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}   # ID de l'application Firebase
+          groups: testers                         # Le groupe "testers" définis dans Firebase
+          file: app/build/outputs/apk/release/app-release.apk  # Chemin vers l'APK
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}  # Clé JSON du compte de service
+        env:
+          ACTIONS_STEP_DEBUG: true # Active le débogage

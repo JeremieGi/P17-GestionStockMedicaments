@@ -1,0 +1,109 @@
+# Build / Passage des tests unitaires / des tests instrumentés
+name: Continuous Integration - tests
+
+# Controls when the workflow will run
+on:
+  # A chaque push ou pull sur la branche "main"
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    env:
+      # Déclaration des variables d'environnement
+
+      # Secrets pour la signature : Déclarer dans GitHub -> mon repo -> Settings -> secrets and variables -> Action -> Repository secrets
+
+      # json Firebase => pas besoin de variable d'environnement, il faut juste créer le fichier sur l'environnement CI
+      # KEY_GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.KEY_GOOGLE_SERVICES_JSON_BASE64 }}
+
+
+    # Différentes étapes
+    steps:
+      # Clone le depot
+      - uses: actions/checkout@v4
+
+      # Installe Java 11 (requis pour Android et SonarQube).
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      # Télécharge le fichier google-services.json (présent dans les secrets GitHub Action)
+      - name: Load Google Service file
+        run:
+          echo "${{ secrets.KEY_GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > app/google-services.json
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build
+        run: ./gradlew build
+
+        # Run Unit test
+      - name: Run unit tests
+        run: ./gradlew test
+        continue-on-error: true  # Permet de continuer même si les tests échouent
+
+      # Permet de déposer un fichier dans le compte-rendu du gitHub Action
+      - name: Upload unit test reports
+        #if: failure() # Pour uploader uniquement si les tests échouent
+        if: always() # always run even if the tests fail
+        uses: actions/upload-artifact@v4
+        with:
+            name: unit-test-reports
+            path: app/build/reports/tests/testReleaseUnitTest/
+
+      # KVM permet à l'émulateur de s'exécuter plus rapidement et de manière plus efficace en utilisant la virtualisation matérielle. Cela réduit considérablement le temps nécessaire pour lancer et exécuter des tests.
+      - name: Enable KVM
+        run: |
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --name-match=kvm
+
+      # https://github.com/marketplace/actions/android-emulator-runner
+      - name: Android Emulator Runner and launch instrumented test
+        uses: ReactiveCircus/android-emulator-runner@v2.32.0
+        with:
+          api-level: 33                                 # Niveau de l'API à utiliser
+          arch: x86_64                                  # Architecture de l'AVD (x86 ou x86_64)
+          emulator-boot-timeout: 300                    # Augmenter le délai d'attente à 300 secondes (5 minutes)
+          disable-animations: true
+          enable-hw-keyboard: false
+          # gpu: swiftshader_indirect  # Utiliser swiftshader pour le rendu logiciel
+
+          #script: ./gradlew connectedCheck   # Commande pour exécuter les tests instrumentés
+          #script: ./gradlew connectedDebugAndroidTest   # Commande pour exécuter les tests instrumentés
+          script: |
+            adb wait-for-device               # Attendre que l'émulateur soit prêt
+            adb shell input keyevent 82       # Simuler un appui sur le bouton 'home' pour "réveiller" l'émulateur
+            ./gradlew connectedDebugAndroidTest jacocoTestReport # Lancer les tests avec rapport de couverture
+
+      # Permet de déposer un fichier dans le compte-rendu du gitHub Action
+      - name: Upload instrumented test reports
+        #if: failure() # Pour uploader uniquement si les tests échouent
+        if: always() # always run even if the tests fail
+        uses: actions/upload-artifact@v4
+        with:
+            name: instrumented-test-reports
+            path: app/build/reports/androidTests/connected/debug/
+
+
+      - name: Upload JaCoCo report - Code coverage
+        uses: actions/upload-artifact@v4
+        with:
+            name: jacoco-report
+            path: app/build/reports/coverage/androidTest/debug/connected/report.xml
+
