@@ -50,9 +50,9 @@ jobs:
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.5.1
         with:
-          appId: ${{ secrets.FIREBASE_APP_ID }}   # ID de l'application Firebase
+          appId: ${{ secrets.FIREBASE_APP_ID }}   # ID de l'application Firebase -  Project settings > General sous Your apps - Ex : 1:1057481851961:android:a870cf5b1049e8774a79e8
           groups: testers                         # Le groupe "testers" définis dans Firebase
           file: app/build/outputs/apk/release/app-release.apk  # Chemin vers l'APK
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}  # Clé JSON du compte de service
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}  # Clé JSON du compte de service (non crypté)
         env:
           ACTIONS_STEP_DEBUG: true # Active le débogage
