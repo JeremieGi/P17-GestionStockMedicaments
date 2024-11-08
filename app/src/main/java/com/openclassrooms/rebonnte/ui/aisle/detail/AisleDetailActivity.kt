@@ -3,7 +3,6 @@ package com.openclassrooms.rebonnte.ui.aisle.detail
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import com.openclassrooms.rebonnte.ui.Screen
 import com.openclassrooms.rebonnte.ui.theme.RebonnteTheme
@@ -41,8 +40,6 @@ class AisleDetailActivity : ComponentActivity() {
         }
     }
 
-    // TODO Denis : A montrer problème de navigation
-
     // Inconvénient de la cohabilitation navigation Compose et Activity
     // Ancien bug de navigation
     // MainActivity => LaunchScreen => MedicineListScreen => AisleListScreen
@@ -63,7 +60,7 @@ class AisleDetailActivity : ComponentActivity() {
         return when (item.itemId) {
             android.R.id.home -> { // Id de la flèche de retour
                 //onBackPressed() // Gérer le clic sur la flèche de retour
-                onBackPressedDispatcher.onBackPressed() // TODO Denis : Question sur le deprecated de onBackPressedDispatcher
+                onBackPressedDispatcher.onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)

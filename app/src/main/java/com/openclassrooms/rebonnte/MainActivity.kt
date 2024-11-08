@@ -26,7 +26,8 @@ class MainActivity : ComponentActivity() {
 
         mainActivity = this
 
-        // TODO Openclassrooms + JG prio 1 => Mail à Openclassrooms car fuite non visible par contre çà fait un bug
+        // Le broadcast provoque une fuite mémoire légère compensée par le garbage collector.
+        // Néanmoins, je commente ce broadcast inutile dans ce projet.
         //startBroadcastReceiver()
 
         setContent {

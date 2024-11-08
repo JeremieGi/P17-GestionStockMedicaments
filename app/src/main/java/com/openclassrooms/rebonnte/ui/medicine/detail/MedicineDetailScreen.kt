@@ -434,7 +434,7 @@ fun HistoryItem(history: History) {
             HistoryLine(stringResource(R.string.user),history.author.sEmail)
 
             // Pattern 18 juin 1985
-            val formatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+            val formatter = SimpleDateFormat("dd MMMM yyyy HH:mm", Locale.getDefault())
             // Formater la date
             val formattedDate = formatter.format(history.date)
 
