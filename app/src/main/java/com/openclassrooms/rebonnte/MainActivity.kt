@@ -95,8 +95,14 @@ fun NavGraph(
         composable(route = Screen.Launch.route) {
 
             LaunchScreen(
-                navigatebyMedicineListScreenP = {
-                   navController.navigate(Screen.MedicinesList.route)
+//                navigatebyMedicineListScreenP = {
+//                   navController.navigate(Screen.MedicinesList.route)
+//                },
+                onClickBottomAisleP = {
+                    navController.navigate(Screen.AisleList.route)
+                },
+                navigateLaunchScreenP = {
+                    navController.navigate(Screen.Launch.route)
                 }
             )
 

@@ -23,6 +23,7 @@ import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.openclassrooms.rebonnte.R
 import com.openclassrooms.rebonnte.ui.ErrorComposable
+import com.openclassrooms.rebonnte.ui.medicine.list.MedicineListScreen
 
 /**
  * Ecran de lancement qui permet d'afficher la fenêtre d'authentification si aucun utilisateur n'est connecté,
@@ -31,7 +32,9 @@ import com.openclassrooms.rebonnte.ui.ErrorComposable
 @Composable
 fun LaunchScreen(
     viewModel: LaunchViewModel = hiltViewModel(),
-    navigatebyMedicineListScreenP : () -> Unit
+    //navigatebyMedicineListScreenP : () -> Unit,
+    onClickBottomAisleP : () -> Unit,
+    navigateLaunchScreenP: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -92,13 +95,13 @@ fun LaunchScreen(
 
     // Si l'utilisateur était déjà loggué ou il vient de se logguer avec succès
     if (viewModel.userLogged() || isAuthenticated ){
-//        //  Utilisateur connecté
-//        MedicineListScreen(
-//            //modifier = modifier,
-//            onClickBottomAisleP = onClickBottomAisleP,
-//            onBackClickP = onBackClickP
-//        )
-        navigatebyMedicineListScreenP()
+        //  Utilisateur connecté
+        MedicineListScreen(
+            onClickBottomAisleP = onClickBottomAisleP,
+            navigateLaunchScreenP = navigateLaunchScreenP
+        )
+        // Il ne faut pas naviguer vers la liste des médicaments sinon le Back ne fermera plus l'application
+        // navigatebyMedicineListScreenP()
     }
 
 

@@ -400,7 +400,7 @@ fun MedicineListComposable(
         modifier = modifier.fillMaxSize()
     ) {
         items(
-            items =listMedicines,
+            items = listMedicines,
             key = { it.id }
         ) { medicine ->
 
@@ -412,7 +412,6 @@ fun MedicineListComposable(
                 },
                 modifier = Modifier.animateItemPlacement()
             ) {
-
 
                 MedicineItem(
                     medicineP = medicine,
@@ -499,7 +498,7 @@ private fun SwipeBox(
     modifier: Modifier = Modifier,
     medicineP: Medicine,
     onDelete: () -> Unit,
-    content: @Composable () -> Unit
+    medicineItemComposableP : @Composable () -> Unit
 ) {
     // Permet de connaître l'état du swipe en cours
     val swipeState = rememberSwipeToDismissBoxState()
@@ -509,6 +508,7 @@ private fun SwipeBox(
     SwipeToDismissBox(
         modifier = modifier.animateContentSize(), // Animation lors du changement de taille du composant
         state = swipeState,
+        enableDismissFromStartToEnd = false, // Désactivation du swipe startToEnd
         backgroundContent = {
 
             // Affichage de la partie qui va apparaître lors du swipe
@@ -531,7 +531,7 @@ private fun SwipeBox(
 
         }
     ) {
-        content()
+        medicineItemComposableP()
     }
 
     // État pour gérer l'affichage de la boîte de dialogue de confirmation
@@ -581,18 +581,6 @@ private fun SwipeBox(
         )
 
     }
-
-
-
-    // Désactivation du swipe StartToEnd
-    // Si l'utilisateur swipe vers la droite, le retour à la position initiale se fait instantanément
-    if (swipeState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
-        LaunchedEffect(swipeState) {
-            // Retour immédiat à la position initiale
-            swipeState.snapTo(SwipeToDismissBoxValue.Settled)
-        }
-    }
-
 
 }
 
