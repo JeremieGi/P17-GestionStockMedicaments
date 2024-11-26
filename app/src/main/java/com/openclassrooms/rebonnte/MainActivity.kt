@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mainActivity = this
+        //mainActivity = this
 
         // Le broadcast provoque une fuite mémoire légère compensée par le garbage collector.
         // Néanmoins, je commente ce broadcast inutile dans ce projet.
@@ -76,9 +76,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 */
-    companion object {
-        lateinit var mainActivity: MainActivity
-    }
+//    companion object {
+//        lateinit var mainActivity: MainActivity
+//    }
 }
 
 @Composable
